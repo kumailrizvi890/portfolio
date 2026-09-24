@@ -1,0 +1,97 @@
+@import "tailwindcss";
+
+/*
+  Design tokens - dark-mode-locked (deliberate: this is an infra/systems
+  portfolio, dark terminal-adjacent aesthetic is the brand, not a fallback).
+
+  Shape system (documented, do not deviate):
+    - buttons / pills / badges -> fully rounded (rounded-full)
+    - cards / panels           -> rounded-2xl (16px)
+    - inputs / code chrome     -> rounded-lg (8px)
+
+  Accent: single "signal amber" accent (--color-accent). Semantic status
+  colors (ok / warn / down) are separate from brand accent and only ever
+  used to represent real state in the live demos.
+*/
+
+:root {
+  --background: #09090b;
+  --surface: #111113;
+  --surface-2: #18181b;
+  --border: #27272a;
+  --foreground: #fafafa;
+  --muted: #a1a1aa;
+  --muted-2: #71717a;
+
+  --accent: #f5a524;
+  --accent-foreground: #09090b;
+
+  /* Validated status palette (dataviz skill, fixed / mode-invariant steps).
+     "warn" intentionally reuses the brand accent (amber doubles as
+     "pay attention" here, same pattern GitHub/Vercel use for warning
+     states) so it's never confused with a third unrelated hue. */
+  --status-ok: #0ca30c;
+  --status-warn: var(--accent);
+  --status-down: #d03b3b;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-border: var(--border);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-muted-2: var(--muted-2);
+
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+
+  --color-status-ok: var(--status-ok);
+  --color-status-warn: var(--status-warn);
+  --color-status-down: var(--status-down);
+
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+html {
+  color-scheme: dark;
+}
+
+body {
+  background: var(--color-background);
+  color: var(--color-foreground);
+}
+
+::selection {
+  background: color-mix(in srgb, var(--accent) 35%, transparent);
+  color: var(--foreground);
+}
+
+/* Fixed, non-scrolling grain layer - cheap, applied once, never on a
+   scrolling container (perf rule from the design skill). */
+.grain {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  opacity: 0.035;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Focus ring, consistent everywhere */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
