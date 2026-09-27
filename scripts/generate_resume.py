@@ -15,27 +15,28 @@ from reportlab.lib.colors import HexColor
 
 INK = HexColor("#18181b")
 MUTED = HexColor("#52525b")
-ACCENT = HexColor("#b45309")
+# Site brand accent (--accent in globals.css) - not the reportlab-default brown.
+ACCENT = HexColor("#c9820a")  # slightly deepened from #f5a524 for print contrast on white
 
 styles = {
-    "name": ParagraphStyle("name", fontName="Helvetica-Bold", fontSize=18, textColor=INK, spaceAfter=2),
-    "contact": ParagraphStyle("contact", fontName="Helvetica", fontSize=9, textColor=MUTED, spaceAfter=10),
+    "name": ParagraphStyle("name", fontName="Helvetica-Bold", fontSize=16, textColor=INK, leading=19, spaceAfter=2),
+    "contact": ParagraphStyle("contact", fontName="Helvetica", fontSize=8.3, textColor=MUTED, spaceAfter=2),
     "section": ParagraphStyle(
-        "section", fontName="Helvetica-Bold", fontSize=11, textColor=ACCENT,
-        spaceBefore=12, spaceAfter=4, alignment=TA_LEFT,
+        "section", fontName="Helvetica-Bold", fontSize=9.5, textColor=ACCENT,
+        spaceBefore=3, spaceAfter=1, alignment=TA_LEFT,
     ),
-    "role": ParagraphStyle("role", fontName="Helvetica-Bold", fontSize=10, textColor=INK, spaceAfter=1),
-    "meta": ParagraphStyle("meta", fontName="Helvetica-Oblique", fontSize=9, textColor=MUTED, spaceAfter=3),
-    "body": ParagraphStyle("body", fontName="Helvetica", fontSize=9.5, textColor=INK, leading=13, spaceAfter=6),
+    "role": ParagraphStyle("role", fontName="Helvetica-Bold", fontSize=9.3, textColor=INK, spaceAfter=0),
+    "meta": ParagraphStyle("meta", fontName="Helvetica-Oblique", fontSize=8.2, textColor=MUTED, spaceAfter=1),
+    "body": ParagraphStyle("body", fontName="Helvetica", fontSize=8.7, textColor=INK, leading=10.4, spaceAfter=2.5),
 }
 
 doc = SimpleDocTemplate(
     "public/resume-kumail-rizvi.pdf",
     pagesize=letter,
-    topMargin=0.55 * inch,
-    bottomMargin=0.55 * inch,
-    leftMargin=0.65 * inch,
-    rightMargin=0.65 * inch,
+    topMargin=0.28 * inch,
+    bottomMargin=0.28 * inch,
+    leftMargin=0.55 * inch,
+    rightMargin=0.55 * inch,
     title="Syed Kumail Rizvi - Resume",
     author="Syed Kumail Rizvi",
 )
@@ -45,7 +46,7 @@ story = []
 
 def section(title):
     story.append(Paragraph(title.upper(), styles["section"]))
-    story.append(HRFlowable(width="100%", thickness=0.6, color=ACCENT, spaceAfter=6))
+    story.append(HRFlowable(width="100%", thickness=0.6, color=ACCENT, spaceAfter=2))
 
 
 def entry(role, org, period, detail):
@@ -118,8 +119,8 @@ entry(
 entry(
     "UP2DATE, AI Internship Application Optimization Platform", "DubHacks Hackathon",
     "2025",
-    "Originated the idea and led a 4-person team; built the front end for a platform predicting internship "
-    "posting windows from historical data, plus AI-driven resume and cover-letter keyword optimization.",
+    "Originated the idea and led a 4-person team building a front end that predicts internship posting "
+    "windows from historical data, plus AI-driven resume and cover-letter keyword optimization.",
 )
 entry(
     "PawPass, Shelter & Foster Coordination Platform (PWA)", "Personal project",
