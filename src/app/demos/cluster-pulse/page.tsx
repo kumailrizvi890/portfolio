@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { DemoShell } from "@/components/demo-shell";
-import { ClusterPulseWidget } from "@/components/cluster-pulse-widget";
+import { ClusterPulseDashboard } from "@/components/cluster-pulse-dashboard";
 
 export const metadata: Metadata = {
   title: "Cluster Pulse",
@@ -12,7 +12,7 @@ export default function ClusterPulsePage() {
     <DemoShell
       slug="cluster-pulse"
       name="Cluster Pulse"
-      tagline="Fleet health, latency, and rollout risk for a simulated cluster fleet"
+      tagline="A plain-English deploy-safety check for a simulated cluster fleet"
       tech={["Go", "Vercel Functions", "Observability"]}
       repoHref="https://github.com/kumailrizvi890/portfolio/blob/main/api/fleet-status.go"
       howItWorks={
@@ -23,16 +23,19 @@ export default function ClusterPulsePage() {
             time-seeded wave function so numbers drift believably instead of jumping randomly on every refresh.
           </p>
           <p>
-            Hit &quot;Simulate a load spike&quot; below and the widget switches to a 2.5s poll and passes{" "}
+            Click &quot;Simulate a load spike&quot; above and the page switches to a 2.5s poll and passes{" "}
             <code className="text-accent">?stress=1</code> to the same Go handler, which multiplies the latency and
-            error-rate jitter for every service. The risk score and status dots you see are computed from that
-            request, in Go, right now.
+            error-rate jitter for every service. The verdict, the gauge, and the status badges you see are all
+            computed from that request, in Go, right now &mdash; nothing is hardcoded on the frontend.
           </p>
-          <p>No real Kubernetes cluster exists behind this. The metrics are simulated; the service, the API contract, and the risk-scoring logic are real.</p>
+          <p>
+            No real Kubernetes cluster exists behind this. The metrics are simulated; the service, the API contract,
+            and the risk-scoring logic are real.
+          </p>
         </>
       }
     >
-      <ClusterPulseWidget interactive />
+      <ClusterPulseDashboard />
     </DemoShell>
   );
 }

@@ -39,8 +39,9 @@ export function SiteNav() {
         <div className="flex items-center gap-3">
           <a
             href="/resume-kumail-rizvi.pdf"
+            target="_blank"
+            rel="noreferrer"
             className="hidden sm:inline-flex items-center rounded-full bg-accent px-4 py-2 text-sm font-medium text-accent-foreground transition-transform active:scale-[0.98] hover:brightness-110"
-            download
           >
             Resume
           </a>
@@ -69,8 +70,9 @@ export function SiteNav() {
           ))}
           <a
             href="/resume-kumail-rizvi.pdf"
+            target="_blank"
+            rel="noreferrer"
             className="mt-2 inline-flex items-center justify-center rounded-full bg-accent px-4 py-2.5 text-sm font-medium text-accent-foreground"
-            download
           >
             Resume
           </a>

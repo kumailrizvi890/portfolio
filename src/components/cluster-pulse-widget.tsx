@@ -1,26 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
-
-type ServiceStatus = {
-  name: string;
-  region: string;
-  status: "ok" | "warn" | "down";
-  latencyMs: number;
-  p99Ms: number;
-  errorRatePct: number;
-  replicas: number;
-};
-
-type FleetResponse = {
-  generatedAt: string;
-  clusterCount: number;
-  deployRiskScore: number;
-  riskBand: "low" | "elevated" | "high";
-  incidentNote: string | null;
-  services: ServiceStatus[];
-};
+import { useFleetStatus, type FleetResponse, type ServiceStatus } from "@/lib/use-fleet-status";
 
 const STATUS_DOT: Record<ServiceStatus["status"], string> = {
   ok: "bg-status-ok",
@@ -34,6 +16,11 @@ const RISK_TEXT: Record<FleetResponse["riskBand"], string> = {
   high: "text-status-down",
 };
 
+/**
+ * The small "proof of life" teaser used in the hero. The full, plain-English
+ * dashboard for non-technical visitors lives in ClusterPulseDashboard on the
+ * /demos/cluster-pulse page - this component stays intentionally compact.
+ */
 export function ClusterPulseWidget({
   compact = false,
   interactive = false,
@@ -41,32 +28,8 @@ export function ClusterPulseWidget({
   compact?: boolean;
   interactive?: boolean;
 }) {
-  const [data, setData] = useState<FleetResponse | null>(null);
-  const [error, setError] = useState(false);
   const [stress, setStress] = useState(false);
-
-  useEffect(() => {
-    let cancelled = false;
-    async function poll() {
-      try {
-        const res = await fetch(`/api/fleet-status${stress ? "?stress=1" : ""}`, { cache: "no-store" });
-        if (!res.ok) throw new Error("bad response");
-        const json = (await res.json()) as FleetResponse;
-        if (!cancelled) {
-          setData(json);
-          setError(false);
-        }
-      } catch {
-        if (!cancelled) setError(true);
-      }
-    }
-    poll();
-    const id = setInterval(poll, stress ? 2500 : 6000);
-    return () => {
-      cancelled = true;
-      clearInterval(id);
-    };
-  }, [stress]);
+  const { data, error } = useFleetStatus(stress);
 
   if (error) {
     return (
