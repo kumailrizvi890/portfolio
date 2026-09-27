@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
+import { motion, useReducedMotion } from "motion/react";
 import { profile } from "@/lib/data";
 
 type Status = "idle" | "sending" | "sent" | "error";
@@ -42,23 +43,43 @@ export function Contact() {
     }
   }
 
+  const reduce = useReducedMotion();
+
   return (
     <section id="contact" className="py-20 sm:py-24">
       <div className="mx-auto max-w-3xl px-4 sm:px-6">
-        <h2 className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
+        <motion.h2
+          initial={reduce ? false : { opacity: 0, y: 12 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.6 }}
+          transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+          className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl"
+        >
           Let’s talk
-        </h2>
+        </motion.h2>
         <p className="mt-3 text-sm text-muted sm:text-base">
           Hiring for a new-grad or internship SWE / AI engineering role? This form writes straight to my
-          database (yes, the one Supabase demo above is reading from too).
+          database (yes, the one Supabase demo above is reading from too) - and pings my phone the moment
+          it lands.
         </p>
 
         {status === "sent" ? (
-          <div className="mt-8 rounded-2xl border border-status-ok/30 bg-status-ok/10 p-6 text-sm text-status-ok">
+          <motion.div
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mt-8 rounded-2xl border border-status-ok/30 bg-status-ok/10 p-6 text-sm text-status-ok"
+          >
             Message received. I’ll get back to you at the email you gave, usually within a day.
-          </div>
+          </motion.div>
         ) : (
-          <form onSubmit={handleSubmit} className="mt-8 space-y-5">
+          <motion.form
+            initial={reduce ? false : { opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.3 }}
+            transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+            onSubmit={handleSubmit}
+            className="mt-8 space-y-5 rounded-2xl border border-border/70 bg-surface/40 p-6 backdrop-blur-md sm:p-8"
+          >
             <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
               <div className="flex flex-col gap-2">
                 <label htmlFor="name" className="text-sm font-medium text-foreground">
@@ -114,7 +135,7 @@ export function Contact() {
             <p className="text-xs text-muted-2">
               Prefer email? <a href={`mailto:${profile.email}`} className="underline hover:text-foreground">{profile.email}</a>
             </p>
-          </form>
+          </motion.form>
         )}
       </div>
     </section>

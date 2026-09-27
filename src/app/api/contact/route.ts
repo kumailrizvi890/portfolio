@@ -29,5 +29,34 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Could not save your message. Please try emailing directly." }, { status: 500 });
   }
 
+  // Best-effort push notification - a recruiter's message should never be
+  // blocked or slowed down by Telegram being unavailable, so failures here
+  // are swallowed after a console log.
+  notifyTelegram({ name, email, message }).catch((err) => {
+    console.error("Telegram notify failed:", err);
+  });
+
   return NextResponse.json({ ok: true });
+}
+
+async function notifyTelegram({ name, email, message }: { name: string; email: string; message: string }) {
+  const token = process.env.TELEGRAM_BOT_TOKEN;
+  const chatId = process.env.TELEGRAM_CHAT_ID;
+  if (!token || !chatId) return;
+
+  const text =
+    `New portfolio contact\n\n` +
+    `Name: ${name}\n` +
+    `Email: ${email}\n\n` +
+    `${message}`;
+
+  const res = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ chat_id: chatId, text }),
+  });
+
+  if (!res.ok) {
+    throw new Error(`Telegram API responded ${res.status}`);
+  }
 }
