@@ -82,7 +82,8 @@ a{ -webkit-tap-highlight-color:transparent; }
   transform:none;
 }
 #headline{
-  position:absolute; top:0; left:0;
+  position:absolute; top:50%; left:50%;
+  z-index:2;
   width:var(--hw);
   margin-left:calc(var(--hw) / -2);
   text-align:center;
@@ -566,8 +567,8 @@ button[data-close]:hover{ border-color:#fff; background:rgba(0,0,0,.55); }
 <div id="stage">
   <div id="world">
     <div id="orb"></div>
-    <h1 id="headline"><span class="inner"></span></h1>
   </div>
+  <h1 id="headline"><span class="inner"></span></h1>
 </div>
 
 <div id="scrolltrack"></div>
@@ -826,7 +827,7 @@ button[data-close]:hover{ border-color:#fff; background:rgba(0,0,0,.55); }
     var sx = tilt + dragY, sy = spin + dragX;
 
     world.style.transform = "translateZ(" + camZ + "px) rotateY(" + sy + "deg) rotateX(" + sx + "deg)";
-    headline.style.transform = "rotateX(" + (-sx) + "deg) rotateY(" + (-sy) + "deg) translateZ(" + (R * 0.62) + "px)";
+    headline.style.transform = "translateZ(" + (camZ + R * 0.62) + "px)";
     headline.style.opacity = String(Math.max(0, 1 - p * 0.55));
 
     body.classList.toggle("deep", p >= 0.999);
