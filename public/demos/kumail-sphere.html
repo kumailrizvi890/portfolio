@@ -1061,6 +1061,19 @@ body.contactopen #contactModal{ opacity:1; pointer-events:auto; }
   stage.addEventListener("pointerup", endDrag);
   stage.addEventListener("pointercancel", endDrag);
 
+  // Fallback for tapping a card: browsers only fire a native "click" after a
+  // touch that didn't move enough to count as a scroll/drag, so this is a
+  // safety net independent of the pointerdown/move/up state machine above -
+  // it's a no-op whenever that machine already opened the lightbox (isLit()
+  // is already true by the time click fires, since click follows pointerup).
+  stage.addEventListener("click", function(e){
+    if (isLit()){ return; }
+    var cardEl = e.target.closest ? e.target.closest(".card") : null;
+    if (!cardEl){ return; }
+    var idx = Number(cardEl.dataset.idx);
+    if (!isNaN(idx)){ openLightbox(idx, "sphere"); }
+  });
+
   /* ---------- grid view ---------- */
   var currentView = "sphere";
   gridBtn.addEventListener("click", function(){
