@@ -419,7 +419,15 @@ body.lit #lit{ opacity:1; pointer-events:auto; }
   box-shadow:0 30px 90px rgba(0,0,0,.75);
   overflow:hidden;
 }
-.shot img{ width:100%; height:100%; object-fit:cover; border-radius:2px; }
+.shot img{ width:100%; height:100%; object-fit:cover; border-radius:2px; transition:opacity .3s ease; }
+#litFrame{
+  position:absolute; inset:0; width:100%; height:100%;
+  border:0; background:#0b0b0b;
+  opacity:0; pointer-events:none;
+  transition:opacity .35s ease;
+}
+.shot.demo img{ opacity:0; }
+.shot.demo #litFrame{ opacity:1; pointer-events:auto; }
 button[data-close]{
   position:absolute; top:12px; right:14px;
   font-size:12.5px;
@@ -446,6 +454,72 @@ button[data-close]:hover{ border-color:#fff; background:rgba(0,0,0,.55); }
 }
 .where{ font-size:13px; color:rgba(244,242,239,.62); }
 .note{ font-size:13.5px; line-height:1.55; color:rgba(244,242,239,.92); margin:0; }
+
+.lit-actions{
+  display:flex; align-items:center; flex-wrap:wrap; gap:14px;
+  margin-top:20px; padding-top:18px;
+  border-top:1px solid rgba(244,242,239,.14);
+}
+.demo-btn, .open-btn{
+  font:inherit; font-size:12.5px; letter-spacing:.02em;
+  padding:10px 16px; border-radius:6px;
+  border:1px solid rgba(244,242,239,.78);
+  color:var(--ink); background:transparent;
+  text-decoration:none; cursor:pointer;
+  transition:border-color .3s ease, background .3s ease, color .3s ease;
+}
+.demo-btn:hover, .open-btn:hover{ border-color:#fff; background:rgba(244,242,239,.08); }
+.demo-btn.active{ background:var(--ink); color:#0a0a0a; border-color:var(--ink); }
+.demo-hint{ font-size:11px; color:var(--dim); }
+
+/* ---------- contact modal ---------- */
+#contactModal{
+  position:fixed; inset:0; z-index:95;
+  display:grid; place-items:center;
+  padding:var(--pad);
+  opacity:0; pointer-events:none;
+  transition:opacity .4s ease;
+}
+#contactModal .scrim{ position:absolute; inset:0; background:rgba(0,0,0,.86); }
+body.contactopen #contactModal{ opacity:1; pointer-events:auto; }
+.cpanel{
+  position:relative;
+  width:min(90vw, 440px);
+  max-height:88vh; overflow-y:auto;
+  background:#0a0a0a;
+  border:1px solid var(--line);
+  border-radius:4px;
+  padding:clamp(26px, 4vw, 38px);
+}
+.cpanel h2{ font-family:var(--serif); font-weight:400; font-size:clamp(22px, 2.4vw, 28px); margin:0 0 8px; color:var(--ink); }
+.csub{ font-size:12.5px; line-height:1.55; color:var(--dim); margin:0 0 22px; }
+.crow{ display:flex; flex-direction:column; gap:6px; margin-bottom:14px; }
+.crow label{ font-size:10.5px; letter-spacing:.06em; text-transform:uppercase; color:var(--dim); }
+.crow input, .crow textarea{
+  font-family:var(--sans); font-size:13.5px; color:var(--ink);
+  background:rgba(244,242,239,.05); border:1px solid var(--line); border-radius:4px;
+  padding:10px 12px; resize:vertical;
+}
+.crow input:focus, .crow textarea:focus{ outline:none; border-color:rgba(244,242,239,.6); }
+.csubmit{
+  width:100%; margin-top:2px;
+  font:inherit; font-size:13px; letter-spacing:.02em;
+  padding:12px 16px; border-radius:4px;
+  border:1px solid var(--ink); background:var(--ink); color:#0a0a0a;
+  cursor:pointer; transition:opacity .25s ease;
+}
+.csubmit:disabled{ opacity:.55; cursor:default; }
+.cfallback{ font-size:11.5px; color:var(--dim); margin:14px 0 0; text-align:center; }
+.cfallback a{ color:var(--ink); }
+.cstatus{ font-size:12px; min-height:14px; margin:-6px 0 10px; color:#e08b7a; }
+.cclose{
+  position:absolute; top:10px; right:12px;
+  font-size:12px; min-width:44px; min-height:32px;
+  padding:6px 12px; border:1px solid rgba(244,242,239,.5); border-radius:6px;
+  background:transparent; color:var(--ink); cursor:pointer;
+}
+.cclose:hover{ border-color:#fff; }
+.csent{ font-size:13.5px; line-height:1.6; color:#9fd6b8; }
 
 /* ---------- menu ---------- */
 #menu{
@@ -607,11 +681,38 @@ button[data-close]:hover{ border-color:#fff; background:rgba(0,0,0,.55); }
 <div id="menu">
   <nav>
     <a href="#" data-grid>The Archive</a>
-    <a href="/">Portfolio</a>
+    <a href="/resume-kumail-rizvi.pdf" target="_blank" rel="noopener">Resume</a>
     <a href="https://github.com/kumailrizvi890" target="_blank" rel="noopener">GitHub</a>
-    <a href="mailto:kumailrizvi890@gmail.com">Contact</a>
+    <a href="#" data-contact>Contact</a>
   </nav>
   <div class="addr">Available for AI Engineer &amp; PM roles<br>kumailrizvi890@gmail.com</div>
+</div>
+
+<div id="contactModal">
+  <div class="scrim" data-close-contact></div>
+  <div class="cpanel">
+    <button data-close-contact type="button" class="cclose">Close</button>
+    <h2>Let&rsquo;s talk</h2>
+    <p class="csub">Hiring for an AI Engineer / PM role? This writes straight to my database and pings my phone the moment it lands.</p>
+    <form id="contactForm">
+      <div class="crow">
+        <label for="cName">Name</label>
+        <input id="cName" name="name" required>
+      </div>
+      <div class="crow">
+        <label for="cEmail">Email</label>
+        <input id="cEmail" name="email" type="email" required>
+      </div>
+      <div class="crow">
+        <label for="cMessage">Message</label>
+        <textarea id="cMessage" name="message" rows="4" required></textarea>
+      </div>
+      <div id="contactStatus" class="cstatus" role="status"></div>
+      <button type="submit" id="contactSubmit" class="csubmit">Send message</button>
+      <p class="cfallback">Prefer email? <a href="mailto:kumailrizvi890@gmail.com">kumailrizvi890@gmail.com</a></p>
+    </form>
+    <div id="contactSent" class="csent" hidden>Message received — I&rsquo;ll get back to you at the email you gave, usually within a day.</div>
+  </div>
 </div>
 
 <div id="lit">
@@ -619,6 +720,7 @@ button[data-close]:hover{ border-color:#fff; background:rgba(0,0,0,.55); }
   <div class="plate">
     <div class="shot">
       <img id="litImg" alt="">
+      <iframe id="litFrame" title="Live project demo" loading="lazy"></iframe>
       <button data-close type="button">Close</button>
     </div>
     <div class="meta">
@@ -627,6 +729,11 @@ button[data-close]:hover{ border-color:#fff; background:rgba(0,0,0,.55); }
         <div class="where" id="litWhere"></div>
       </div>
       <p class="note" id="litNote"></p>
+    </div>
+    <div class="lit-actions">
+      <button id="litDemoBtn" type="button" class="demo-btn">Launch live demo</button>
+      <a id="litOpenBtn" href="#" target="_blank" rel="noopener" class="open-btn">Open in new tab ↗</a>
+      <span class="demo-hint">The real, deployed app — not a mockup.</span>
     </div>
   </div>
 </div>
@@ -639,6 +746,14 @@ button[data-close]:hover{ border-color:#fff; background:rgba(0,0,0,.55); }
 
   function thumbUrl(id){ return "kumail-sphere-img/" + id + ".jpg"; }
   function fullUrl(id){ return "kumail-sphere-img/" + id + ".jpg"; }
+
+  var LIVE_DEMOS = {
+    tradepro: "https://tradepro-kumailr.vercel.app",
+    opsauto: "https://ops-automation-kumailr.vercel.app",
+    pawpass: "https://pawpass-kumailr.vercel.app",
+    qmail: "https://qmail-demo-kumailr.vercel.app"
+  };
+  function demoUrlFor(id){ return LIVE_DEMOS[id.split("-")[0]] || null; }
 
   var STILLS = [
     {id:"tradepro-terminal", title:"TradePro — Live Terminal", place:"Python · Vercel · Yahoo Finance API", note:"A candlestick terminal for BTC-USD with live market data, an 8-factor confluence gate (RSI, MACD, ADX and more), and a real order ticket with ATR-based stops."},
@@ -688,10 +803,19 @@ button[data-close]:hover{ border-color:#fff; background:rgba(0,0,0,.55); }
   var menuEl = document.getElementById("menu");
   var litEl = document.getElementById("lit");
   var litImg = document.getElementById("litImg");
+  var litFrame = document.getElementById("litFrame");
+  var shotEl = litEl.querySelector(".shot");
   var litTitle = document.getElementById("litTitle");
   var litWhere = document.getElementById("litWhere");
   var litNote = document.getElementById("litNote");
+  var litDemoBtn = document.getElementById("litDemoBtn");
+  var litOpenBtn = document.getElementById("litOpenBtn");
   var dot = document.getElementById("dot");
+  var contactModal = document.getElementById("contactModal");
+  var contactForm = document.getElementById("contactForm");
+  var contactStatus = document.getElementById("contactStatus");
+  var contactSubmit = document.getElementById("contactSubmit");
+  var contactSent = document.getElementById("contactSent");
 
   var cardEls = [];
   var gridFigureEls = [];
@@ -958,8 +1082,52 @@ button[data-close]:hover{ border-color:#fff; background:rgba(0,0,0,.55); }
         e.preventDefault();
         body.classList.add("gridview");
         currentView = "grid";
+      } else if (a.hasAttribute("data-contact")){
+        e.preventDefault();
+        openContact();
       }
       setMenuOpen(false);
+    });
+  });
+
+  /* ---------- contact modal ---------- */
+  function openContact(){ body.classList.add("contactopen"); }
+  function closeContact(){ body.classList.remove("contactopen"); }
+  contactModal.querySelectorAll("[data-close-contact]").forEach(function(el){
+    el.addEventListener("click", closeContact);
+  });
+  contactForm.addEventListener("submit", function(e){
+    e.preventDefault();
+    var fd = new FormData(contactForm);
+    var payload = {
+      name: String(fd.get("name") || ""),
+      email: String(fd.get("email") || ""),
+      message: String(fd.get("message") || "")
+    };
+    contactStatus.textContent = "";
+    contactSubmit.disabled = true;
+    contactSubmit.textContent = "Sending…";
+    fetch("/api/contact", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    }).then(function(res){
+      return res.json().catch(function(){ return {}; }).then(function(json){
+        return { ok: res.ok, json: json };
+      });
+    }).then(function(r){
+      if (!r.ok){
+        contactStatus.textContent = r.json.error || "Something went wrong. Please try again.";
+        contactSubmit.disabled = false;
+        contactSubmit.textContent = "Send message";
+        return;
+      }
+      contactForm.hidden = true;
+      contactSent.hidden = false;
+    }).catch(function(){
+      contactStatus.textContent = "Network error. Please try emailing directly.";
+      contactSubmit.disabled = false;
+      contactSubmit.textContent = "Send message";
     });
   });
   document.getElementById("wordmark").addEventListener("click", function(e){ e.preventDefault(); });
@@ -983,6 +1151,33 @@ button[data-close]:hover{ border-color:#fff; background:rgba(0,0,0,.55); }
     litTitle.textContent = rec.title;
     litWhere.textContent = rec.place;
     litNote.textContent = rec.note;
+
+    shotEl.classList.remove("demo");
+    litFrame.src = "about:blank";
+    var demoUrl = demoUrlFor(rec.id);
+    if (demoUrl){
+      litDemoBtn.hidden = false;
+      litOpenBtn.hidden = false;
+      litOpenBtn.href = demoUrl;
+      litDemoBtn.textContent = "Launch live demo";
+      litDemoBtn.classList.remove("active");
+      litDemoBtn.onclick = function(){
+        if (shotEl.classList.contains("demo")){
+          shotEl.classList.remove("demo");
+          litFrame.src = "about:blank";
+          litDemoBtn.textContent = "Launch live demo";
+          litDemoBtn.classList.remove("active");
+        } else {
+          litFrame.src = demoUrl;
+          shotEl.classList.add("demo");
+          litDemoBtn.textContent = "Back to screenshot";
+          litDemoBtn.classList.add("active");
+        }
+      };
+    } else {
+      litDemoBtn.hidden = true;
+      litOpenBtn.hidden = true;
+    }
 
     body.classList.add("lit");
     body.classList.add("locked");
@@ -1009,6 +1204,8 @@ button[data-close]:hover{ border-color:#fff; background:rgba(0,0,0,.55); }
   function closeLightbox(){
     var idx = focused;
     focused = -1;
+    shotEl.classList.remove("demo");
+    litFrame.src = "about:blank";
     var plate = litEl.querySelector(".plate");
     var rect = sourceRect(idx);
     var plateRect = plate.getBoundingClientRect();
@@ -1037,7 +1234,8 @@ button[data-close]:hover{ border-color:#fff; background:rgba(0,0,0,.55); }
   /* ---------- escape ---------- */
   window.addEventListener("keydown", function(e){
     if (e.key !== "Escape"){ return; }
-    if (body.classList.contains("lit")){ closeLightbox(); }
+    if (body.classList.contains("contactopen")){ closeContact(); }
+    else if (body.classList.contains("lit")){ closeLightbox(); }
     else if (menuEl.classList.contains("open")){ setMenuOpen(false); }
     else if (body.classList.contains("gridview")){ body.classList.remove("gridview"); currentView = "sphere"; }
   });
