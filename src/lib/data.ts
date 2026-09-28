@@ -147,18 +147,18 @@ export type ExperienceItem = {
 
 export const workExperience: ExperienceItem[] = [
   {
+    org: "Marvin Windows",
+    role: "Brand Ambassador",
+    period: "Feb 2026 - Sep 2026",
+    detail:
+      "Drove in-store sales for home window replacement by engaging walk-up customers, explaining product value, and converting interest into qualified leads and appointments, closing an average of 8 deals worth $400,000 in sales every week.",
+  },
+  {
     org: "Instacart, Caper Carts",
     role: "Brand Ambassador",
     period: "Jul 2024 - Oct 2024",
     detail:
       "Supported the launch of Instacart's AI-powered Caper Carts, driving a 25% increase in customer engagement across 500+ product implementations.",
-  },
-  {
-    org: "Hot Iron Mongolian Grill",
-    role: "Service Crew",
-    period: "Jul 2023 - Jul 2024",
-    detail:
-      "Managed restocking, cashiering, and customer service, contributing to $5,000+ in daily sales.",
   },
 ];
 

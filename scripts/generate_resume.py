@@ -137,11 +137,13 @@ entry(
 )
 
 section("Work Experience")
+entry("Brand Ambassador", "Marvin Windows", "Feb 2026 to Sep 2026",
+      "Drove in-store sales for home window replacement by engaging walk-up customers, explaining "
+      "product value, and converting interest into qualified leads and appointments, closing an "
+      "average of 8 deals worth $400,000 in sales every week.")
 entry("Brand Ambassador", "Instacart, Caper Carts", "Jul 2024 to Oct 2024",
       "Supported the launch of Instacart's AI-powered Caper Carts, driving a 25% increase in customer "
       "engagement through hands-on guidance across 500+ product implementations.")
-entry("Service Crew", "Hot Iron Mongolian Grill", "Jul 2023 to Jul 2024",
-      "Managed restocking, cashiering, and customer service, contributing to $5,000+ in daily sales.")
 
 section("Leadership & Activities")
 entry("Vice President", "Pakistan Student Association, UW Bothell", "Jul 2023 to Jul 2026",
