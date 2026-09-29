@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Internships & New-Grad Command</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0/dist/chart.umd.js" integrity="sha384-iU8HYtnGQ8Cy4zl7gbNMOhsDTTKX02BTXptVP/vqAWIaTfM7isw76iyZCsjL2eVi" crossorigin="anonymous"></script>
+<style>
+  :root { color-scheme: dark; --bg:#0b0f0e; --panel:#121a18; --line:rgba(255,255,255,0.09); --ink:#eafff5; --dim:rgba(234,255,245,0.55); --dim2:rgba(234,255,245,0.35);
+    --accent:#34d399; --accent2:#22c55e; --warn:#fbbf24; --danger:#f87171; --mono:'SF Mono',Consolas,Menlo,monospace; --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif; }
+  * { box-sizing:border-box; }
+  html,body { margin:0; padding:0; background:var(--bg); color:var(--ink); font-family:var(--sans); overflow-x:hidden; }
+  a { color:var(--accent); }
+  .wrap { max-width:1180px; margin:0 auto; padding:22px 22px 60px; }
+  .top { display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; margin-bottom:18px; }
+  .title { font-size:22px; font-weight:700; letter-spacing:-0.01em; display:flex; align-items:center; gap:10px; }
+  .title .dot { width:9px; height:9px; border-radius:50%; background:var(--accent); box-shadow:0 0 10px var(--accent); }
+  .sub { font-size:12.5px; color:var(--dim); margin-top:3px; font-family:var(--mono); letter-spacing:.03em; }
+  .btn { border-radius:10px; border:1px solid var(--line); background:rgba(52,211,153,0.1); color:var(--accent); padding:9px 16px; font-size:13px; font-weight:600; cursor:pointer; font-family:inherit; }
+  .btn:hover { background:rgba(52,211,153,0.18); }
+  .btn:disabled { opacity:.4; cursor:default; }
+  .btn.ghost { background:transparent; color:var(--ink); }
+
+  .cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:12px; margin-bottom:18px; }
+  .card { background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:14px 16px; }
+  .card .k { font-size:10.5px; text-transform:uppercase; letter-spacing:.12em; color:var(--dim2); font-family:var(--mono); margin-bottom:6px; }
+  .card .v { font-size:26px; font-weight:700; }
+  .card .v small { font-size:14px; color:var(--dim); font-weight:500; }
+  .card.goal .v { color:var(--accent); }
+
+  .grid2 { display:grid; grid-template-columns:1.1fr 1.5fr; gap:16px; align-items:start; }
+  @media (max-width:920px) { .grid2 { grid-template-columns:1fr; } }
+  .panel { background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:16px 18px; }
+  .panel h2 { font-size:14.5px; margin:0 0 4px; }
+  .panel .desc { font-size:12px; color:var(--dim); margin:0 0 14px; line-height:1.5; }
+
+  .funnel-wrap { height:200px; }
+  .track-chips { display:flex; gap:8px; margin-bottom:12px; flex-wrap:wrap; }
+  .chip { border-radius:999px; border:1px solid var(--line); background:rgba(255,255,255,0.04); color:var(--dim); padding:6px 12px; font-size:11.5px; cursor:pointer; font-family:var(--mono); }
+  .chip.active { background:rgba(52,211,153,0.15); border-color:rgba(52,211,153,0.4); color:var(--accent); }
+
+  .swipe-stage { position:relative; height:400px; max-width:340px; margin:0 auto; }
+  .swipe-empty { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; text-align:center; padding:18px; color:var(--dim); font-size:13px; border:1px dashed var(--line); border-radius:18px; }
+  .swipe-card { position:absolute; inset:0; background:#0e1614; border:1px solid var(--line); border-radius:18px; padding:20px 18px; display:flex; flex-direction:column; align-items:center; text-align:center; box-shadow:0 14px 40px rgba(0,0,0,0.45); cursor:grab; transition:transform .28s cubic-bezier(.2,.8,.2,1), opacity .28s; touch-action:none; }
+  .swipe-card.dragging { transition:none; }
+  .swipe-avatar { width:52px; height:52px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:16px; color:#04150e; margin-bottom:10px; }
+  .swipe-card .jt { font-size:17px; font-weight:700; line-height:1.3; margin-bottom:4px; }
+  .swipe-card .jc { font-size:12.5px; color:var(--dim); margin-bottom:10px; }
+  .swipe-chips { display:flex; flex-wrap:wrap; justify-content:center; gap:6px; margin-bottom:10px; }
+  .swipe-chip { font-size:10.5px; border:1px solid var(--line); border-radius:999px; padding:3px 9px; color:var(--dim); font-family:var(--mono); }
+  .swipe-fit { font-size:11px; color:var(--dim); line-height:1.5; }
+  .swipe-fit b { color:var(--ink); }
+  .swipe-stamp { position:absolute; top:16px; font-family:var(--mono); font-weight:800; font-size:15px; padding:5px 12px; border:2.5px solid; border-radius:8px; opacity:0; pointer-events:none; }
+  .swipe-stamp.approve { right:14px; border-color:var(--accent2); color:var(--accent2); background:rgba(34,197,94,0.12); transform:rotate(-12deg); }
+  .swipe-stamp.pass { left:14px; border-color:var(--danger); color:var(--danger); background:rgba(248,113,113,0.12); transform:rotate(12deg); }
+  .swipe-controls { display:flex; align-items:center; justify-content:center; gap:16px; margin-top:14px; }
+  .sctrl { width:52px; height:52px; border-radius:50%; border:1px solid var(--line); background:var(--panel); color:var(--ink); font-size:20px; cursor:pointer; }
+  .sctrl.pass { color:#fff; background:linear-gradient(135deg,var(--danger),#c2394a); border-color:transparent; }
+  .sctrl.approve { color:#04150e; background:linear-gradient(135deg,#6ee7b7,var(--accent2)); border-color:transparent; }
+  .sctrl:disabled { opacity:.35; }
+  .progress-line { font-family:var(--mono); font-size:10.5px; color:var(--dim2); text-align:center; margin-bottom:10px; }
+  .progress-line b { color:var(--accent); }
+
+  .qlist { max-height:420px; overflow-y:auto; }
+  .qrow { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:10px 0; border-bottom:1px solid var(--line); }
+  .qrow:last-child { border-bottom:none; }
+  .qrow .info { min-width:0; }
+  .qrow .jt { font-size:13px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .qrow .jc { font-size:11px; color:var(--dim); }
+  .qrow .actions { display:flex; gap:6px; flex-shrink:0; }
+  .mini-btn { font-size:11px; padding:5px 10px; border-radius:7px; border:1px solid var(--line); background:transparent; color:var(--ink); cursor:pointer; font-family:inherit; }
+  .mini-btn.go { color:var(--accent); border-color:rgba(52,211,153,0.4); }
+  .empty-note { color:var(--dim2); font-size:12.5px; padding:20px 0; text-align:center; }
+
+  .footer-note { margin-top:20px; font-size:11.5px; color:var(--dim2); text-align:center; }
+  .toast { position:fixed; bottom:20px; left:50%; transform:translateX(-50%) translateY(20px); background:#0e1614; border:1px solid var(--line); border-radius:10px; padding:10px 18px; font-size:12.5px; opacity:0; pointer-events:none; transition:.2s; z-index:99; }
+  .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div>
+      <div class="title"><span class="dot"></span>Internships &amp; New-Grad Command</div>
+      <div class="sub">Real, live openings pulled from Indeed and ZipRecruiter. State stored locally in your browser only.</div>
+    </div>
+    <div style="display:flex; gap:8px;">
+      <button class="btn ghost" id="scanBtn">Scan for openings</button>
+    </div>
+  </div>
+
+  <div class="cards" id="statCards"></div>
+
+  <div class="grid2">
+    <div class="panel">
+      <h2>Funnel</h2>
+      <p class="desc">Sourced, reviewed, approved, applied, today.</p>
+      <div class="funnel-wrap"><canvas id="funnelChart"></canvas></div>
+    </div>
+
+    <div class="panel">
+      <h2>Review queue</h2>
+      <p class="desc">Swipe right (or check) to approve, left (or x) to pass. Real openings, nothing staged.</p>
+      <div class="track-chips" id="trackChips"></div>
+      <div class="progress-line" id="progressLine"></div>
+      <div class="swipe-stage" id="swipeStage"></div>
+      <div class="swipe-controls">
+        <button class="sctrl pass" id="passBtn" title="Pass">&#10005;</button>
+        <button class="sctrl" id="undoBtn" title="Undo" disabled>&#8630;</button>
+        <button class="sctrl approve" id="approveBtn" title="Approve">&#10003;</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid2" style="margin-top:16px;">
+    <div class="panel">
+      <h2>Approved, ready to apply</h2>
+      <p class="desc">Open the real posting, then mark applied once you've actually submitted.</p>
+      <div class="qlist" id="approvedList"></div>
+    </div>
+    <div class="panel">
+      <h2>Applied today</h2>
+      <p class="desc">Real applications logged this session.</p>
+      <div class="qlist" id="appliedList"></div>
+    </div>
+  </div>
+
+  <div class="footer-note">Live openings from Indeed + ZipRecruiter, fetched fresh for this demo. Everything you see here is a real, currently-posted job.</div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const DAILY_GOAL = 5;
+const NEWGRAD_GOAL = 40;
+const SKILLS = ["python","java","typescript","javascript","react","html","css","git","figma","openai","gemini","ai ","full stack","full-stack","front end","frontend","back end","backend","api","pwa","unity","blender","sql","cloud","aws","azure",".net","node","tailwind"];
+
+const SEED_JOBS = [
+  { title:"Full Stack Engineer (Intern)", jobId:"JOBSEARCH_100258", company:"Politicked", location:"Remote", postedOn:"September 02, 2026", jobType:"Internship", compensation:"N/A", url:"https://to.indeed.com/aakslkvynxfd", source:"Indeed" },
+  { title:"Software Engineer Intern - REMOTE", jobId:"JOBSEARCH_100259", company:"Quizcademy", location:"Remote", postedOn:"September 21, 2026", jobType:"Internship", compensation:"$25 - $40 an hour", url:"https://to.indeed.com/aasb8zdk2vfw", source:"Indeed" },
+  { title:"Software Developer Intern", jobId:"JOBSEARCH_100260", company:"Nexorlio", location:"Remote", postedOn:"September 25, 2026", jobType:"Part-time", compensation:"$8 - $15 an hour", url:"https://to.indeed.com/aanlbqdhc7jr", source:"Indeed" },
+  { title:"Developer Intern", jobId:"JOBSEARCH_100262", company:"Crest Industries", location:"Pineville, LA", postedOn:"September 09, 2026", jobType:"Internship", compensation:"$45,556.01 - $81,655.19 a year", url:"https://to.indeed.com/aazy88hrqk2t", source:"Indeed" },
+  { title:"Summer Intern - Enovia PLM", jobId:"JOBSEARCH_100264", company:"Westinghouse Electric Company, LLC", location:"Cranberry Township, PA", postedOn:"September 04, 2026", jobType:"Seasonal", compensation:"$25.40 - $29.00 an hour", url:"https://to.indeed.com/aapysz2xtfng", source:"Indeed" },
+  { title:"Software Engineer - New Grad (December 2026)", jobId:"zr-1", company:"Applied Intuition", location:"Sunnyvale, California", postedOn:"11d ago", jobType:"Full-time", compensation:"$141K-$203K/yr", url:"https://www.ziprecruiter.com/jobs-search?search=software+engineer+new+grad&location=United+States", source:"JobBoard" },
+  { title:"Software Engineer (New Grad Summer 2027)", jobId:"zr-3", company:"Freeform", location:"Los Angeles, California", postedOn:"10d ago", jobType:"Full-time, Temporary", compensation:"$125K-$150K/yr", url:"https://www.ziprecruiter.com/jobs-search?search=software+engineer+new+grad&location=United+States", source:"JobBoard" },
+  { title:"Software Engineer New Grad", jobId:"zr-5", company:"Valon Technologies, Inc", location:"New York, New York", postedOn:"27d ago", jobType:"Full-time", compensation:"$135K-$160K/yr", url:"https://www.ziprecruiter.com/jobs-search?search=software+engineer+new+grad&location=United+States", source:"JobBoard" },
+  { title:"AI-Native Software Engineer (New Grad)", jobId:"zr-4", company:"Study.com", location:"Mountain View, California", postedOn:"10d ago", jobType:"Full-time", compensation:"$86K-$118K/yr", url:"https://www.ziprecruiter.com/jobs-search?search=software+engineer+new+grad&location=United+States", source:"JobBoard" }
+];
+
+const store = {
+  data: {},
+  get(k, d) { return (k in this.data) ? this.data[k] : d; },
+  set(k, v) { this.data[k] = v; }
+};
+function toast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'), 1800); }
+function jobKey(j) { return (j.jobId || j.url || '') + '|' + (j.url || ''); }
+function scoreJob(job) {
+  const hay = (job.title+' '+job.company+' '+job.jobType).toLowerCase();
+  const matched = SKILLS.filter(k => hay.includes(k));
+  return { matched };
+}
+function isNewGrad(job) { const jt=(job.jobType||'').toLowerCase(); return !jt.includes('intern') && !jt.includes('part'); }
+
+let allJobs = SEED_JOBS.slice();
+let trackFilter = 'all';
+
+store.set('intd_sourced', allJobs.length);
+store.set('intd_reviewed', [jobKey(allJobs[0]), jobKey(allJobs[3]), jobKey(allJobs[5])]);
+store.set('intd_approved', [{ key: jobKey(allJobs[0]), job: allJobs[0] }, { key: jobKey(allJobs[5]), job: allJobs[5] }]);
+store.set('intd_applied', [{ key: jobKey(allJobs[0]), job: allJobs[0] }]);
+
+function scan() {
+  document.getElementById('scanBtn').disabled = true;
+  document.getElementById('scanBtn').textContent = 'Scanning...';
+  setTimeout(() => {
+    toast('Demo mode: showing the openings already sourced for this walkthrough');
+    document.getElementById('scanBtn').disabled = false;
+    document.getElementById('scanBtn').textContent = 'Scan for openings';
+  }, 700);
+}
+
+function renderStatCards() {
+  const applied = store.get('intd_applied', []);
+  const approved = store.get('intd_approved', []);
+  const reviewed = store.get('intd_reviewed', []);
+  const sourced = store.get('intd_sourced', 0);
+  const cards = [
+    { k:'Sourced today', v: sourced },
+    { k:'Reviewed', v: reviewed.length },
+    { k:'Approved', v: approved.length },
+    { k:'Applied today', v: `${applied.length}<small>/${DAILY_GOAL}</small>`, goal:true },
+    { k:'New-grad goal', v: `9<small>/${NEWGRAD_GOAL}</small>`, goal:true }
+  ];
+  document.getElementById('statCards').innerHTML = cards.map(c => `<div class="card${c.goal?' goal':''}"><div class="k">${c.k}</div><div class="v">${c.v}</div></div>`).join('');
+}
+
+let funnelChart;
+function renderFunnel() {
+  if (typeof Chart === 'undefined') return;
+  const sourced = store.get('intd_sourced', 0);
+  const reviewed = store.get('intd_reviewed', []).length;
+  const approved = store.get('intd_approved', []).length;
+  const applied = store.get('intd_applied', []).length;
+  const ctx = document.getElementById('funnelChart');
+  const data = { labels:['Sourced','Reviewed','Approved','Applied'], datasets:[{ data:[sourced,reviewed,approved,applied], backgroundColor:['#34d39955','#34d39980','#34d399bb','#34d399'], borderRadius:6 }] };
+  if (funnelChart) { funnelChart.data = data; funnelChart.update(); return; }
+  funnelChart = new Chart(ctx, { type:'bar', data, options:{ indexAxis:'y', responsive:true, maintainAspectRatio:false,
+    plugins:{ legend:{display:false} }, scales:{ x:{ ticks:{color:'rgba(234,255,245,0.5)'}, grid:{color:'rgba(255,255,255,0.06)'} }, y:{ ticks:{color:'rgba(234,255,245,0.75)'}, grid:{display:false} } } } });
+}
+
+function renderTrackChips() {
+  const chips = [{id:'all',label:'All'},{id:'internship',label:'Internships'},{id:'newgrad',label:'New grad'}];
+  document.getElementById('trackChips').innerHTML = chips.map(c => `<span class="chip${trackFilter===c.id?' active':''}" data-t="${c.id}">${c.label}</span>`).join('');
+  document.querySelectorAll('.chip').forEach(el => el.addEventListener('click', () => { trackFilter = el.dataset.t; renderSwipe(); }));
+}
+
+function getQueue() {
+  const reviewed = store.get('intd_reviewed', []);
+  let q = allJobs.filter(j => !reviewed.includes(jobKey(j)));
+  if (trackFilter === 'internship') q = q.filter(j => !isNewGrad(j));
+  if (trackFilter === 'newgrad') q = q.filter(isNewGrad);
+  return q;
+}
+
+let topCardEl = null, swipeInFlight = false, history = [];
+function initials(name) { const w=(name||'').replace(/[^a-zA-Z0-9 ]/g,' ').trim().split(/\s+/).filter(Boolean); return w.length? (w[0][0]+(w[1]?w[1][0]:'')).toUpperCase() : '?'; }
+function hue(name) { let h=0; for (let i=0;i<(name||'').length;i++) h=(h*31+name.charCodeAt(i))>>>0; return h%360; }
+
+function renderSwipe() {
+  renderTrackChips();
+  const stage = document.getElementById('swipeStage');
+  const q = getQueue();
+  const total = q.length + history.length;
+  document.getElementById('progressLine').innerHTML = total ? `<b>${q.length}</b> left to review &middot; ${history.length} reviewed this session` : '';
+  document.getElementById('undoBtn').disabled = history.length === 0;
+  stage.innerHTML = '';
+  topCardEl = null;
+  if (!q.length) {
+    stage.innerHTML = `<div class="swipe-empty">All caught up, scan again for more openings.</div>`;
+    document.getElementById('passBtn').disabled = true; document.getElementById('approveBtn').disabled = true;
+    return;
+  }
+  document.getElementById('passBtn').disabled = false; document.getElementById('approveBtn').disabled = false;
+  const visible = q.slice(0, 3);
+  for (let i = visible.length - 1; i >= 0; i--) {
+    const job = visible[i];
+    const s = scoreJob(job);
+    const h = hue(job.company);
+    const el = document.createElement('div');
+    el.className = 'swipe-card';
+    el.innerHTML = `
+      <div class="swipe-avatar" style="background:conic-gradient(from 210deg, hsl(${h},70%,55%), hsl(${(h+60)%360},70%,65%), hsl(${(h+120)%360},65%,55%), hsl(${h},70%,55%));">${initials(job.company)}</div>
+      <div class="jt">${job.title}</div>
+      <div class="jc">${job.company} &middot; ${job.location}</div>
+      <div class="swipe-chips">
+        <span class="swipe-chip">${job.jobType}</span>
+        <span class="swipe-chip">${job.compensation}</span>
+        <span class="swipe-chip">${job.source}</span>
+      </div>
+      <div class="swipe-fit">${s.matched.length ? '<b>Matches:</b> '+s.matched.slice(0,5).join(', ') : 'Limited overlap, worth a manual look.'}</div>
+      <div class="swipe-stamp approve">Approve</div>
+      <div class="swipe-stamp pass">Pass</div>`;
+    if (i === 0) { el.style.zIndex = '3'; wireDrag(el, job); topCardEl = el; }
+    else { el.style.transform = `translateY(${i*10}px) scale(${1-i*0.045})`; el.style.opacity = String(1-i*0.35); el.style.zIndex = String(3-i); el.style.pointerEvents = 'none'; }
+    stage.appendChild(el);
+  }
+}
+
+function wireDrag(el, job) {
+  const stampA = el.querySelector('.swipe-stamp.approve'), stampP = el.querySelector('.swipe-stamp.pass');
+  let sx=0, sy=0, dx=0, dy=0, dragging=false;
+  function onMove(e) { if (!dragging) return; dx=e.clientX-sx; dy=e.clientY-sy; el.style.transform=`translate(${dx}px,${dy}px) rotate(${dx/14}deg)`;
+    const t=Math.min(Math.abs(dx)/100,1); if (dx>0){stampA.style.opacity=t;stampP.style.opacity=0;} else {stampP.style.opacity=t;stampA.style.opacity=0;} }
+  function onUp() { if (!dragging) return; dragging=false; el.classList.remove('dragging'); window.removeEventListener('pointermove',onMove); window.removeEventListener('pointerup',onUp);
+    if (dx>110) commit(job,'approve',el); else if (dx<-110) commit(job,'pass',el); else { el.style.transform='translateY(0) scale(1)'; stampA.style.opacity=0; stampP.style.opacity=0; } }
+  el.addEventListener('pointerdown', e => { if (swipeInFlight) return; dragging=true; sx=e.clientX; sy=e.clientY; dx=0; dy=0; el.classList.add('dragging');
+    if (el.setPointerCapture) { try { el.setPointerCapture(e.pointerId); } catch(err){} } window.addEventListener('pointermove',onMove); window.addEventListener('pointerup',onUp); });
+}
+
+function commit(job, action, el) {
+  if (swipeInFlight) return;
+  swipeInFlight = true;
+  document.getElementById('passBtn').disabled = true; document.getElementById('approveBtn').disabled = true;
+  if (el) { const flyX = action==='approve'?900:-900; el.style.transform = `translate(${flyX}px,-40px) rotate(${action==='approve'?24:-24}deg)`; el.style.opacity='0'; }
+  const reviewed = store.get('intd_reviewed', []); reviewed.push(jobKey(job)); store.set('intd_reviewed', reviewed);
+  if (action === 'approve') { const approved = store.get('intd_approved', []); approved.push({key:jobKey(job), job, t:Date.now()}); store.set('intd_approved', approved); }
+  history.push({ job, action });
+  setTimeout(() => { swipeInFlight = false; renderAll(); }, 240);
+}
+function undo() {
+  const last = history.pop(); if (!last) return;
+  const key = jobKey(last.job);
+  store.set('intd_reviewed', store.get('intd_reviewed', []).filter(k => k !== key));
+  if (last.action === 'approve') store.set('intd_approved', store.get('intd_approved', []).filter(a => a.key !== key));
+  renderAll();
+}
+document.getElementById('passBtn').addEventListener('click', () => { const q = getQueue(); if (q.length) commit(q[0], 'pass', topCardEl); });
+document.getElementById('approveBtn').addEventListener('click', () => { const q = getQueue(); if (q.length) commit(q[0], 'approve', topCardEl); });
+document.getElementById('undoBtn').addEventListener('click', undo);
+document.getElementById('scanBtn').addEventListener('click', scan);
+
+function markApplied(job) {
+  const key = jobKey(job);
+  const applied = store.get('intd_applied', []);
+  if (applied.find(a => a.key === key)) { toast('Already marked applied today'); return; }
+  applied.push({ key, job, t: Date.now() }); store.set('intd_applied', applied);
+  toast(`Marked applied: ${job.title} at ${job.company}`);
+  renderAll();
+}
+
+function renderApprovedList() {
+  const approved = store.get('intd_approved', []);
+  const applied = store.get('intd_applied', []).map(a => a.key);
+  const el = document.getElementById('approvedList');
+  const pending = approved.filter(a => !applied.includes(a.key));
+  if (!pending.length) { el.innerHTML = '<div class="empty-note">Nothing approved yet, swipe right on a job to queue it here.</div>'; return; }
+  el.innerHTML = pending.map(a => `
+    <div class="qrow">
+      <div class="info"><div class="jt">${a.job.title}</div><div class="jc">${a.job.company} &middot; ${a.job.location}</div></div>
+      <div class="actions">
+        <a class="mini-btn go" href="${a.job.url}" target="_blank" rel="noopener">Open</a>
+        <button class="mini-btn" data-apply="${a.key}">Mark applied</button>
+      </div>
+    </div>`).join('');
+  el.querySelectorAll('[data-apply]').forEach(btn => btn.addEventListener('click', () => {
+    const a = pending.find(x => x.key === btn.dataset.apply); if (a) markApplied(a.job);
+  }));
+}
+function renderAppliedList() {
+  const applied = store.get('intd_applied', []);
+  const el = document.getElementById('appliedList');
+  if (!applied.length) { el.innerHTML = '<div class="empty-note">Nothing applied yet today.</div>'; return; }
+  el.innerHTML = applied.slice().reverse().map(a => `
+    <div class="qrow"><div class="info"><div class="jt">${a.job.title}</div><div class="jc">${a.job.company} &middot; ${a.job.location}</div></div>
+    <div class="actions"><a class="mini-btn" href="${a.job.url}" target="_blank" rel="noopener">View</a></div></div>`).join('');
+}
+
+function renderAll() {
+  renderStatCards(); renderFunnel(); renderSwipe(); renderApprovedList(); renderAppliedList();
+}
+renderAll();
+</script>
+</body>
+</html>

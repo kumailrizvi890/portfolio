@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Agency CRM: Sales, Leads &amp; Websites</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0/dist/chart.umd.js" integrity="sha384-iU8HYtnGQ8Cy4zl7gbNMOhsDTTKX02BTXptVP/vqAWIaTfM7isw76iyZCsjL2eVi" crossorigin="anonymous"></script>
+<style>
+  :root { color-scheme: dark; --bg:#0c0a12; --panel:#161222; --line:rgba(255,255,255,0.09); --ink:#f3efff; --dim:rgba(243,239,255,0.55); --dim2:rgba(243,239,255,0.35);
+    --accent:#a78bfa; --accent2:#8b5cf6; --warm:#fbbf24; --hot:#fb7185; --sent:#38bdf8; --lost:#71717a; --mono:'SF Mono',Consolas,Menlo,monospace; --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif; }
+  * { box-sizing:border-box; }
+  html,body { margin:0; padding:0; background:var(--bg); color:var(--ink); font-family:var(--sans); overflow-x:hidden; }
+  a { color:var(--accent); }
+  .wrap { max-width:1220px; margin:0 auto; padding:22px 22px 60px; }
+  .top { display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; margin-bottom:18px; }
+  .title { font-size:22px; font-weight:700; letter-spacing:-0.01em; display:flex; align-items:center; gap:10px; }
+  .title .dot { width:9px; height:9px; border-radius:50%; background:var(--accent); box-shadow:0 0 10px var(--accent); }
+  .sub { font-size:12.5px; color:var(--dim); margin-top:3px; font-family:var(--mono); letter-spacing:.03em; }
+  .btn { border-radius:10px; border:1px solid var(--line); background:rgba(167,139,250,0.12); color:var(--accent); padding:9px 16px; font-size:13px; font-weight:600; cursor:pointer; font-family:inherit; }
+  .btn:hover { background:rgba(167,139,250,0.2); }
+  .badge { display:inline-block; font-size:10.5px; font-family:var(--mono); border:1px solid var(--line); border-radius:999px; padding:3px 10px; color:var(--dim); margin-left:10px; }
+
+  .cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:12px; margin-bottom:18px; }
+  .card { background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:14px 16px; }
+  .card .k { font-size:10.5px; text-transform:uppercase; letter-spacing:.12em; color:var(--dim2); font-family:var(--mono); margin-bottom:6px; }
+  .card .v { font-size:24px; font-weight:700; }
+  .card.money .v { color:var(--accent); }
+
+  .grid2 { display:grid; grid-template-columns:1fr 1.4fr; gap:16px; align-items:start; }
+  @media (max-width:960px) { .grid2 { grid-template-columns:1fr; } }
+  .panel { background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:16px 18px; margin-bottom:16px; }
+  .panel h2 { font-size:14.5px; margin:0 0 4px; }
+  .panel .desc { font-size:12px; color:var(--dim); margin:0 0 14px; line-height:1.5; }
+  .funnel-wrap { height:220px; }
+
+  table.leads { width:100%; border-collapse:collapse; font-size:12.5px; }
+  table.leads th { text-align:left; font-size:10.5px; text-transform:uppercase; letter-spacing:.08em; color:var(--dim2); font-family:var(--mono); padding:6px 8px; border-bottom:1px solid var(--line); }
+  table.leads td { padding:8px 8px; border-bottom:1px solid rgba(255,255,255,0.05); vertical-align:top; }
+  table.leads tr:hover td { background:rgba(255,255,255,0.02); }
+  .stage-pill { display:inline-block; padding:3px 9px; border-radius:999px; font-size:10.5px; font-weight:600; font-family:var(--mono); }
+  .stage-New { background:rgba(255,255,255,0.08); color:var(--dim); }
+  .stage-WarmLead { background:rgba(251,191,36,0.15); color:var(--warm); }
+  .stage-HotLead { background:rgba(251,113,133,0.15); color:var(--hot); }
+  .stage-DraftReady { background:rgba(56,189,248,0.15); color:var(--sent); }
+  .stage-Sent { background:rgba(56,189,248,0.15); color:var(--sent); }
+  .stage-Replied { background:rgba(167,139,250,0.2); color:var(--accent); }
+  .stage-DemoProposed { background:rgba(167,139,250,0.3); color:#fff; }
+  .stage-Parked { background:rgba(113,113,122,0.2); color:var(--lost); }
+  .stage-Lost { background:rgba(113,113,122,0.2); color:var(--lost); }
+  .offer-tag { display:inline-block; font-size:10px; border:1px solid var(--line); border-radius:6px; padding:1px 6px; margin:1px 2px 1px 0; color:var(--dim); }
+
+  .feed-item { display:flex; gap:10px; padding:10px 0; border-bottom:1px solid var(--line); }
+  .feed-item:last-child { border-bottom:none; }
+  .feed-dot { width:7px; height:7px; border-radius:50%; background:var(--accent); margin-top:5px; flex-shrink:0; box-shadow:0 0 6px var(--accent); }
+  .feed-text { font-size:12.5px; line-height:1.5; }
+  .feed-text b { color:var(--ink); }
+  .feed-meta { font-size:10.5px; color:var(--dim2); margin-top:2px; font-family:var(--mono); }
+
+  .site-row { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:10px 0; border-bottom:1px solid var(--line); font-size:12.5px; }
+  .site-row:last-child { border-bottom:none; }
+  .site-status { font-size:10.5px; font-family:var(--mono); padding:3px 9px; border-radius:999px; }
+  .site-status.dev { background:rgba(56,189,248,0.15); color:var(--sent); }
+  .site-status.ready { background:rgba(167,139,250,0.2); color:var(--accent); }
+
+  .empty-note { color:var(--dim2); font-size:12.5px; padding:20px 0; text-align:center; }
+  .footer-note { margin-top:8px; font-size:11.5px; color:var(--dim2); text-align:center; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div>
+      <div class="title"><span class="dot"></span>Agency CRM: Sales, Leads &amp; Websites<span class="badge">Sample data</span></div>
+      <div class="sub">Same schema and queries as the live Notion-backed CRM I run for outreach, shown here with sample companies so client data stays private.</div>
+    </div>
+    <button class="btn" id="refreshBtn">Refresh data</button>
+  </div>
+
+  <div class="cards" id="statCards"></div>
+
+  <div class="grid2">
+    <div>
+      <div class="panel">
+        <h2>Pipeline by stage</h2>
+        <p class="desc">Prospect count by stage, grouped with a single SQL-style query against the CRM.</p>
+        <div class="funnel-wrap"><canvas id="funnelChart"></canvas></div>
+      </div>
+      <div class="panel">
+        <h2>Website delivery</h2>
+        <p class="desc">What is actually in the client sites folder right now.</p>
+        <div id="siteList"></div>
+      </div>
+    </div>
+
+    <div>
+      <div class="panel">
+        <h2>Leads</h2>
+        <p class="desc">Every prospect currently tracked, sorted by deal value.</p>
+        <div style="overflow-x:auto;"><table class="leads" id="leadsTable"></table></div>
+      </div>
+      <div class="panel">
+        <h2>Recent activity</h2>
+        <p class="desc">Last actions logged by the prospecting and outreach agents.</p>
+        <div id="activityFeed"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-note">Nothing here auto-sends. Every outreach email waits as a Gmail draft for review before it goes out.</div>
+</div>
+
+<script>
+const STAGE_ORDER = ["New","WarmLead","HotLead","DraftReady","Sent","Replied","DemoProposed","Parked","Lost"];
+const CLOSED_OUT = ["Parked","Lost"];
+
+function money(n) { return '$' + Number(n||0).toLocaleString('en-US'); }
+
+const SAMPLE_LEADS = [
+  { Company:"Cascade Family Dental", Stage:"DraftReady", Industry:"Medical/Dental", "Suggested Price":2400, "Offer Fit":'["Website Redesign","Online Booking"]', "Contact Email":"info@cascadefamilydental.example", Phone:"" },
+  { Company:"Harborline Roofing Co.", Stage:"HotLead", Industry:"Home Services", "Suggested Price":3200, "Offer Fit":'["Website Redesign","SEO","Lead Forms"]', "Contact Email":"office@harborlineroofing.example", Phone:"" },
+  { Company:"Nomad Kitchen", Stage:"DraftReady", Industry:"Restaurant/Hospitality", "Suggested Price":1800, "Offer Fit":'["Online Menu","Ordering Page"]', "Contact Email":"", Phone:"" },
+  { Company:"Greenview Legal Group", Stage:"WarmLead", Industry:"Legal", "Suggested Price":4200, "Offer Fit":'["Website Redesign","Client Intake Form"]', "Contact Email":"contact@greenviewlegal.example", Phone:"" },
+  { Company:"Birchwood Realty Partners", Stage:"DraftReady", Industry:"Real Estate", "Suggested Price":2900, "Offer Fit":'["Listings Page","SEO"]', "Contact Email":"hello@birchwoodrealty.example", Phone:"" },
+  { Company:"Lantern Coffee Roasters", Stage:"DraftReady", Industry:"Restaurant/Hospitality", "Suggested Price":1500, "Offer Fit":'["Website Redesign","Google Business Profile"]', "Contact Email":"", Phone:"" },
+  { Company:"Redstone Auto Detailing", Stage:"WarmLead", Industry:"Home Services", "Suggested Price":2100, "Offer Fit":'["Booking Page","SEO"]', "Contact Email":"book@redstoneauto.example", Phone:"" },
+  { Company:"Willowbrook Veterinary Clinic", Stage:"HotLead", Industry:"Medical/Dental", "Suggested Price":2700, "Offer Fit":'["Website Redesign","Online Booking","Reviews Widget"]', "Contact Email":"appointments@willowbrookvet.example", Phone:"" },
+  { Company:"Pinecrest Property Management", Stage:"Sent", Industry:"Real Estate", "Suggested Price":3600, "Offer Fit":'["Tenant Portal Link","Website Redesign"]', "Contact Email":"leasing@pinecrestpm.example", Phone:"" },
+  { Company:"Foxglove Floral Studio", Stage:"DraftReady", Industry:"Other", "Suggested Price":1200, "Offer Fit":'["Website Redesign","Online Ordering"]', "Contact Email":"", Phone:"" },
+  { Company:"Kestrel Home Cleaning", Stage:"New", Industry:"Home Services", "Suggested Price":1600, "Offer Fit":'["Booking Page"]', "Contact Email":"", Phone:"" },
+  { Company:"Alder & Finch Law Office", Stage:"Replied", Industry:"Legal", "Suggested Price":3900, "Offer Fit":'["Website Redesign","SEO"]', "Contact Email":"reception@alderfinchlaw.example", Phone:"" },
+  { Company:"Sunridge Family Chiropractic", Stage:"DemoProposed", Industry:"Medical/Dental", "Suggested Price":2500, "Offer Fit":'["Website Redesign","Online Booking"]', "Contact Email":"front.desk@sunridgechiro.example", Phone:"" },
+  { Company:"Marlow Street Diner", Stage:"Parked", Industry:"Restaurant/Hospitality", "Suggested Price":1400, "Offer Fit":'["Online Menu"]', "Contact Email":"", Phone:"" },
+  { Company:"Copperline Electric", Stage:"Lost", Industry:"Home Services", "Suggested Price":2200, "Offer Fit":'["Website Redesign","Lead Forms"]', "Contact Email":"", Phone:"" }
+];
+
+const SAMPLE_ACTIVITY = [
+  { Agent:"Prospecting Agent", Entry:"Found and scored 6 new local businesses matching the offer criteria", Company:"batch", d:"Sep 26, 2026" },
+  { Agent:"Outreach Agent", Entry:"Drafted a cold email and queued it in Gmail for review", Company:"Cascade Family Dental", d:"Sep 26, 2026" },
+  { Agent:"Outreach Agent", Entry:"Drafted a follow-up after no response to the first email", Company:"Greenview Legal Group", d:"Sep 25, 2026" },
+  { Agent:"Prospecting Agent", Entry:"Flagged as a hot lead after a five star Google review mentioned wanting a new site", Company:"Harborline Roofing Co.", d:"Sep 25, 2026" },
+  { Agent:"Scheduling Agent", Entry:"Logged a reply requesting a short call this week", Company:"Alder & Finch Law Office", d:"Sep 24, 2026" },
+  { Agent:"Outreach Agent", Entry:"Sent a proposal draft with pricing and a demo link", Company:"Pinecrest Property Management", d:"Sep 23, 2026" },
+  { Agent:"Prospecting Agent", Entry:"Marked as parked, business is not looking to redo its site this quarter", Company:"Marlow Street Diner", d:"Sep 22, 2026" }
+];
+
+function parseOfferFit(s) { try { return JSON.parse(s || '[]'); } catch(e) { return []; } }
+
+function loadLeads() { return SAMPLE_LEADS; }
+function loadActivity() { return SAMPLE_ACTIVITY; }
+
+function renderStatCards(leads) {
+  const total = leads.length;
+  const hot = leads.filter(l => l.Stage === 'HotLead').length;
+  const warm = leads.filter(l => l.Stage === 'WarmLead').length;
+  const draftReady = leads.filter(l => l.Stage === 'DraftReady').length;
+  const pipelineValue = leads.filter(l => !CLOSED_OUT.includes(l.Stage)).reduce((s,l) => s + (l['Suggested Price']||0), 0);
+  const cards = [
+    { k:'Total prospects', v: total },
+    { k:'Hot leads', v: hot },
+    { k:'Warm leads', v: warm },
+    { k:'Drafts ready to send', v: draftReady },
+    { k:'Live pipeline value', v: money(pipelineValue), money:true }
+  ];
+  document.getElementById('statCards').innerHTML = cards.map(c => `<div class="card${c.money?' money':''}"><div class="k">${c.k}</div><div class="v">${c.v}</div></div>`).join('');
+}
+
+let funnelChart;
+function renderFunnel(leads) {
+  if (typeof Chart === 'undefined') return;
+  const counts = STAGE_ORDER.map(s => leads.filter(l => l.Stage === s).length);
+  const ctx = document.getElementById('funnelChart');
+  const data = { labels: STAGE_ORDER, datasets:[{ data: counts, backgroundColor:'#a78bfa', borderRadius:6 }] };
+  if (funnelChart) { funnelChart.data = data; funnelChart.update(); return; }
+  funnelChart = new Chart(ctx, { type:'bar', data, options:{ indexAxis:'y', responsive:true, maintainAspectRatio:false,
+    plugins:{ legend:{display:false} }, scales:{ x:{ ticks:{color:'rgba(243,239,255,0.5)'}, grid:{color:'rgba(255,255,255,0.06)'} }, y:{ ticks:{color:'rgba(243,239,255,0.75)', font:{size:10.5} }, grid:{display:false} } } } });
+}
+
+function renderLeadsTable(leads) {
+  const el = document.getElementById('leadsTable');
+  if (!leads.length) { el.parentElement.innerHTML = '<div class="empty-note">No prospects yet, the prospecting agent runs weekday mornings.</div>'; return; }
+  const rows = leads.slice().sort((a,b) => (b['Suggested Price']||0) - (a['Suggested Price']||0));
+  el.innerHTML = `<thead><tr><th>Company</th><th>Stage</th><th>Industry</th><th>Offer</th><th>Value</th></tr></thead><tbody>` +
+    rows.map(l => `<tr>
+      <td><b>${l.Company||'None'}</b>${l['Contact Email'] ? '' : '<br><span style="color:var(--dim2);font-size:10.5px;">no public email</span>'}</td>
+      <td><span class="stage-pill stage-${l.Stage||'New'}">${l.Stage||'New'}</span></td>
+      <td>${l.Industry||'None'}</td>
+      <td>${parseOfferFit(l['Offer Fit']).map(o => `<span class="offer-tag">${o}</span>`).join('')}</td>
+      <td>${money(l['Suggested Price'])}</td>
+    </tr>`).join('') + '</tbody>';
+}
+
+function renderActivity(items) {
+  const el = document.getElementById('activityFeed');
+  if (!items.length) { el.innerHTML = '<div class="empty-note">No activity logged yet.</div>'; return; }
+  el.innerHTML = items.map(a => `
+    <div class="feed-item">
+      <span class="feed-dot"></span>
+      <div>
+        <div class="feed-text"><b>${a.Agent||'Agent'}</b>: ${a.Entry||a.Action||''}</div>
+        <div class="feed-meta">${a.Company && a.Company!=='batch' ? a.Company+' , ' : ''}${a.d||''}</div>
+      </div>
+    </div>`).join('');
+}
+
+function renderSites() {
+  const sites = [
+    { name:'_template', desc:'Reusable agency site template built with Vite, React, Tailwind and Motion, with accessibility and legal pages built in.', status:'ready' },
+    { name:'pulse', desc:'Client build in progress, scaffolded from the template.', status:'dev' }
+  ];
+  document.getElementById('siteList').innerHTML = sites.map(s => `
+    <div class="site-row">
+      <div><b>${s.name}</b><br><span style="color:var(--dim); font-size:11.5px;">${s.desc}</span></div>
+      <span class="site-status ${s.status}">${s.status === 'ready' ? 'Template ready' : 'In development'}</span>
+    </div>`).join('') + '<div class="footer-note" style="margin-top:8px;">This list is maintained by hand, not auto-scanned.</div>';
+}
+
+function loadAll() {
+  document.getElementById('refreshBtn').disabled = true;
+  document.getElementById('refreshBtn').textContent = 'Refreshing...';
+  setTimeout(() => {
+    const leads = loadLeads(), activity = loadActivity();
+    renderStatCards(leads); renderFunnel(leads); renderLeadsTable(leads); renderActivity(activity);
+    document.getElementById('refreshBtn').disabled = false;
+    document.getElementById('refreshBtn').textContent = 'Refresh data';
+  }, 450);
+}
+document.getElementById('refreshBtn').addEventListener('click', loadAll);
+renderSites();
+loadAll();
+</script>
+</body>
+</html>

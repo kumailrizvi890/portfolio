@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lahori Bowls — Team Dashboard</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/bold/style.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="assets/supabase-config.js"></script>
+<style>
+  :root{
+    --paper:#181109; --paper-2:#221808; --ink:#f4ece0; --ink-soft:#c3ad8f;
+    --line:rgba(255,255,255,0.12);
+    --saffron:#f0ab4d; --saffron-dark:#dd9427; --saffron-tint:rgba(240,171,77,0.14);
+    --chili:#e2694f; --chili-dark:#bd402a; --chili-tint:rgba(226,105,79,0.14);
+    --herb:#82b273; --herb-dark:#5c8a52; --herb-tint:rgba(130,178,115,0.14);
+    --teal:#30b79c; --teal-dark:#1e8e78; --teal-tint:rgba(48,183,156,0.16); --on-teal:#07211b;
+    --glass:rgba(28,19,10,0.6);
+    --radius-lg:22px; --radius-md:14px; --radius-sm:10px;
+    color-scheme: dark;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; min-height:100vh;
+    background:
+      radial-gradient(1100px 500px at 10% -10%, var(--saffron-tint), transparent 60%),
+      radial-gradient(900px 500px at 105% 0%, var(--chili-tint), transparent 55%),
+      var(--paper);
+    color:var(--ink); font-family:'Work Sans', -apple-system, sans-serif; font-size:15.5px; line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,h4{ font-family:'Space Grotesk','Work Sans',sans-serif; font-weight:700; letter-spacing:-0.01em; margin:0; color:var(--ink); }
+  p{margin:0;}
+  a{color:inherit;}
+  button{font-family:inherit; cursor:pointer;}
+  input, select, textarea{font-family:inherit; font-size:14.5px; color:var(--ink); background:var(--paper-2); border:1px solid var(--line); border-radius:var(--radius-sm); padding:9px 12px;}
+  input:focus, select:focus, textarea:focus{outline:2px solid var(--teal); outline-offset:1px;}
+  .wrap{max-width:1280px; margin:0 auto; padding:0 24px;}
+  .hidden{display:none !important;}
+  .btn{border:none; border-radius:999px; padding:9px 16px; font-size:13.5px; font-weight:600; transition:transform .15s ease, background .2s ease; white-space:nowrap;}
+  .btn:active{transform:scale(0.97);}
+  .btn-teal{background:var(--teal); color:var(--on-teal);} .btn-teal:hover{background:var(--teal-dark);}
+  .btn-ghost{background:transparent; border:1px solid var(--line); color:var(--ink);} .btn-ghost:hover{border-color:var(--saffron);}
+  .btn-chili{background:var(--chili); color:#fff;} .btn-chili:hover{background:var(--chili-dark);}
+  .btn-sm{padding:6px 12px; font-size:12.5px;}
+  .btn:disabled{opacity:.45; cursor:not-allowed;}
+  .card{background:color-mix(in srgb, var(--paper-2) 88%, transparent); border:1px solid var(--line); border-radius:var(--radius-md); padding:16px;}
+  .tag{display:inline-flex; align-items:center; gap:5px; font-size:11px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; padding:3px 9px; border-radius:999px;}
+  .tag-pending{background:var(--saffron-tint); color:var(--saffron);}
+  .tag-accepted{background:var(--teal-tint); color:var(--teal);}
+  .tag-ready{background:var(--herb-tint); color:var(--herb);}
+  .tag-completed{background:rgba(255,255,255,0.08); color:var(--ink-soft);}
+  .tag-cancelled{background:var(--chili-tint); color:var(--chili);}
+
+  /* ---- login ---- */
+  .auth-shell{min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px;}
+  .auth-card{width:100%; max-width:400px; padding:32px;}
+  .auth-brand{display:flex; align-items:center; gap:10px; margin-bottom:22px;}
+  .auth-brand .mark{width:38px; height:38px; border-radius:10px; background:linear-gradient(135deg,var(--saffron),var(--chili)); display:flex; align-items:center; justify-content:center; color:#fff; font-weight:700; flex-shrink:0;}
+  .field{margin-bottom:14px; display:flex; flex-direction:column; gap:6px;}
+  .field label{font-size:12.5px; font-weight:600; color:var(--ink-soft);}
+  .field input, .field select{width:100%;}
+  .auth-error{color:var(--chili); font-size:13px; margin-top:10px; min-height:1em;}
+  .auth-note{font-size:12.5px; color:var(--ink-soft); margin-top:16px; line-height:1.5;}
+
+  /* ---- top bar ---- */
+  .topbar{position:sticky; top:0; z-index:50; background:color-mix(in srgb, var(--paper) 90%, transparent); backdrop-filter:blur(10px); border-bottom:1px solid var(--line);}
+  .topbar .wrap{display:flex; align-items:center; justify-content:space-between; gap:16px; height:66px;}
+  .topbar-brand{display:flex; align-items:center; gap:10px; font-family:'Space Grotesk',sans-serif; font-weight:700;}
+  .topbar-brand .mark{width:32px; height:32px; border-radius:9px; background:linear-gradient(135deg,var(--saffron),var(--chili)); display:flex; align-items:center; justify-content:center; color:#fff; font-size:14px; flex-shrink:0;}
+  .who{font-size:12.5px; color:var(--ink-soft); text-align:right;}
+  .who b{color:var(--ink); font-weight:600;}
+  .topbar-right{display:flex; align-items:center; gap:12px;}
+
+  .tabs{display:flex; gap:6px; padding:14px 0 0; flex-wrap:wrap;}
+  .tab-btn{background:transparent; border:1px solid var(--line); border-radius:999px; padding:8px 16px; font-size:13.5px; font-weight:600; color:var(--ink-soft);}
+  .tab-btn.active{background:var(--teal); color:var(--on-teal); border-color:var(--teal);}
+  .tab-panel{padding:20px 0 60px;}
+
+  /* ---- orders board ---- */
+  .board{display:grid; grid-template-columns:repeat(4,1fr); gap:16px; align-items:start;}
+  @media (max-width:1000px){ .board{grid-template-columns:1fr 1fr;} }
+  @media (max-width:620px){ .board{grid-template-columns:1fr;} }
+  .col-head{display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; padding:0 4px;}
+  .col-head h3{font-size:14px;}
+  .col-count{font-size:12px; color:var(--ink-soft); background:rgba(255,255,255,0.06); border-radius:999px; padding:2px 9px;}
+  .col-list{display:flex; flex-direction:column; gap:10px; min-height:40px;}
+  .order-card{padding:13px;}
+  .order-card .oc-top{display:flex; justify-content:space-between; align-items:flex-start; gap:8px; margin-bottom:8px;}
+  .order-card .oc-who{font-weight:600; font-size:14px;}
+  .order-card .oc-sub{font-size:12px; color:var(--ink-soft); margin-top:2px;}
+  .order-card .oc-items{font-size:12.5px; color:var(--ink-soft); margin:8px 0; line-height:1.5;}
+  .order-card .oc-total{font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:15px; color:var(--saffron);}
+  .oc-actions{display:flex; gap:6px; flex-wrap:wrap; margin-top:10px;}
+  .eta-row{display:flex; gap:6px; flex-wrap:wrap; margin-top:8px;}
+  .eta-chip{border:1px solid var(--line); background:transparent; color:var(--ink); border-radius:999px; padding:5px 11px; font-size:12px; font-weight:600;}
+  .eta-chip.sel{background:var(--saffron); color:#221305; border-color:var(--saffron);}
+  .eta-custom{width:64px; padding:5px 8px; font-size:12px;}
+  .countdown{font-size:12px; font-weight:700; color:var(--herb);}
+  .countdown.late{color:var(--chili);}
+  .empty-col{font-size:12.5px; color:var(--ink-soft); padding:14px; text-align:center; border:1px dashed var(--line); border-radius:var(--radius-sm);}
+
+  /* ---- pricing / staff / rewards tables ---- */
+  .tbl{width:100%; border-collapse:collapse; font-size:13.5px;}
+  .tbl th{text-align:left; font-size:11.5px; text-transform:uppercase; letter-spacing:.04em; color:var(--ink-soft); padding:8px 10px; border-bottom:1px solid var(--line);}
+  .tbl td{padding:9px 10px; border-bottom:1px solid var(--line); vertical-align:middle;}
+  .tbl input[type="number"]{width:90px;}
+  .price-form{display:flex; flex-wrap:wrap; gap:16px; margin-top:20px;}
+  .price-group{flex:1 1 260px; min-width:260px;}
+  .price-group h4{font-size:13px; text-transform:uppercase; letter-spacing:.04em; color:var(--saffron); margin-bottom:8px;}
+  .save-row{display:flex; justify-content:flex-end; margin-top:16px;}
+  .status-pill{font-size:11.5px; font-weight:700; padding:3px 10px; border-radius:999px;}
+  .status-approved{background:var(--herb-tint); color:var(--herb);}
+  .status-pending{background:var(--chili-tint); color:var(--chili);}
+  .invite-form{display:flex; gap:10px; flex-wrap:wrap; align-items:flex-end; margin-bottom:22px;}
+  .invite-form .field{margin-bottom:0; min-width:180px;}
+  .msg{font-size:13px; margin-top:8px; min-height:1em;}
+  .msg.ok{color:var(--herb);} .msg.err{color:var(--chili);}
+  .toast{position:fixed; bottom:22px; right:22px; background:var(--paper-2); border:1px solid var(--line); border-radius:var(--radius-sm); padding:12px 18px; font-size:13.5px; font-weight:600; opacity:0; transform:translateY(10px); transition:opacity .25s ease, transform .25s ease; pointer-events:none; z-index:200;}
+  .toast.show{opacity:1; transform:translateY(0);}
+</style>
+</head>
+<body>
+
+<!-- ================= LOGIN ================= -->
+<div id="loginView" class="auth-shell">
+  <div class="card auth-card">
+    <div class="auth-brand">
+      <div class="mark">LB</div>
+      <div>
+        <div style="font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:17px;">Lahori Bowls</div>
+        <div style="font-size:11.5px; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.04em;">Team Dashboard</div>
+      </div>
+    </div>
+    <form id="loginForm">
+      <div class="field">
+        <label for="loginEmail">Work email</label>
+        <input id="loginEmail" type="email" required autocomplete="username">
+      </div>
+      <div class="field">
+        <label for="loginPassword">Password</label>
+        <input id="loginPassword" type="password" required autocomplete="current-password">
+      </div>
+      <button type="submit" class="btn btn-teal" style="width:100%; padding:11px;" id="loginSubmitBtn">Sign in</button>
+      <div class="auth-error" id="loginError"></div>
+    </form>
+    <div class="auth-note">Staff accounts are created by the owner from the Staff tab. If you don't have an account yet, check your email for an invite link, or ask the owner.</div>
+
+    <div id="bootstrapWrap" class="hidden" style="margin-top:18px; border-top:1px solid var(--line); padding-top:16px;">
+      <button type="button" id="bootstrapToggle" class="btn btn-ghost btn-sm" style="width:100%;">First time setting up? Create the owner account</button>
+      <form id="signupForm" class="hidden" style="margin-top:14px;">
+        <div class="field"><label for="suName">Your name</label><input id="suName" type="text" required></div>
+        <div class="field"><label for="suEmail">Email</label><input id="suEmail" type="email" required autocomplete="username"></div>
+        <div class="field"><label for="suPassword">Password (min 8 characters)</label><input id="suPassword" type="password" minlength="8" required autocomplete="new-password"></div>
+        <button type="submit" class="btn btn-teal" style="width:100%; padding:11px;" id="signupSubmitBtn">Create owner account</button>
+        <div class="auth-error" id="signupError"></div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- ================= NOT AUTHORIZED ================= -->
+<div id="deniedView" class="auth-shell hidden">
+  <div class="card auth-card" style="text-align:center;">
+    <h2 style="margin-bottom:10px;" id="deniedTitle">This account isn't staff</h2>
+    <p style="color:var(--ink-soft); font-size:13.5px; margin-bottom:18px;" id="deniedMsg">Your login worked, but this account doesn't have employee or owner access on Lahori Bowls. Ask the owner to add you from the Staff tab.</p>
+    <button class="btn btn-teal hidden" id="claimOwnerBtn" style="margin-bottom:10px;">Make this account the owner</button>
+    <div><button class="btn btn-ghost" id="deniedSignOutBtn">Sign out</button></div>
+  </div>
+</div>
+
+<!-- ================= DASHBOARD ================= -->
+<div id="dashboard" class="hidden">
+  <div class="topbar">
+    <div class="wrap">
+      <div class="topbar-brand"><div class="mark">LB</div> Lahori Bowls · Team</div>
+      <div class="topbar-right">
+        <div class="who">Signed in as <b id="whoName">—</b><br><span id="whoRole"></span></div>
+        <button class="btn btn-ghost btn-sm" id="refreshBtn"><i class="ph ph-arrows-clockwise"></i> Refresh</button>
+        <button class="btn btn-ghost btn-sm" id="signOutBtn">Sign out</button>
+      </div>
+    </div>
+    <div class="wrap">
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="orders">Orders</button>
+        <button class="tab-btn" data-tab="pricing">Menu Pricing</button>
+        <button class="tab-btn owner-only hidden" data-tab="staff">Staff</button>
+        <button class="tab-btn owner-only hidden" data-tab="rewards">Rewards</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <!-- ORDERS TAB -->
+    <div class="tab-panel" data-panel="orders">
+      <div class="board">
+        <div>
+          <div class="col-head"><h3><i class="ph-bold ph-bell"></i> New</h3><span class="col-count" id="countPending">0</span></div>
+          <div class="col-list" id="colPending"></div>
+        </div>
+        <div>
+          <div class="col-head"><h3><i class="ph-bold ph-clock"></i> Accepted</h3><span class="col-count" id="countAccepted">0</span></div>
+          <div class="col-list" id="colAccepted"></div>
+        </div>
+        <div>
+          <div class="col-head"><h3><i class="ph-bold ph-bag"></i> Ready</h3><span class="col-count" id="countReady">0</span></div>
+          <div class="col-list" id="colReady"></div>
+        </div>
+        <div>
+          <div class="col-head"><h3><i class="ph-bold ph-check-circle"></i> Done today</h3><span class="col-count" id="countDone">0</span></div>
+          <div class="col-list" id="colDone"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PRICING TAB -->
+    <div class="tab-panel hidden" data-panel="pricing">
+      <div class="card">
+        <h3 style="margin-bottom:4px;">Menu pricing</h3>
+        <p style="font-size:13px; color:var(--ink-soft); margin-bottom:4px;">These prices feed the live builder and receipt on the website in real time. Set every item to its real price — anything left at $0 shows as "Free" to customers.</p>
+        <div id="pricingOwnerNote" class="msg hidden" style="color:var(--saffron);">You're viewing as an employee — pricing is read-only. Ask the owner to make changes.</div>
+        <div class="price-form" id="pricingForm"></div>
+        <div class="save-row owner-only hidden">
+          <button class="btn btn-teal" id="savePricingBtn">Save all prices</button>
+        </div>
+        <div class="msg" id="pricingMsg"></div>
+      </div>
+    </div>
+
+    <!-- STAFF TAB (owner only) -->
+    <div class="tab-panel hidden" data-panel="staff">
+      <div class="card" style="margin-bottom:18px;">
+        <h3 style="margin-bottom:12px;">Add a team member</h3>
+        <form id="inviteForm" class="invite-form">
+          <div class="field"><label>Full name</label><input id="inviteName" type="text" required></div>
+          <div class="field"><label>Email</label><input id="inviteEmail" type="email" required></div>
+          <div class="field">
+            <label>Role</label>
+            <select id="inviteRole"><option value="employee">Employee</option><option value="owner">Owner</option></select>
+          </div>
+          <button type="submit" class="btn btn-teal" id="inviteSubmitBtn">Send invite</button>
+        </form>
+        <div class="msg" id="inviteMsg"></div>
+        <p style="font-size:12px; color:var(--ink-soft); margin-top:8px;">New team members get an email invite to set their own password. Existing accounts are upgraded to staff immediately.</p>
+      </div>
+      <div class="card">
+        <h3 style="margin-bottom:12px;">Current staff</h3>
+        <table class="tbl">
+          <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Status</th><th></th></tr></thead>
+          <tbody id="staffRows"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- REWARDS TAB (owner only) -->
+    <div class="tab-panel hidden" data-panel="rewards">
+      <div class="card" style="margin-bottom:18px;">
+        <h3 style="margin-bottom:12px;">Add a reward</h3>
+        <form id="rewardForm" class="invite-form">
+          <div class="field"><label>Title</label><input id="rewardTitle" type="text" required></div>
+          <div class="field"><label>Points cost</label><input id="rewardPoints" type="number" min="0" step="10" required></div>
+          <div class="field">
+            <label>Kind</label>
+            <select id="rewardKind"><option value="standard">Standard</option><option value="birthday">Birthday</option><option value="seasonal">Seasonal</option></select>
+          </div>
+          <div class="field" style="min-width:240px;"><label>Description</label><input id="rewardDesc" type="text"></div>
+          <button type="submit" class="btn btn-teal">Add reward</button>
+        </form>
+        <div class="msg" id="rewardMsg"></div>
+      </div>
+      <div class="card">
+        <h3 style="margin-bottom:12px;">Rewards catalog</h3>
+        <table class="tbl">
+          <thead><tr><th>Title</th><th>Kind</th><th>Points</th><th>Active</th><th></th></tr></thead>
+          <tbody id="rewardRows"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+  'use strict';
+
+  var supabaseClient = null;
+  try {
+    if (window.supabase && window.LAHORI_SUPABASE_URL && window.LAHORI_SUPABASE_KEY) {
+      supabaseClient = window.supabase.createClient(window.LAHORI_SUPABASE_URL, window.LAHORI_SUPABASE_KEY);
+    }
+  } catch (e) { console.warn('Supabase client init failed', e); }
+
+  var state = { profile: null, session: null, orders: [], pricing: [], staff: [], rewards: [] };
+  var ETA_PRESETS = [15, 20, 30, 45];
+  var pendingEta = {}; // orderId -> selected minutes, before Accept is clicked
+  var hasOwnerCache = null; // null = unknown yet, else boolean
+
+  function $(sel, root){ return (root || document).querySelector(sel); }
+  function $all(sel, root){ return Array.prototype.slice.call((root || document).querySelectorAll(sel)); }
+  function esc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+  function money(n){ return '$' + (Number(n) || 0).toFixed(2); }
+
+  function toast(msg){
+    var t = $('#toast');
+    if (!t) return;
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(function(){ t.classList.remove('show'); }, 2600);
+  }
+
+  // ---------------- AUTH ----------------
+  function showView(name){
+    $('#loginView').classList.toggle('hidden', name !== 'login');
+    $('#deniedView').classList.toggle('hidden', name !== 'denied');
+    $('#dashboard').classList.toggle('hidden', name !== 'dashboard');
+  }
+
+  async function loadOwnProfile(userId){
+    if (!supabaseClient) return null;
+    var res = await supabaseClient.from('profiles').select('*').eq('id', userId).maybeSingle();
+    if (res.error) { console.error(res.error); return null; }
+    return res.data;
+  }
+
+  async function checkHasOwner(){
+    if (!supabaseClient) return true; // fail safe: don't offer bootstrap if we can't check
+    if (hasOwnerCache !== null) return hasOwnerCache;
+    var res = await supabaseClient.rpc('has_any_owner');
+    hasOwnerCache = res.error ? true : !!res.data;
+    return hasOwnerCache;
+  }
+
+  async function handleSession(session){
+    state.session = session || null;
+    if (!session) {
+      showView('login');
+      checkHasOwner().then(function(owned){ $('#bootstrapWrap').classList.toggle('hidden', owned); });
+      return;
+    }
+    var profile = await loadOwnProfile(session.user.id);
+    state.profile = profile;
+    var isStaff = profile && (profile.role === 'employee' || profile.role === 'owner') && profile.status === 'approved';
+    if (!isStaff) {
+      hasOwnerCache = null; // re-check fresh, a claim may have just happened
+      var owned = await checkHasOwner();
+      $('#claimOwnerBtn').classList.toggle('hidden', owned);
+      $('#deniedTitle').textContent = owned ? "This account isn't staff" : 'No owner account yet';
+      $('#deniedMsg').textContent = owned
+        ? "Your login worked, but this account doesn't have employee or owner access on Lahori Bowls. Ask the owner to add you from the Staff tab."
+        : 'Lahori Bowls has no owner account set up yet. Since you were the first to sign in, you can claim the owner role for this account.';
+      showView('denied');
+      return;
+    }
+    $('#whoName').textContent = profile.full_name || session.user.email || 'Team member';
+    $('#whoRole').textContent = profile.role === 'owner' ? 'Owner' : 'Employee';
+    $all('.owner-only').forEach(function(el){ el.classList.toggle('hidden', profile.role !== 'owner'); });
+    $('#pricingOwnerNote').classList.toggle('hidden', profile.role === 'owner');
+    $('#savePricingBtn').closest('.save-row') && $('#savePricingBtn').closest('.save-row').classList.toggle('hidden', profile.role !== 'owner');
+    showView('dashboard');
+    refreshAll();
+    subscribeRealtime();
+  }
+
+  if (supabaseClient) {
+    supabaseClient.auth.getSession().then(function(res){ handleSession(res.data && res.data.session); });
+    supabaseClient.auth.onAuthStateChange(function(_evt, session){ handleSession(session); });
+  } else {
+    showView('login');
+    $('#loginError').textContent = 'Could not connect to the login system. Check your connection and reload.';
+  }
+
+  $('#loginForm').addEventListener('submit', async function(e){
+    e.preventDefault();
+    if (!supabaseClient) return;
+    var btn = $('#loginSubmitBtn');
+    btn.disabled = true; $('#loginError').textContent = '';
+    var email = $('#loginEmail').value.trim();
+    var password = $('#loginPassword').value;
+    var res = await supabaseClient.auth.signInWithPassword({ email: email, password: password });
+    btn.disabled = false;
+    if (res.error) { $('#loginError').textContent = res.error.message || 'Sign-in failed.'; return; }
+  });
+
+  function signOut(){ if (supabaseClient) supabaseClient.auth.signOut(); showView('login'); }
+  $('#signOutBtn').addEventListener('click', signOut);
+  $('#deniedSignOutBtn').addEventListener('click', signOut);
+
+  $('#bootstrapToggle').addEventListener('click', function(){
+    $('#signupForm').classList.toggle('hidden');
+  });
+
+  $('#signupForm').addEventListener('submit', async function(e){
+    e.preventDefault();
+    if (!supabaseClient) return;
+    var btn = $('#signupSubmitBtn');
+    var errEl = $('#signupError');
+    btn.disabled = true; errEl.textContent = '';
+    var name = $('#suName').value.trim();
+    var email = $('#suEmail').value.trim();
+    var password = $('#suPassword').value;
+    var res = await supabaseClient.auth.signUp({ email: email, password: password, options: { data: { full_name: name } } });
+    btn.disabled = false;
+    if (res.error) { errEl.textContent = res.error.message || 'Could not create the account.'; return; }
+    if (res.data && res.data.session) {
+      // Email confirmation is off — we're already signed in; handleSession will
+      // fire via onAuthStateChange and route us to the "claim owner" prompt.
+      toast('Account created — claim the owner role next.');
+    } else {
+      errEl.style.color = 'var(--herb)';
+      errEl.textContent = 'Account created. Check your email to confirm it, then sign in above and claim the owner role.';
+    }
+  });
+
+  $('#claimOwnerBtn').addEventListener('click', async function(){
+    if (!supabaseClient || !state.session) return;
+    var btn = this;
+    btn.disabled = true;
+    var res = await supabaseClient
+      .from('profiles')
+      .update({ role: 'owner', status: 'approved' })
+      .eq('id', state.session.user.id);
+    btn.disabled = false;
+    if (res.error) { toast('Could not claim owner: ' + res.error.message); return; }
+    hasOwnerCache = null;
+    toast('You are now the owner of Lahori Bowls.');
+    handleSession(state.session);
+  });
+
+  // ---------------- TABS ----------------
+  $all('.tab-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      $all('.tab-btn').forEach(function(b){ b.classList.remove('active'); });
+      btn.classList.add('active');
+      var tab = btn.dataset.tab;
+      $all('.tab-panel').forEach(function(p){ p.classList.toggle('hidden', p.dataset.panel !== tab); });
+    });
+  });
+
+  // ---------------- ORDERS ----------------
+  function fmtItems(items){
+    if (!items) return '';
+    try {
+      var parts = [];
+      if (items.format) parts.push(items.format);
+      if (items.base) parts.push(items.base);
+      (items.protein || []).forEach(function(p){ parts.push(typeof p === 'string' ? p : p.label); });
+      (items.toppings || []).forEach(function(t){ parts.push(typeof t === 'string' ? t : t.label); });
+      (items.sauce || []).forEach(function(s){ parts.push(typeof s === 'string' ? s : s.label); });
+      return parts.filter(Boolean).join(', ');
+    } catch (e) { return ''; }
+  }
+
+  function minutesSince(iso){ return Math.floor((Date.now() - new Date(iso).getTime()) / 60000); }
+
+  function renderOrderCard(o){
+    var who = o.guest_name || (o.customer_id ? 'Registered customer' : 'Guest');
+    var phone = o.guest_phone || '';
+    var card = document.createElement('div');
+    card.className = 'card order-card';
+    var actionsHtml = '';
+
+    if (o.status === 'pending') {
+      var sel = pendingEta[o.id] || 20;
+      actionsHtml =
+        '<div class="eta-row" data-eta-row="' + o.id + '">' +
+        ETA_PRESETS.map(function(m){ return '<button type="button" class="eta-chip' + (m === sel ? ' sel' : '') + '" data-eta="' + m + '" data-order="' + o.id + '">' + m + ' min</button>'; }).join('') +
+        '<input type="number" class="eta-custom" min="1" placeholder="custom" data-eta-custom="' + o.id + '">' +
+        '</div>' +
+        '<div class="oc-actions">' +
+        '<button class="btn btn-teal btn-sm" data-act="accept" data-id="' + o.id + '">Accept</button>' +
+        '<button class="btn btn-ghost btn-sm" data-act="cancel" data-id="' + o.id + '">Decline</button>' +
+        '</div>';
+    } else if (o.status === 'accepted') {
+      var etaMin = o.ready_eta_minutes || 20;
+      var elapsed = o.accepted_at ? minutesSince(o.accepted_at) : 0;
+      var remaining = etaMin - elapsed;
+      actionsHtml =
+        '<div class="countdown' + (remaining <= 0 ? ' late' : '') + '">' + (remaining <= 0 ? 'Ready time passed' : remaining + ' min left') + ' · quoted ' + etaMin + ' min</div>' +
+        '<div class="oc-actions">' +
+        '<button class="btn btn-teal btn-sm" data-act="ready" data-id="' + o.id + '">Mark ready</button>' +
+        '<button class="btn btn-ghost btn-sm" data-act="cancel" data-id="' + o.id + '">Cancel</button>' +
+        '</div>';
+    } else if (o.status === 'ready') {
+      actionsHtml =
+        '<div class="oc-actions">' +
+        '<button class="btn btn-teal btn-sm" data-act="complete" data-id="' + o.id + '">Picked up / Complete</button>' +
+        '</div>';
+    }
+
+    card.innerHTML =
+      '<div class="oc-top">' +
+        '<div><div class="oc-who">' + esc(who) + '</div><div class="oc-sub">' + esc(phone) + (o.notes ? ' · ' + esc(o.notes) : '') + '</div></div>' +
+        '<span class="tag tag-' + o.status + '">' + o.status + '</span>' +
+      '</div>' +
+      '<div class="oc-items">' + esc(fmtItems(o.items)) + (o.items && o.items.qty > 1 ? ' · x' + o.items.qty : '') + '</div>' +
+      '<div class="oc-total">' + money(o.total) + '</div>' +
+      actionsHtml;
+
+    return card;
+  }
+
+  function renderOrders(){
+    var byStatus = { pending: [], accepted: [], ready: [], done: [] };
+    var todayStr = new Date().toDateString();
+    state.orders.forEach(function(o){
+      if (o.status === 'pending') byStatus.pending.push(o);
+      else if (o.status === 'accepted') byStatus.accepted.push(o);
+      else if (o.status === 'ready') byStatus.ready.push(o);
+      else if ((o.status === 'completed' || o.status === 'cancelled') && new Date(o.created_at).toDateString() === todayStr) byStatus.done.push(o);
+    });
+
+    [['colPending','countPending','pending'], ['colAccepted','countAccepted','accepted'], ['colReady','countReady','ready'], ['colDone','countDone','done']].forEach(function(pair){
+      var listEl = $('#' + pair[0]);
+      var countEl = $('#' + pair[1]);
+      var rows = byStatus[pair[2]];
+      countEl.textContent = rows.length;
+      listEl.innerHTML = '';
+      if (!rows.length) {
+        var empty = document.createElement('div');
+        empty.className = 'empty-col';
+        empty.textContent = pair[2] === 'pending' ? 'No new orders' : pair[2] === 'done' ? 'Nothing finished yet today' : 'Nothing here right now';
+        listEl.appendChild(empty);
+        return;
+      }
+      rows.forEach(function(o){ listEl.appendChild(renderOrderCard(o)); });
+    });
+  }
+
+  async function loadOrders(){
+    if (!supabaseClient) return;
+    var res = await supabaseClient.from('orders').select('*').order('created_at', { ascending: false }).limit(150);
+    if (res.error) { console.error(res.error); return; }
+    state.orders = res.data || [];
+    renderOrders();
+  }
+
+  function notifyOrderEmail(orderId, kind){
+    if (!orderId || !window.LAHORI_SUPABASE_URL || !window.LAHORI_SUPABASE_KEY) return;
+    var token = (state.session && state.session.access_token) || window.LAHORI_SUPABASE_KEY;
+    fetch(window.LAHORI_SUPABASE_URL + '/functions/v1/send-order-email', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token, 'apikey': window.LAHORI_SUPABASE_KEY },
+      body: JSON.stringify({ orderId: orderId, kind: kind })
+    }).catch(function(err){ console.warn('Order email notify failed (non-fatal)', err); });
+  }
+
+  async function updateOrder(id, patch){
+    if (!supabaseClient) return;
+    var res = await supabaseClient.from('orders').update(patch).eq('id', id);
+    if (res.error) { toast('Could not update order: ' + res.error.message); return false; }
+    await loadOrders();
+    return true;
+  }
+
+  document.addEventListener('click', function(e){
+    var chip = e.target.closest('.eta-chip');
+    if (chip) {
+      var orderId = chip.dataset.order;
+      pendingEta[orderId] = parseInt(chip.dataset.eta, 10);
+      $all('.eta-chip[data-order="' + orderId + '"]').forEach(function(c){ c.classList.toggle('sel', c === chip); });
+      return;
+    }
+    var actBtn = e.target.closest('button[data-act]');
+    if (!actBtn) return;
+    var act = actBtn.dataset.act;
+    var id = actBtn.dataset.id;
+    if (act === 'accept') {
+      var customInput = document.querySelector('input[data-eta-custom="' + id + '"]');
+      var eta = (customInput && customInput.value) ? parseInt(customInput.value, 10) : (pendingEta[id] || 20);
+      if (!eta || eta < 1) eta = 20;
+      updateOrder(id, { status: 'accepted', ready_eta_minutes: eta, accepted_by: state.session ? state.session.user.id : null }).then(function(ok){ if (ok) toast('Order accepted · ready in ' + eta + ' min'); });
+    } else if (act === 'ready') {
+      updateOrder(id, { status: 'ready' }).then(function(ok){ if (ok) { toast('Marked ready'); notifyOrderEmail(id, 'ready'); } });
+    } else if (act === 'complete') {
+      updateOrder(id, { status: 'completed' }).then(function(ok){ if (ok) toast('Order completed'); });
+    } else if (act === 'cancel') {
+      updateOrder(id, { status: 'cancelled' }).then(function(ok){ if (ok) toast('Order cancelled'); });
+    }
+  });
+
+  function subscribeRealtime(){
+    if (!supabaseClient || !supabaseClient.channel) return;
+    try {
+      supabaseClient.channel('orders-live')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, function(){ loadOrders(); })
+        .subscribe();
+    } catch (e) { console.warn('Realtime subscribe failed, falling back to polling', e); }
+    setInterval(function(){ if (!$('#dashboard').classList.contains('hidden')) { loadOrders(); renderOrders(); } }, 30000);
+  }
+
+  // ---------------- PRICING ----------------
+  var CATEGORY_LABEL = { format: 'Format', base: 'Base', protein: 'Protein', topping: 'Toppings', sauce: 'Sauce' };
+
+  async function loadPricing(){
+    if (!supabaseClient) return;
+    var res = await supabaseClient.from('menu_pricing').select('*').order('category').order('sort_order');
+    if (res.error) { console.error(res.error); return; }
+    state.pricing = res.data || [];
+    renderPricing();
+  }
+
+  function renderPricing(){
+    var isOwner = state.profile && state.profile.role === 'owner';
+    var groups = {};
+    state.pricing.forEach(function(row){
+      groups[row.category] = groups[row.category] || [];
+      groups[row.category].push(row);
+    });
+    var html = '';
+    Object.keys(CATEGORY_LABEL).forEach(function(cat){
+      var rows = groups[cat] || [];
+      if (!rows.length) return;
+      html += '<div class="price-group"><h4>' + CATEGORY_LABEL[cat] + '</h4>';
+      rows.forEach(function(row){
+        html += '<div style="display:flex; align-items:center; justify-content:space-between; gap:10px; padding:6px 0; border-bottom:1px solid var(--line);">' +
+          '<span style="font-size:13.5px;">' + esc(row.label) + '</span>' +
+          '<input type="number" min="0" step="0.25" value="' + Number(row.price).toFixed(2) + '" data-price-id="' + row.id + '" ' + (isOwner ? '' : 'disabled') + '>' +
+          '</div>';
+      });
+      html += '</div>';
+    });
+    $('#pricingForm').innerHTML = html || '<p style="color:var(--ink-soft); font-size:13px;">No menu items found yet.</p>';
+  }
+
+  $('#savePricingBtn').addEventListener('click', async function(){
+    if (!supabaseClient) return;
+    var btn = this;
+    btn.disabled = true;
+    var inputs = $all('input[data-price-id]');
+    var msgEl = $('#pricingMsg');
+    msgEl.className = 'msg'; msgEl.textContent = 'Saving…';
+    var errors = 0;
+    for (var i = 0; i < inputs.length; i++) {
+      var id = inputs[i].dataset.priceId;
+      var price = parseFloat(inputs[i].value);
+      if (isNaN(price) || price < 0) continue;
+      var res = await supabaseClient.from('menu_pricing').update({ price: price, updated_at: new Date().toISOString() }).eq('id', id);
+      if (res.error) errors++;
+    }
+    btn.disabled = false;
+    if (errors) { msgEl.className = 'msg err'; msgEl.textContent = errors + ' item(s) failed to save.'; }
+    else { msgEl.className = 'msg ok'; msgEl.textContent = 'All prices saved. The live builder will pick these up immediately.'; }
+    loadPricing();
+  });
+
+  // ---------------- STAFF ----------------
+  async function loadStaff(){
+    if (!supabaseClient) return;
+    var res = await supabaseClient.from('profiles').select('*').in('role', ['employee','owner']).order('created_at');
+    if (res.error) { console.error(res.error); return; }
+    state.staff = res.data || [];
+    renderStaff();
+  }
+
+  function renderStaff(){
+    var rows = state.staff.map(function(p){
+      return '<tr>' +
+        '<td>' + esc(p.full_name || '—') + '</td>' +
+        '<td>' + esc(p.email || '—') + '</td>' +
+        '<td style="text-transform:capitalize;">' + esc(p.role) + '</td>' +
+        '<td><span class="status-pill status-' + p.status + '">' + p.status + '</span></td>' +
+        '<td><button class="btn btn-ghost btn-sm" data-toggle-status="' + p.id + '" data-current="' + p.status + '">' + (p.status === 'approved' ? 'Suspend' : 'Reactivate') + '</button></td>' +
+        '</tr>';
+    }).join('');
+    $('#staffRows').innerHTML = rows || '<tr><td colspan="5" style="color:var(--ink-soft);">No staff yet — invite your first team member above.</td></tr>';
+  }
+
+  $('#staffRows').addEventListener('click', async function(e){
+    var btn = e.target.closest('button[data-toggle-status]');
+    if (!btn || !supabaseClient) return;
+    var id = btn.dataset.toggleStatus;
+    var next = btn.dataset.current === 'approved' ? 'pending' : 'approved';
+    var res = await supabaseClient.from('profiles').update({ status: next }).eq('id', id);
+    if (res.error) { toast('Could not update: ' + res.error.message); return; }
+    loadStaff();
+  });
+
+  $('#inviteForm').addEventListener('submit', async function(e){
+    e.preventDefault();
+    if (!supabaseClient || !state.session) return;
+    var btn = $('#inviteSubmitBtn');
+    var msgEl = $('#inviteMsg');
+    btn.disabled = true; msgEl.className = 'msg'; msgEl.textContent = 'Sending invite…';
+    var payload = {
+      full_name: $('#inviteName').value.trim(),
+      email: $('#inviteEmail').value.trim(),
+      role: $('#inviteRole').value
+    };
+    try {
+      var resp = await fetch(window.LAHORI_SUPABASE_URL + '/functions/v1/create-staff', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + state.session.access_token,
+          'apikey': window.LAHORI_SUPABASE_KEY
+        },
+        body: JSON.stringify(payload)
+      });
+      var data = await resp.json().catch(function(){ return {}; });
+      if (!resp.ok || data.error) {
+        msgEl.className = 'msg err'; msgEl.textContent = data.error || 'Could not add staff member.';
+      } else {
+        msgEl.className = 'msg ok';
+        msgEl.textContent = data.existed ? 'Existing account upgraded to staff.' : 'Invite sent — they will get an email to set their password.';
+        $('#inviteForm').reset();
+        loadStaff();
+      }
+    } catch (err) {
+      msgEl.className = 'msg err'; msgEl.textContent = 'Network error reaching the invite service.';
+    }
+    btn.disabled = false;
+  });
+
+  // ---------------- REWARDS ----------------
+  async function loadRewards(){
+    if (!supabaseClient) return;
+    var res = await supabaseClient.from('rewards').select('*').order('created_at', { ascending: false });
+    if (res.error) { console.error(res.error); return; }
+    state.rewards = res.data || [];
+    renderRewards();
+  }
+
+  function renderRewards(){
+    var rows = state.rewards.map(function(r){
+      return '<tr>' +
+        '<td>' + esc(r.title) + (r.description ? '<div style="font-size:11.5px; color:var(--ink-soft);">' + esc(r.description) + '</div>' : '') + '</td>' +
+        '<td style="text-transform:capitalize;">' + esc(r.kind) + '</td>' +
+        '<td>' + esc(r.points_cost) + '</td>' +
+        '<td><span class="status-pill ' + (r.active ? 'status-approved' : 'status-pending') + '">' + (r.active ? 'Active' : 'Off') + '</span></td>' +
+        '<td><button class="btn btn-ghost btn-sm" data-toggle-reward="' + r.id + '" data-current="' + r.active + '">' + (r.active ? 'Turn off' : 'Turn on') + '</button></td>' +
+        '</tr>';
+    }).join('');
+    $('#rewardRows').innerHTML = rows || '<tr><td colspan="5" style="color:var(--ink-soft);">No rewards yet — add one above.</td></tr>';
+  }
+
+  $('#rewardRows').addEventListener('click', async function(e){
+    var btn = e.target.closest('button[data-toggle-reward]');
+    if (!btn || !supabaseClient) return;
+    var id = btn.dataset.toggleReward;
+    var next = !(btn.dataset.current === 'true');
+    var res = await supabaseClient.from('rewards').update({ active: next }).eq('id', id);
+    if (res.error) { toast('Could not update reward: ' + res.error.message); return; }
+    loadRewards();
+  });
+
+  $('#rewardForm').addEventListener('submit', async function(e){
+    e.preventDefault();
+    if (!supabaseClient) return;
+    var msgEl = $('#rewardMsg');
+    var payload = {
+      title: $('#rewardTitle').value.trim(),
+      points_cost: parseInt($('#rewardPoints').value, 10) || 0,
+      kind: $('#rewardKind').value,
+      description: $('#rewardDesc').value.trim() || null
+    };
+    var res = await supabaseClient.from('rewards').insert(payload);
+    if (res.error) { msgEl.className = 'msg err'; msgEl.textContent = res.error.message; return; }
+    msgEl.className = 'msg ok'; msgEl.textContent = 'Reward added.';
+    $('#rewardForm').reset();
+    loadRewards();
+  });
+
+  // ---------------- REFRESH ----------------
+  function refreshAll(){
+    loadOrders();
+    loadPricing();
+    if (state.profile && state.profile.role === 'owner') { loadStaff(); loadRewards(); }
+  }
+  $('#refreshBtn').addEventListener('click', function(){ refreshAll(); toast('Refreshed'); });
+
+  // Live-update countdowns without a full refetch
+  setInterval(function(){ if (!$('#dashboard').classList.contains('hidden')) renderOrders(); }, 15000);
+
+})();
+</script>
+</body>
+</html>

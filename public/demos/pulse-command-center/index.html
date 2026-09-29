@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pulse Command Center</title>
+<style>
+  :root { color-scheme: dark; --bg:#07090c; --panel:#10151c; --line:rgba(255,255,255,0.09); --ink:#eaf6ff; --dim:rgba(234,246,255,0.55); --dim2:rgba(234,246,255,0.35);
+    --cyan:#5ad8ff; --cyan-bright:#a9ecff; --warn:#fbbf24; --mono:'SF Mono',Consolas,Menlo,monospace; --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif; }
+  * { box-sizing:border-box; }
+  html,body { margin:0; padding:0; background:var(--bg); color:var(--ink); font-family:var(--sans); overflow-x:hidden; }
+  .wrap { max-width:980px; margin:0 auto; padding:30px 22px 60px; text-align:center; }
+
+  .orb-hero { position:relative; width:min(46vh,320px); height:min(46vh,320px); margin:10px auto 6px; }
+  .oh-ring { position:absolute; left:50%; top:50%; border:1.5px solid var(--cyan); border-radius:50%; box-shadow:0 0 14px rgba(90,216,255,0.4), inset 0 0 14px rgba(90,216,255,0.25); }
+  .oh-ring.ra { width:100%; height:100%; margin:-50% 0 0 -50%; animation:rSpin 18s linear infinite; opacity:.8; }
+  .oh-ring.rb { width:84%; height:84%; margin:-42% 0 0 -42%; border-style:dashed; opacity:.6; animation:rSpinRev 13s linear infinite; }
+  .oh-ring.rc { width:68%; height:68%; margin:-34% 0 0 -34%; border-style:dotted; opacity:.5; animation:rSpin 9s linear infinite; }
+  @keyframes rSpin { from{transform:rotateZ(0deg);} to{transform:rotateZ(360deg);} }
+  @keyframes rSpinRev { from{transform:rotateZ(360deg);} to{transform:rotateZ(0deg);} }
+  .oh-core { position:absolute; left:50%; top:50%; width:56%; height:56%; margin:-28% 0 0 -28%; border-radius:50%;
+    background:radial-gradient(circle, #fff 0%, var(--cyan-bright) 32%, var(--cyan) 68%, transparent 100%);
+    box-shadow:0 0 60px var(--cyan-bright), 0 0 140px rgba(90,216,255,0.5); animation:ohCorePulse 2.6s ease-in-out infinite; }
+  @keyframes ohCorePulse { 0%,100%{transform:scale(1); opacity:1;} 50%{transform:scale(1.08); opacity:.85;} }
+  @media (prefers-reduced-motion: reduce) { .oh-core, .oh-ring { animation:none; } }
+
+  .greet { font-size:26px; font-weight:700; letter-spacing:-0.01em; margin-top:4px; }
+  .greet-sub { font-size:13px; color:var(--dim); font-family:var(--mono); margin-top:6px; letter-spacing:.02em; }
+  .badge { display:inline-block; font-size:10.5px; font-family:var(--mono); border:1px solid var(--line); border-radius:999px; padding:3px 10px; color:var(--dim); margin-left:8px; vertical-align:middle; }
+
+  .cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:12px; margin:28px 0 8px; text-align:left; }
+  .card { background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:14px 16px; }
+  .card .k { font-size:10.5px; text-transform:uppercase; letter-spacing:.12em; color:var(--dim2); font-family:var(--mono); margin-bottom:6px; }
+  .card .v { font-size:24px; font-weight:700; color:var(--cyan); }
+
+  .workspace { margin-top:30px; text-align:left; }
+  .workspace h2 { font-size:13px; text-transform:uppercase; letter-spacing:.1em; color:var(--dim2); font-family:var(--mono); margin-bottom:12px; text-align:center; }
+  .apps { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:14px; }
+  .app-card { background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:18px; }
+  .app-card .name { font-size:15px; font-weight:700; margin-bottom:5px; }
+  .app-card .desc { font-size:12.5px; color:var(--dim); line-height:1.5; margin-bottom:10px; }
+  .app-card .open-hint { font-size:11px; color:var(--dim2); font-family:var(--mono); border-top:1px solid var(--line); padding-top:9px; }
+
+  .footer-note { margin-top:26px; font-size:11.5px; color:var(--dim2); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="orb-hero">
+    <div class="oh-ring ra"></div>
+    <div class="oh-ring rb"></div>
+    <div class="oh-ring rc"></div>
+    <div class="oh-core"></div>
+  </div>
+  <div class="greet" id="greet">Hey, Kumail.<span class="badge">Sample data</span></div>
+  <div class="greet-sub">Everything is split into its own workspace, here is where things stand.</div>
+
+  <div class="cards" id="statCards"></div>
+
+  <div class="workspace">
+    <h2>Your workspace</h2>
+    <div class="apps">
+      <div class="app-card">
+        <div class="name">Internships and New-Grad Dashboard</div>
+        <div class="desc">Swipe-to-approve job review, application funnel, the 5 per day pace and the 40 application graduation goal.</div>
+        <div class="open-hint">Real, live openings from Indeed and ZipRecruiter</div>
+      </div>
+      <div class="app-card">
+        <div class="name">Agency: Sales, Leads and Websites</div>
+        <div class="desc">Lead pipeline, pipeline value, activity log, and website delivery status.</div>
+        <div class="open-hint">Sample data, same schema as the live CRM</div>
+      </div>
+      <div class="app-card">
+        <div class="name">TradePro</div>
+        <div class="desc">Regime-aware multi-agent paper trading terminal.</div>
+        <div class="open-hint">Live demo, real market data</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-note">This is a status hub, not a control panel, each app owns its own data and runs independently. Stats below use the same sample dataset as the Agency dashboard.</div>
+</div>
+
+<script>
+const CLOSED_OUT = ["Parked","Lost"];
+function money(n) { return '$' + Number(n||0).toLocaleString('en-US'); }
+
+const SAMPLE_LEADS = [
+  { Stage:"DraftReady", "Suggested Price":2400 }, { Stage:"HotLead", "Suggested Price":3200 },
+  { Stage:"DraftReady", "Suggested Price":1800 }, { Stage:"WarmLead", "Suggested Price":4200 },
+  { Stage:"DraftReady", "Suggested Price":2900 }, { Stage:"DraftReady", "Suggested Price":1500 },
+  { Stage:"WarmLead", "Suggested Price":2100 }, { Stage:"HotLead", "Suggested Price":2700 },
+  { Stage:"Sent", "Suggested Price":3600 }, { Stage:"DraftReady", "Suggested Price":1200 },
+  { Stage:"New", "Suggested Price":1600 }, { Stage:"Replied", "Suggested Price":3900 },
+  { Stage:"DemoProposed", "Suggested Price":2500 }, { Stage:"Parked", "Suggested Price":1400 },
+  { Stage:"Lost", "Suggested Price":2200 }
+];
+
+function renderGreeting() {
+  const h = new Date().getHours();
+  const part = h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening';
+  document.getElementById('greet').innerHTML = `${part}, Kumail.<span class="badge">Sample data</span>`;
+}
+
+function loadStatus() {
+  const leads = SAMPLE_LEADS;
+  const hot = leads.filter(l => l.Stage === 'HotLead').length;
+  const warm = leads.filter(l => l.Stage === 'WarmLead').length;
+  const draftReady = leads.filter(l => l.Stage === 'DraftReady').length;
+  const value = leads.filter(l => !CLOSED_OUT.includes(l.Stage)).reduce((s,l) => s + (l['Suggested Price']||0), 0);
+  const cards = [
+    { k:'Hot leads', v: hot },
+    { k:'Warm leads', v: warm },
+    { k:'Drafts waiting', v: draftReady },
+    { k:'Pipeline value', v: money(value) }
+  ];
+  document.getElementById('statCards').innerHTML = cards.map(c => `<div class="card"><div class="k">${c.k}</div><div class="v">${c.v}</div></div>`).join('');
+}
+
+renderGreeting();
+loadStatus();
+</script>
+</body>
+</html>

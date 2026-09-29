@@ -1,0 +1,1555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lahori Bowls — Build your bowl, floating and free</title>
+<meta name="description" content="Bold Lahori street-food flavors. Build your bowl live: pick your base, protein, toppings and sauce and watch it come together in real time. 100% Zabiha Halal, Capitol Hill, Seattle. Order online for pickup.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/bold/style.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="assets/supabase-config.js"></script>
+<script>
+  // One shared Supabase client for the whole page (builder pricing/orders +
+  // the account/rewards module below), so a sign-in from the account modal
+  // is immediately visible to the order button without a page reload.
+  window.LAHORI_SB = (function(){
+    try {
+      if (window.supabase && window.LAHORI_SUPABASE_URL && window.LAHORI_SUPABASE_KEY) {
+        return window.supabase.createClient(window.LAHORI_SUPABASE_URL, window.LAHORI_SUPABASE_KEY);
+      }
+    } catch (e) { console.warn('Supabase client unavailable', e); }
+    return null;
+  })();
+  window.LAHORI_ACCOUNT = { session: null, profile: null };
+</script>
+<style>
+  :root{
+    --paper:#181109;
+    --paper-2:#221808;
+    --ink:#f4ece0;
+    --ink-soft:#c3ad8f;
+    --line:rgba(255,255,255,0.12);
+    --saffron:#f0ab4d;
+    --saffron-dark:#dd9427;
+    --saffron-tint:rgba(240,171,77,0.14);
+    --chili:#e2694f;
+    --chili-dark:#bd402a;
+    --chili-tint:rgba(226,105,79,0.14);
+    --herb:#82b273;
+    --herb-dark:#5c8a52;
+    --herb-tint:rgba(130,178,115,0.14);
+    --teal:#30b79c;
+    --teal-dark:#1e8e78;
+    --teal-tint:rgba(48,183,156,0.16);
+    --on-teal:#07211b;
+    --glass:rgba(28,19,10,0.6);
+    --radius-lg:26px;
+    --radius-md:16px;
+    --radius-sm:10px;
+    color-scheme: dark;
+  }
+  [data-theme="dark"]{
+    --paper:#181109;
+    --paper-2:#221808;
+    --ink:#f4ece0;
+    --ink-soft:#c3ad8f;
+    --line:rgba(255,255,255,0.12);
+    --saffron:#f0ab4d;
+    --saffron-dark:#dd9427;
+    --saffron-tint:rgba(240,171,77,0.14);
+    --chili:#e2694f;
+    --chili-dark:#bd402a;
+    --chili-tint:rgba(226,105,79,0.14);
+    --herb:#82b273;
+    --herb-dark:#5c8a52;
+    --herb-tint:rgba(130,178,115,0.14);
+    --teal:#30b79c;
+    --teal-dark:#1e8e78;
+    --teal-tint:rgba(48,183,156,0.16);
+    --on-teal:#07211b;
+    --glass:rgba(28,19,10,0.6);
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  @media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto;} }
+  body{
+    margin:0;
+    background:
+      radial-gradient(1100px 500px at 15% -8%, var(--saffron-tint), transparent 60%),
+      radial-gradient(900px 500px at 105% 10%, var(--chili-tint), transparent 55%),
+      var(--paper);
+    color:var(--ink);
+    font-family:'Work Sans', -apple-system, sans-serif;
+    font-size:16px;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+    transition:background .3s ease, color .3s ease;
+    overflow-x:hidden;
+  }
+  h1,h2,h3,h4{ font-family:'Space Grotesk','Work Sans',sans-serif; font-weight:700; letter-spacing:-0.01em; margin:0; color:var(--ink); }
+  p{margin:0;}
+  a{color:inherit; text-decoration:none;}
+  img{max-width:100%; display:block;}
+  button{font-family:inherit; cursor:pointer;}
+  .wrap{width:100%; max-width:none; margin:0; padding:0 32px;}
+  .visually-hidden{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;}
+
+  /* ---------- nav ---------- */
+  .nav{ position:sticky; top:0; z-index:60; background:color-mix(in srgb, var(--paper) 86%, transparent); backdrop-filter:blur(12px); border-bottom:1px solid var(--line); height:72px; }
+  .nav .wrap{height:72px; display:flex; align-items:center; justify-content:space-between; gap:20px;}
+  .brand{display:flex; align-items:center; gap:10px; font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:17px;}
+  .brand-mark{width:36px; height:36px; border-radius:10px; background:linear-gradient(135deg, var(--saffron), var(--chili)); display:flex; align-items:center; justify-content:center; color:#fff; font-size:17px; flex-shrink:0; box-shadow:0 6px 16px -6px rgba(226,105,79,0.55);}
+  .brand-word{display:flex; flex-direction:column; line-height:1.15;}
+  .brand-sub{font-family:'Work Sans',sans-serif; font-weight:500; font-size:10.5px; letter-spacing:.03em; text-transform:uppercase; color:var(--ink-soft);}
+  @media (max-width:520px){ .brand-sub{display:none;} }
+  .nav-links{display:flex; align-items:center; gap:26px; font-size:14.5px; font-weight:500;}
+  .nav-links a:hover{color:var(--teal-dark);}
+  .nav-right{display:flex; align-items:center; gap:12px;}
+  .nav-call{ display:flex; align-items:center; gap:7px; border:1px solid var(--line); border-radius:999px; padding:9px 14px; font-size:13.5px; font-weight:600; color:var(--ink); white-space:nowrap; transition:border-color .2s ease, color .2s ease; }
+  .nav-call i{font-size:15px; color:var(--saffron-dark);}
+  .nav-call:hover{border-color:var(--saffron); color:var(--saffron-dark);}
+  @media (max-width:1080px){ .nav-call-label{display:none;} .nav-call{padding:9px; width:38px; height:38px; justify-content:center;} }
+  .nav-cta{ background:var(--teal); color:var(--on-teal); border:none; border-radius:999px; padding:10px 20px; font-size:14px; font-weight:600; white-space:nowrap; transition:transform .15s ease, background .2s ease; }
+  .nav-cta:hover{background:var(--teal-dark);}
+  .nav-cta:active{transform:scale(0.97);}
+  .nav-burger{display:none; width:40px; height:40px; border:1px solid var(--line); border-radius:10px; background:transparent; align-items:center; justify-content:center; font-size:19px; color:var(--ink);}
+  .mobile-menu{display:none; flex-direction:column; gap:2px; padding:8px 24px 18px; border-bottom:1px solid var(--line); background:var(--paper);}
+  .mobile-menu a{padding:12px 4px; font-size:15px; font-weight:500; border-bottom:1px solid var(--line);}
+  .mobile-menu a:last-child{border-bottom:none;}
+  .mobile-menu.open{display:flex;}
+  @media (max-width:860px){ .nav-links{display:none;} .nav-burger{display:flex;} }
+  #navAccountBtn{background:transparent;}
+  #navAccountBtnMobile{display:flex; align-items:center;}
+
+  /* ---------- account / rewards modal ---------- */
+  .acct-overlay{position:fixed; inset:0; z-index:200; background:rgba(10,7,3,0.7); backdrop-filter:blur(4px); display:none; align-items:center; justify-content:center; padding:20px;}
+  .acct-overlay.open{display:flex;}
+  .acct-card{position:relative; width:100%; max-width:420px; max-height:88vh; overflow-y:auto; background:var(--paper-2); border:1px solid var(--line); border-radius:var(--radius-lg); padding:30px 26px; box-shadow:0 30px 80px -20px rgba(0,0,0,0.6);}
+  .acct-close{position:absolute; top:14px; right:16px; background:transparent; border:none; color:var(--ink-soft); font-size:26px; line-height:1; padding:4px 8px;}
+  .acct-close:hover{color:var(--ink);}
+  .acct-tabs{display:flex; gap:8px; margin-bottom:18px;}
+  .acct-tab{flex:1; background:transparent; border:1px solid var(--line); border-radius:999px; padding:9px 10px; font-size:13px; font-weight:600; color:var(--ink-soft);}
+  .acct-tab.active{background:var(--teal); color:var(--on-teal); border-color:var(--teal);}
+  .acct-form{display:flex; flex-direction:column; gap:11px;}
+  .acct-form input{width:100%; font-family:inherit; font-size:14.5px; color:var(--ink); background:var(--paper); border:1px solid var(--line); border-radius:var(--radius-sm); padding:11px 13px;}
+  .acct-form input:focus{outline:2px solid var(--teal); outline-offset:1px;}
+  .acct-label{font-size:12px; color:var(--ink-soft); margin-top:-2px;}
+  .acct-error{color:var(--chili); font-size:13px; min-height:1em;}
+  .acct-note{font-size:12px; color:var(--ink-soft); margin-top:16px; line-height:1.5;}
+  .acct-who{display:flex; align-items:center; gap:12px; margin-bottom:18px;}
+  .acct-avatar{width:44px; height:44px; border-radius:50%; background:linear-gradient(135deg,var(--saffron),var(--chili)); display:flex; align-items:center; justify-content:center; color:#fff; font-size:19px; flex-shrink:0;}
+  .acct-name{font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:16px;}
+  .acct-points{font-size:13px; color:var(--saffron);}
+  .acct-points span{font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:15px;}
+  .acct-section-title{font-size:12.5px; text-transform:uppercase; letter-spacing:.04em; color:var(--ink-soft); margin-bottom:10px;}
+  .acct-rewards-list{display:flex; flex-direction:column; gap:10px; max-height:280px; overflow-y:auto;}
+  .acct-reward{border:1px solid var(--line); border-radius:var(--radius-sm); padding:11px 13px; display:flex; align-items:center; justify-content:space-between; gap:10px;}
+  .acct-reward-title{font-weight:600; font-size:13.5px;}
+  .acct-reward-desc{font-size:12px; color:var(--ink-soft); margin-top:2px;}
+  .acct-reward-cost{font-size:12px; color:var(--saffron); font-weight:700; white-space:nowrap;}
+  .acct-reward-empty{font-size:13px; color:var(--ink-soft);}
+  .acct-msg{font-size:13px; margin-top:8px; min-height:1em;}
+  .acct-msg.ok{color:var(--herb);} .acct-msg.err{color:var(--chili);}
+
+  .reveal{opacity:0; transform:translateY(38px) scale(.98); transition:opacity .8s cubic-bezier(.16,1,.3,1), transform .8s cubic-bezier(.16,1,.3,1);}
+  .reveal.in{opacity:1; transform:translateY(0) scale(1);}
+  @media (prefers-reduced-motion: reduce){ .reveal{opacity:1; transform:none; transition:none;} }
+
+  /* ---------- hero (ambient full-bleed video background) ---------- */
+  .hero{ position:relative; isolation:isolate; overflow:hidden; min-height:640px; display:flex; align-items:center; padding:70px 0; }
+  .hero-bg-media{ position:absolute; inset:0; z-index:0; }
+  .hero-bg-media video{ width:100%; height:100%; object-fit:cover; display:block; animation:heroPan 28s ease-in-out infinite alternate; }
+  @keyframes heroPan{ 0%{transform:scale(1) translate(0,0);} 100%{transform:scale(1.1) translate(-1.6%,-1%);} }
+  @media (prefers-reduced-motion: reduce){ .hero-bg-media video{animation:none;} }
+  .hero-bg-scrim{
+    position:absolute; inset:0; z-index:1;
+    background:
+      linear-gradient(100deg, rgba(24,17,9,.95) 0%, rgba(24,17,9,.84) 32%, rgba(24,17,9,.4) 62%, rgba(24,17,9,.72) 100%),
+      radial-gradient(1100px 520px at 8% -10%, var(--saffron-tint), transparent 60%);
+  }
+  .hero .wrap{ position:relative; z-index:2; }
+  .eyebrow{display:inline-flex; align-items:center; gap:7px; font-size:12.5px; font-weight:600; color:var(--teal-dark); margin-bottom:14px; text-transform:uppercase; letter-spacing:.05em;}
+  .eyebrow i{font-size:14px;}
+  .hero-copy{max-width:560px;}
+  .hero-copy h1{font-size:clamp(32px,4.3vw,54px); line-height:1.06; margin-bottom:18px;}
+  .hero-copy h1 em{font-style:italic; background:linear-gradient(90deg, var(--chili), var(--saffron-dark)); -webkit-background-clip:text; background-clip:text; color:transparent;}
+  .hero-copy p{font-size:16.5px; color:var(--ink-soft); max-width:44ch; margin-bottom:26px;}
+  .hero-cta-row{display:flex; gap:12px; flex-wrap:wrap;}
+  .btn{ display:inline-flex; align-items:center; justify-content:center; gap:8px; padding:13px 24px; border-radius:999px; font-size:14.5px; font-weight:600; border:1px solid transparent; white-space:nowrap; transition:transform .15s ease, background .2s ease, border-color .2s ease; }
+  .btn:active{transform:scale(0.97);}
+  .btn-primary{background:var(--teal); color:var(--on-teal);}
+  .btn-primary:hover{background:var(--teal-dark);}
+  .btn-secondary{background:transparent; color:var(--ink); border-color:var(--line);}
+  .btn-secondary:hover{border-color:var(--teal); color:var(--teal-dark);}
+  .hero-stat-row{display:flex; gap:22px; margin-top:30px; flex-wrap:wrap;}
+  .hero-stat{display:flex; flex-direction:column;}
+  .hero-stat .n{font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:20px;}
+  .hero-stat .l{font-size:12px; color:var(--ink-soft);}
+
+  .hero-video-tag{ position:absolute; z-index:2; right:28px; bottom:28px; background:var(--glass); backdrop-filter:blur(8px); border-radius:999px; padding:9px 16px; display:flex; align-items:center; gap:8px; font-size:12.5px; font-weight:600; border:1px solid var(--line); }
+  .hero-video-tag i{color:var(--chili);}
+  .hero-badge{ position:absolute; z-index:2; top:28px; right:28px; width:108px; height:108px; border-radius:50%; background:linear-gradient(135deg, var(--teal), var(--teal-dark)); color:var(--on-teal); display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; gap:2px; box-shadow:0 18px 30px -10px rgba(12,138,112,0.5); animation:badgeFloat 5s ease-in-out infinite; }
+  .hero-badge i{font-size:22px;}
+  .hero-badge strong{font-family:'Space Grotesk',sans-serif; font-size:12px; line-height:1.15;}
+  .hero-badge span{font-size:9.5px; opacity:.85;}
+  @keyframes badgeFloat{ 0%,100%{transform:translateY(0) rotate(-4deg);} 50%{transform:translateY(-10px) rotate(2deg);} }
+
+  @media (max-width:900px){
+    .hero{min-height:560px; padding:48px 0 40px;}
+    .hero-badge{display:none;}
+    .hero-video-tag{left:20px; right:auto; bottom:20px;}
+  }
+
+  /* ---------- trust ---------- */
+  .trust{padding:24px 0; border-top:1px solid var(--line); border-bottom:1px solid var(--line);}
+  .trust .wrap{display:flex; flex-wrap:wrap; gap:26px; justify-content:space-between; align-items:center;}
+  .trust-item{display:flex; align-items:center; gap:10px; font-size:14px; font-weight:500; color:var(--ink-soft);}
+  .trust-item i{font-size:19px;}
+  .trust-item:nth-child(1) i{color:var(--teal-dark);}
+  .trust-item:nth-child(2) i{color:var(--saffron-dark);}
+  .trust-item:nth-child(3) i{color:var(--chili-dark);}
+  .trust-item:nth-child(4) i{color:var(--herb-dark);}
+
+  /* ---------- section shell ---------- */
+  section{padding:76px 0;}
+  .section-head{max-width:600px; margin-bottom:38px;}
+  .section-head p{color:var(--ink-soft); margin-top:12px; font-size:15.5px;}
+  .section-head h2{font-size:clamp(26px,3vw,38px); line-height:1.12;}
+
+  /* ---------- stats bento ---------- */
+  .stats-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:14px;}
+  .stat-tile{border-radius:var(--radius-md); padding:22px 20px; border:1px solid var(--line);}
+  .stat-tile .num{font-family:'Space Grotesk',sans-serif; font-size:27px; font-weight:700; margin-bottom:6px;}
+  .stat-tile .label{font-size:12.5px; opacity:.85;}
+  .stat-tile.c1{background:linear-gradient(135deg, var(--teal), var(--teal-dark)); color:var(--on-teal); border-color:transparent;}
+  .stat-tile.c2{background:var(--saffron-tint); color:var(--ink);}
+  .stat-tile.c3{background:var(--chili-tint); color:var(--ink);}
+  .stat-tile.c4{background:var(--herb-tint); color:var(--ink);}
+  @media (max-width:760px){ .stats-grid{grid-template-columns:1fr 1fr;} }
+
+  /* ---------- builder ---------- */
+  .builder-section{
+    position:relative;
+    background:
+      radial-gradient(900px 480px at 10% 0%, var(--saffron-tint), transparent 60%),
+      radial-gradient(800px 460px at 100% 100%, var(--chili-tint), transparent 55%);
+    padding:8px 0 48px;
+  }
+  .builder-head{max-width:640px; margin:0 auto 8px; text-align:center; padding:44px 24px 0;}
+  .builder-head .eyebrow{justify-content:center; width:100%;}
+  .builder-head h2{font-size:clamp(26px,3vw,38px);}
+  .builder-head p{color:var(--ink-soft); margin-top:10px; font-size:15px;}
+
+  .mini-stage{
+    position:relative; height:300px; margin-top:0; touch-action:none;
+    border-radius:var(--radius-lg); overflow:hidden;
+    background:
+      radial-gradient(560px 380px at 50% 12%, rgba(255,255,255,0.20), transparent 62%),
+      radial-gradient(900px 520px at 50% 102%, rgba(255,255,255,0.05), transparent 70%),
+      linear-gradient(180deg, #1d1811 0%, #0c0906 100%);
+  }
+  [data-theme="dark"] .mini-stage{
+    background:
+      radial-gradient(560px 380px at 50% 12%, rgba(255,255,255,0.14), transparent 62%),
+      radial-gradient(900px 520px at 50% 102%, rgba(255,255,255,0.04), transparent 70%),
+      linear-gradient(180deg, #100c08 0%, #050403 100%);
+  }
+  .stage-spot{ position:absolute; left:50%; top:-120px; width:520px; height:420px; transform:translateX(-50%); background:radial-gradient(ellipse at center, rgba(255,255,255,0.22), transparent 68%); pointer-events:none; }
+  .stage-pedestal{
+    position:absolute; left:50%; bottom:36px; width:220px; height:34px; transform:translateX(-50%);
+    border-radius:50%;
+    background:radial-gradient(ellipse at center, rgba(255,255,255,0.12), rgba(255,255,255,0.02) 55%, transparent 75%);
+    box-shadow:0 0 0 1px rgba(255,255,255,0.18), 0 0 50px 10px rgba(255,255,255,0.08);
+  }
+  .stage-pedestal::before{
+    content:''; position:absolute; inset:0; border-radius:50%;
+    border:1px solid rgba(255,255,255,0.4);
+  }
+
+  /* ---------- live bowl visual (real ingredient photos, no WebGL) ---------- */
+  .bowl-visual{ position:absolute; inset:0; display:flex; align-items:flex-end; justify-content:center; padding-bottom:22px; }
+  .bowl-photo{ position:relative; z-index:1; width:230px; max-width:62%; filter:drop-shadow(0 22px 26px rgba(0,0,0,0.45)); }
+  .bowl-fill{
+    position:absolute; z-index:2; left:50%; bottom:54px; width:150px; height:74px; transform:translateX(-50%);
+    border-radius:50%; overflow:hidden;
+    background:radial-gradient(ellipse at 40% 30%, rgba(255,255,255,0.4), transparent 60%), var(--saffron-tint);
+    box-shadow:inset 0 6px 14px rgba(0,0,0,0.25);
+    display:flex; align-items:center; justify-content:center;
+    transition:background-image .3s ease;
+  }
+  .bowl-fill img{ width:100%; height:100%; object-fit:cover; opacity:.92; mix-blend-mode:normal; }
+  .bowl-chips{ position:absolute; z-index:3; inset:0; pointer-events:none; }
+  .bowl-chip{
+    position:absolute; top:0; left:0; width:46px; height:46px; margin:-23px 0 0 -23px;
+    border-radius:50%; overflow:hidden; border:2px solid rgba(255,255,255,0.9);
+    box-shadow:0 10px 18px -6px rgba(0,0,0,0.5);
+    background:#2a231a;
+    opacity:0; transform:translate(var(--cx,0px),calc(var(--cy,0px) - 26px)) scale(.5);
+    transition:transform .5s cubic-bezier(.22,1.4,.36,1), opacity .35s ease;
+    animation:chipBob 3.4s ease-in-out infinite;
+    animation-delay:var(--bob-delay,0s);
+  }
+  .bowl-chip.in{ opacity:1; transform:translate(var(--cx,0px),var(--cy,0px)) scale(1); }
+  .bowl-chip.leaving{ opacity:0; transform:translate(var(--cx,0px),calc(var(--cy,0px) - 14px)) scale(.55); transition:transform .3s ease, opacity .25s ease; }
+  .bowl-chip img{ width:100%; height:100%; object-fit:cover; }
+  .bowl-chip.icon-chip{ display:flex; align-items:center; justify-content:center; color:#fff; font-size:17px; }
+  @keyframes chipBob{ 0%,100%{ margin-top:-23px; } 50%{ margin-top:-29px; } }
+  @media (prefers-reduced-motion: reduce){ .bowl-chip{ animation:none; } }
+  .bowl-empty-hint{ position:absolute; z-index:3; left:50%; bottom:14px; transform:translateX(-50%); font-size:11px; color:rgba(255,255,255,0.55); white-space:nowrap; pointer-events:none; transition:opacity .3s ease; }
+  @media (max-width:520px){ .bowl-photo{width:180px;} .bowl-fill{width:112px; height:56px; bottom:46px;} .bowl-chip{width:38px; height:38px; margin:-19px 0 0 -19px;} }
+
+  .builder-live-grid{ display:grid; grid-template-columns:300px 1fr; gap:24px; align-items:start; padding:0 24px; margin-top:8px; }
+
+  .layers-stack{display:flex; flex-direction:column; gap:2px; margin-top:16px;}
+  .layer-panel{background:transparent; border:none; border-bottom:1px solid var(--line); border-radius:0; padding:16px 4px;}
+  .layer-panel:last-child{border-bottom:none;}
+  .layer-head{display:flex; align-items:baseline; gap:8px; margin-bottom:10px;}
+  .layer-index{font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:11.5px; color:var(--teal-dark);}
+  .layer-name{font-size:13.5px; font-weight:600;}
+  .layer-carousel{display:flex; align-items:center; gap:10px;}
+  .layer-arrow{width:36px; height:36px; border-radius:50%; border:1px solid var(--line); background:transparent; display:flex; align-items:center; justify-content:center; color:var(--ink); flex-shrink:0; transition:border-color .2s ease, background .2s ease; font-size:15px;}
+  .layer-arrow:hover{border-color:var(--teal); background:var(--teal-tint); color:var(--teal-dark);}
+  .layer-card{flex:1; display:flex; align-items:center; gap:12px; padding:8px 4px; border-radius:var(--radius-sm); background:transparent; touch-action:pan-y; user-select:none; cursor:grab; min-width:0;}
+  .layer-card:active{cursor:grabbing;}
+  .layer-thumb{width:52px; height:52px; border-radius:50%; overflow:hidden; flex-shrink:0; box-shadow:0 6px 14px -6px rgba(0,0,0,0.4); border:2px solid rgba(255,255,255,0.15); background:#2a231a;}
+  .layer-thumb img{width:100%; height:100%; object-fit:cover;}
+  .layer-thumb.icon-thumb{display:flex; align-items:center; justify-content:center; font-size:20px; color:#fff;}
+  .layer-info{flex:1; min-width:0;}
+  .layer-option-name{font-size:14px; font-weight:600; color:var(--ink); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .layer-option-count{font-size:11px; color:var(--ink-soft); margin-top:2px;}
+  .layer-add-btn{flex-shrink:0; padding:7px 13px; border-radius:999px; font-size:12px; font-weight:600; border:1px solid var(--teal); color:var(--teal-dark); background:transparent; transition:background .2s ease, color .2s ease; white-space:nowrap;}
+  .layer-add-btn.added{background:var(--teal); color:var(--on-teal);}
+  .layer-added-list{font-size:11.5px; color:var(--ink-soft); margin-top:10px;}
+  @media (max-width:520px){ .layer-arrow{width:30px; height:30px; font-size:13px;} .layer-thumb{width:42px; height:42px;} .layer-option-name{font-size:13px;} }
+
+  .receipt-panel{ background:color-mix(in srgb, var(--paper) 42%, transparent); backdrop-filter:blur(16px); border:1px solid rgba(255,255,255,0.08); border-radius:var(--radius-lg); box-shadow:0 30px 70px -30px rgba(0,0,0,0.5); padding:22px; position:sticky; top:88px; }
+  .receipt-head{display:flex; flex-direction:column; gap:2px; margin-bottom:14px;}
+  .receipt-head h3{font-size:16px;}
+  .receipt-sub{font-size:11.5px; color:var(--ink-soft);}
+  .receipt-lines{display:flex; flex-direction:column; min-height:44px;}
+  .receipt-empty{font-size:13px; color:var(--ink-soft); padding:14px 0;}
+  .receipt-line{ padding:12px 0; border-bottom:1px solid var(--line); animation:receiptIn .3s cubic-bezier(.34,1.56,.64,1); }
+  @keyframes receiptIn{ 0%{ opacity:0; transform:translateX(-8px); } 100%{ opacity:1; transform:translateX(0); } }
+  .rl-main{display:flex; justify-content:space-between; gap:10px; align-items:baseline;}
+  .rl-title{font-size:13.5px; font-weight:600; color:var(--ink); line-height:1.3;}
+  .rl-sub{display:block; font-size:11.5px; font-weight:400; color:var(--ink-soft); margin-top:2px;}
+  .rl-price{font-size:13px; font-weight:600; color:var(--teal-dark); white-space:nowrap;}
+  .rl-controls{display:flex; align-items:center; justify-content:space-between; margin-top:9px;}
+  .qty-stepper{display:flex; align-items:center; gap:0; border:1px solid var(--line); border-radius:999px; overflow:hidden;}
+  .qty-btn{width:26px; height:26px; display:flex; align-items:center; justify-content:center; background:transparent; border:none; color:var(--ink); font-size:15px; line-height:1;}
+  .qty-btn:hover:not(:disabled){background:var(--teal-tint); color:var(--teal-dark);}
+  .qty-btn:disabled{opacity:.35; cursor:not-allowed;}
+  .qty-val{min-width:22px; text-align:center; font-size:12.5px; font-weight:600;}
+  .rl-void{width:26px; height:26px; border-radius:50%; border:1px solid var(--line); background:transparent; color:var(--ink-soft); display:flex; align-items:center; justify-content:center; font-size:12px; transition:border-color .2s ease, color .2s ease;}
+  .rl-void:hover{border-color:var(--chili); color:var(--chili);}
+  .receipt-total{display:flex; justify-content:space-between; align-items:baseline; margin-top:14px; padding-top:14px; border-top:1px solid var(--line);}
+  .receipt-total span:last-child{font-family:'Space Grotesk',sans-serif; font-size:24px; font-weight:700; color:var(--teal-dark);}
+  .receipt-note{font-size:11.5px; color:var(--ink-soft); margin-top:6px;}
+  .guest-fields{display:flex; flex-direction:column; gap:8px; margin-top:14px;}
+  .guest-fields input{ padding:10px 12px; border-radius:var(--radius-sm); border:1px solid var(--line); background:var(--paper-2); color:var(--ink); font-family:inherit; font-size:13.5px; }
+  .guest-fields input:focus{outline:2px solid var(--teal); outline-offset:1px;}
+  .receipt-panel .btn{width:100%; margin-top:16px;}
+  .toast{ margin-top:12px; font-size:12.5px; color:var(--teal-dark); background:var(--teal-tint); padding:10px 12px; border-radius:var(--radius-sm); display:none; }
+  @media (max-width:980px){
+    .builder-live-grid{grid-template-columns:1fr;}
+    .receipt-panel{position:static; order:2;}
+    .builder-stage-col{order:1;}
+  }
+  .toast.show{display:block;}
+  @media (max-width:900px){ .mini-stage{height:230px;} }
+
+  /* ---------- menu bento ---------- */
+  .menu-bento{display:grid; grid-template-columns:repeat(6,1fr); grid-auto-rows:160px; gap:14px;}
+  .menu-tile{border-radius:var(--radius-md); overflow:hidden; position:relative; grid-column:span 2; grid-row:span 1;}
+  .menu-tile.big{grid-column:span 3; grid-row:span 2;}
+  .menu-tile img{width:100%; height:100%; object-fit:cover;}
+  .menu-tile .tint{position:absolute; inset:0; background:linear-gradient(0deg, rgba(0,0,0,.65), rgba(0,0,0,0) 55%);}
+  .menu-tile .cap{position:absolute; left:16px; bottom:14px; right:16px; color:#fff;}
+  .menu-tile .cap strong{font-family:'Space Grotesk',sans-serif; font-size:16px; display:block;}
+  .menu-tile .cap span{font-size:12px; opacity:.85;}
+  .menu-tile.duo{display:flex; flex-direction:column; justify-content:flex-end; padding:18px; color:#fff;}
+  .menu-tile.duo.saffron{background:linear-gradient(150deg, var(--saffron), var(--saffron-dark));}
+  .menu-tile.duo.chili{background:linear-gradient(150deg, var(--chili), var(--chili-dark));}
+  .menu-tile.duo.herb{background:linear-gradient(150deg, var(--herb), var(--herb-dark));}
+  .menu-tile.duo i{position:absolute; top:16px; right:16px; font-size:22px; opacity:.65;}
+  .menu-tile.duo strong{font-family:'Space Grotesk',sans-serif; font-size:16px; display:block;}
+  .menu-tile.duo span{font-size:12px; opacity:.85;}
+  @media (max-width:860px){ .menu-bento{grid-template-columns:repeat(2,1fr); grid-auto-rows:180px;} .menu-tile{grid-column:span 1 !important; grid-row:span 1 !important;} }
+
+  /* ---------- catering split ---------- */
+  .catering{background:var(--ink); color:var(--paper); overflow:hidden;}
+  .catering .grid2{display:grid; grid-template-columns:1fr 1fr;}
+  .catering-copy{padding:48px;}
+  .catering-copy h2{color:var(--paper); font-size:clamp(24px,2.6vw,32px); margin-bottom:14px;}
+  .catering-copy p{color:rgba(250,246,238,0.72); font-size:15px; max-width:42ch; margin-bottom:22px;}
+  .catering-list{display:flex; flex-direction:column; gap:10px; margin-bottom:26px;}
+  .catering-list div{display:flex; align-items:center; gap:10px; font-size:14px; color:rgba(250,246,238,0.85);}
+  .catering-list i{color:var(--saffron); font-size:17px;}
+  .catering-form{background:var(--paper-2); padding:48px; color:var(--ink);}
+  .field{margin-bottom:16px;}
+  .field label{display:block; font-size:13px; font-weight:600; margin-bottom:7px; color:var(--ink-soft);}
+  .field input, .field textarea{ width:100%; padding:11px 13px; border-radius:var(--radius-sm); border:1px solid var(--line); background:var(--paper); color:var(--ink); font-family:inherit; font-size:14.5px; }
+  .field input:focus, .field textarea:focus{outline:2px solid var(--teal); outline-offset:1px;}
+  .field-error{font-size:12px; color:var(--chili); margin-top:6px; display:none;}
+  .field-error.show{display:block;}
+  .field-row{display:grid; grid-template-columns:1fr 1fr; gap:14px;}
+  .catering-confirm{display:none; background:var(--teal-tint); color:var(--teal-dark); padding:14px 16px; border-radius:var(--radius-sm); font-size:13.5px; margin-top:14px;}
+  .catering-confirm.show{display:block;}
+  @media (max-width:860px){ .catering .grid2{grid-template-columns:1fr;} .catering-copy,.catering-form{padding:32px 24px;} .field-row{grid-template-columns:1fr;} }
+
+  /* ---------- gallery ---------- */
+  .gallery-head{display:flex; align-items:baseline; justify-content:space-between; gap:16px; flex-wrap:wrap; margin-bottom:24px;}
+  .gallery-grid{display:grid; grid-template-columns:repeat(5,1fr); gap:12px;}
+  .gallery-tile{aspect-ratio:1; border-radius:var(--radius-sm); overflow:hidden; position:relative; background:var(--paper-2);}
+  .gallery-tile img{width:100%; height:100%; object-fit:cover; transition:transform .4s ease;}
+  .gallery-tile:hover img{transform:scale(1.07);}
+  @media (max-width:760px){ .gallery-grid{grid-template-columns:repeat(3,1fr);} .gallery-tile:nth-child(n+4){display:none;} }
+
+  /* ---------- visit ---------- */
+  .visit-grid{display:grid; grid-template-columns:0.9fr 1.1fr; gap:40px; align-items:start;}
+  .visit-card{background:var(--paper-2); border-radius:var(--radius-lg); padding:32px;}
+  .visit-row{display:flex; gap:14px; padding:14px 0; border-bottom:1px solid var(--line);}
+  .visit-row:last-of-type{border-bottom:none;}
+  .visit-row i{font-size:19px; color:var(--teal-dark); margin-top:2px;}
+  .visit-row strong{display:block; font-size:14.5px; margin-bottom:2px;}
+  .visit-row span{font-size:13.5px; color:var(--ink-soft);}
+  .visit-actions{display:flex; gap:10px; margin-top:20px; flex-wrap:wrap;}
+  .hours-table{width:100%; border-collapse:collapse;}
+  .hours-table td{padding:11px 4px; font-size:14px; border-bottom:1px solid var(--line);}
+  .hours-table td:last-child{text-align:right; font-weight:500;}
+  .hours-table tr.today td{color:var(--teal-dark); font-weight:600;}
+  .map-embed{border-radius:var(--radius-lg); overflow:hidden; border:1px solid var(--line); height:100%; min-height:280px;}
+  .map-embed iframe{width:100%; height:100%; min-height:280px; border:0; display:block;}
+  @media (max-width:900px){ .visit-grid{grid-template-columns:1fr;} }
+
+  /* ---------- footer ---------- */
+  footer{border-top:1px solid var(--line); padding:44px 0 30px;}
+  .footer-grid{display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:24px;}
+  .footer-links{display:flex; gap:22px; font-size:13.5px; color:var(--ink-soft); flex-wrap:wrap;}
+  .footer-bottom{margin-top:30px; padding-top:20px; border-top:1px solid var(--line); display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px; font-size:12.5px; color:var(--ink-soft);}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="wrap">
+    <a href="#top" class="brand">
+      <span class="brand-mark"><i class="ph-bold ph-bowl-food"></i></span>
+      <span class="brand-word">Lahori Bowls<span class="brand-sub">Capitol Hill, Seattle</span></span>
+    </a>
+    <div class="nav-links">
+      <a href="#builder">Build your bowl</a>
+      <a href="#menu">Menu</a>
+      <a href="#catering">Catering</a>
+      <a href="#visit">Visit</a>
+    </div>
+    <div class="nav-right">
+      <a class="nav-call" href="tel:+12067998578" aria-label="Call Lahori Bowls, (206) 799-8578" title="Call us: (206) 799-8578"><i class="ph-bold ph-phone"></i><span class="nav-call-label">(206) 799-8578</span></a>
+      <button class="nav-call" id="navAccountBtn" aria-label="Sign in or view your account" title="Your account"><i class="ph-bold ph-user-circle"></i><span class="nav-call-label" id="navAccountLabel">Sign in</span></button>
+      <a class="nav-cta" href="#builder">Order online</a>
+      <button class="nav-burger" id="navBurger" aria-label="Open menu"><i class="ph ph-list"></i></button>
+    </div>
+  </div>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="#builder">Build your bowl</a>
+    <a href="#menu">Menu</a>
+    <a href="#catering">Catering</a>
+    <a href="#visit">Visit</a>
+    <a href="tel:+12067998578"><i class="ph-bold ph-phone"></i>&nbsp; Call: (206) 799-8578</a>
+    <a href="#" id="navAccountBtnMobile"><i class="ph-bold ph-user-circle"></i>&nbsp; <span id="navAccountLabelMobile">Sign in / My rewards</span></a>
+  </div>
+</nav>
+
+<!-- ================= ACCOUNT / REWARDS MODAL ================= -->
+<div class="acct-overlay" id="acctOverlay">
+  <div class="acct-card" role="dialog" aria-modal="true" aria-label="Your Lahori Bowls account">
+    <button class="acct-close" id="acctCloseBtn" aria-label="Close">&times;</button>
+
+    <div id="acctSignedOut">
+      <div class="acct-tabs">
+        <button class="acct-tab active" data-acct-tab="signin">Sign in</button>
+        <button class="acct-tab" data-acct-tab="signup">Sign up &amp; earn points</button>
+      </div>
+      <form id="acctSigninForm" class="acct-form">
+        <input type="email" id="acctSigninEmail" placeholder="Email" required autocomplete="username">
+        <input type="password" id="acctSigninPassword" placeholder="Password" required autocomplete="current-password">
+        <button type="submit" class="btn btn-primary">Sign in</button>
+        <div class="acct-error" id="acctSigninError"></div>
+      </form>
+      <form id="acctSignupForm" class="acct-form hidden">
+        <input type="text" id="acctSignupName" placeholder="Your name" required autocomplete="name">
+        <input type="email" id="acctSignupEmail" placeholder="Email" required autocomplete="username">
+        <input type="tel" id="acctSignupPhone" placeholder="Phone (optional)" autocomplete="tel">
+        <label class="acct-label">Birthday (optional — for your birthday reward)</label>
+        <input type="date" id="acctSignupBirthday">
+        <input type="password" id="acctSignupPassword" placeholder="Password (min 8 characters)" minlength="8" required autocomplete="new-password">
+        <button type="submit" class="btn btn-primary">Create account</button>
+        <div class="acct-error" id="acctSignupError"></div>
+      </form>
+      <p class="acct-note">Members earn 10 points per $1 spent, redeemable for free items and specials — plus a birthday reward and seasonal promos.</p>
+    </div>
+
+    <div id="acctSignedIn" class="hidden">
+      <div class="acct-who">
+        <div class="acct-avatar"><i class="ph-bold ph-user"></i></div>
+        <div>
+          <div class="acct-name" id="acctName">—</div>
+          <div class="acct-points"><span id="acctPoints">0</span> points</div>
+        </div>
+      </div>
+      <h4 class="acct-section-title">Your rewards</h4>
+      <div id="acctRewardsList" class="acct-rewards-list"></div>
+      <div class="acct-msg" id="acctRedeemMsg"></div>
+      <button class="btn btn-secondary" id="acctSignOutBtn" style="margin-top:14px;">Sign out</button>
+    </div>
+  </div>
+</div>
+
+<main id="top">
+
+  <section class="hero">
+    <div class="hero-bg-media" aria-hidden="true">
+      <video autoplay muted loop playsinline poster="assets/bowl-empty.jpg">
+        <source src="assets/hero-bowl-loop.mp4" type="video/mp4">
+      </video>
+    </div>
+    <div class="hero-bg-scrim" aria-hidden="true"></div>
+    <div class="hero-video-tag"><i class="ph-bold ph-play-circle"></i>Every bowl starts like this</div>
+    <div class="hero-badge">
+      <i class="ph-bold ph-seal-check"></i>
+      <strong>100% Zabiha Halal</strong>
+      <span>Every protein</span>
+    </div>
+    <div class="wrap">
+      <div class="hero-copy reveal">
+        <span class="eyebrow"><i class="ph-bold ph-sparkle"></i>Fully interactive bowl builder</span>
+        <h1>Your bowl, <em>built floating in front of you.</em></h1>
+        <p>Pick a base, a protein, toppings and sauce — watch each one drop into the bowl live. Pakistani street food, fast casual, ready in minutes on 12th Ave.</p>
+        <div class="hero-cta-row">
+          <a class="btn btn-primary" href="#builder"><i class="ph-bold ph-hand-swipe-right"></i>Build your bowl</a>
+          <a class="btn btn-secondary" href="tel:+12067998578"><i class="ph-bold ph-phone"></i>Call: (206) 799-8578</a>
+        </div>
+        <div class="hero-stat-row">
+          <div class="hero-stat"><span class="n">$12.99+</span><span class="l">Starting price</span></div>
+          <div class="hero-stat"><span class="n">14 free</span><span class="l">Toppings and sauces</span></div>
+          <div class="hero-stat"><span class="n">100%</span><span class="l">Zabiha Halal</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="trust">
+    <div class="wrap">
+      <div class="trust-item reveal"><i class="ph-bold ph-seal-check"></i>100% Zabiha Halal</div>
+      <div class="trust-item reveal"><i class="ph-bold ph-clock"></i>Ready in minutes</div>
+      <div class="trust-item reveal"><i class="ph-bold ph-map-pin"></i>Capitol Hill, Seattle</div>
+      <div class="trust-item reveal"><i class="ph-bold ph-users-three"></i>Catering available</div>
+    </div>
+  </div>
+
+  <section id="stats">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <h2>Why people come back</h2>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-tile c1 reveal"><div class="num">$12.99</div><div class="label">Starting price, before protein</div></div>
+        <div class="stat-tile c2 reveal"><div class="num">14 free</div><div class="label">Toppings and sauces, no upcharge</div></div>
+        <div class="stat-tile c3 reveal"><div class="num">3 ways</div><div class="label">Bowl, wrap, or fries</div></div>
+        <div class="stat-tile c4 reveal"><div class="num">Minutes</div><div class="label">From order to hands</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="builder">
+    <div class="builder-section">
+      <div class="builder-head reveal">
+        <span class="eyebrow"><i class="ph-bold ph-hand-swipe-right"></i>Build your order</span>
+        <h2>Browse each layer. Tap Add to drop it in.</h2>
+        <p>Bowl, wrap, or loaded fries — use the arrows to flip through options, then hit Add when you find the one you want. Sauces and toppings stack as many as you like, always free. Your order builds itself on the left as you go.</p>
+      </div>
+
+      <div class="builder-live-grid">
+        <div class="receipt-panel reveal" id="receiptPanel">
+          <div class="receipt-head">
+            <h3>Your order</h3>
+            <span class="receipt-sub">Updates live as you build</span>
+          </div>
+          <div class="receipt-lines" id="receiptLines"></div>
+          <div class="receipt-total">
+            <span>Total</span>
+            <span id="receiptTotal">$0.00</span>
+          </div>
+          <div class="receipt-note">Toppings and sauce are always free, add as many as you want. Protein is priced per item — add more than one and it stacks.</div>
+          <div class="guest-fields">
+            <input type="text" id="guestName" placeholder="Your name" autocomplete="name">
+            <input type="tel" id="guestPhone" placeholder="Phone (for pickup call)" autocomplete="tel">
+            <input type="email" id="guestEmail" placeholder="Email (for order confirmation + ready alert)" autocomplete="email">
+          </div>
+          <button class="btn btn-primary" id="orderBtn"><i class="ph-bold ph-paper-plane-tilt"></i>Place order</button>
+          <a class="btn btn-secondary" id="cashAppBtn" href="https://cash.app/$lahoribowls/pickup" target="_blank" rel="noopener"><i class="ph ph-bag"></i>Pay with Cash App instead</a>
+          <div class="toast" id="orderToast">Order sent to the kitchen. Want to pay ahead? Use Cash App below, or just pay when you pick up.</div>
+        </div>
+
+        <div class="builder-stage-col">
+          <div class="mini-stage reveal" id="orbitStage">
+            <div class="stage-spot"></div>
+            <div class="stage-pedestal"></div>
+            <div class="bowl-visual" aria-hidden="true">
+              <img class="bowl-photo" src="assets/bowl-empty.jpg" alt="">
+              <div class="bowl-fill" id="bowlFill"></div>
+              <div class="bowl-chips" id="bowlChips"></div>
+            </div>
+            <div class="bowl-empty-hint" id="bowlEmptyHint">Tap Add below to build it</div>
+          </div>
+
+          <div class="layers-stack" id="layersStack"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="menu">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="eyebrow"><i class="ph-bold ph-fork-knife"></i>The menu</span>
+        <h2>Six proteins, one house style</h2>
+        <p>Simmered, grilled, or spiced the way Lahore does it, then dropped into whatever format you're craving.</p>
+      </div>
+      <div class="menu-bento">
+        <div class="menu-tile big reveal">
+          <img src="assets/ig-salmon-bowl.jpg" alt="Real Lahori Bowls salmon bowl, from @lahori_bowls on Instagram">
+          <div class="tint"></div>
+          <div class="cap"><strong>Glazed salmon</strong><span>Seared and finished with house glaze, straight from the counter</span></div>
+        </div>
+        <div class="menu-tile reveal">
+          <img src="assets/ingredients/steak.png" alt="Grilled steak">
+          <div class="tint"></div>
+          <div class="cap"><strong>Steak</strong><span>Grilled and sliced</span></div>
+        </div>
+        <div class="menu-tile duo saffron reveal">
+          <i class="ph-bold ph-cooking-pot"></i>
+          <strong>Butter chicken</strong>
+          <span>Simmered in a rich tomato and butter gravy</span>
+        </div>
+        <div class="menu-tile duo chili reveal">
+          <i class="ph-bold ph-fire"></i>
+          <strong>Honey chili chicken</strong>
+          <span>Sweet heat, grilled to order</span>
+        </div>
+        <div class="menu-tile duo herb reveal">
+          <i class="ph-bold ph-leaf"></i>
+          <strong>Chana masala</strong>
+          <span>The vegetarian favorite</span>
+        </div>
+        <div class="menu-tile duo saffron reveal" style="background:linear-gradient(150deg, var(--chili-dark), var(--saffron-dark));">
+          <i class="ph-bold ph-bowl-steam"></i>
+          <strong>Chicken karahi</strong>
+          <span>Lahori style, bone-in flavor</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="catering">
+      <div class="catering">
+        <div class="grid2">
+          <div class="catering-copy reveal">
+            <span class="eyebrow" style="color:var(--saffron);">Catering</span>
+            <h2>Feeding your office, your event, or your whole block party</h2>
+            <p>Same build-your-own format, scaled up. Tell us the headcount and the date and we'll put a spread together.</p>
+            <div class="catering-list">
+              <div><i class="ph-bold ph-check-circle"></i>Bowls, wraps, or a full toppings bar</div>
+              <div><i class="ph-bold ph-check-circle"></i>100% Zabiha Halal, every order</div>
+              <div><i class="ph-bold ph-check-circle"></i>Delivery or pickup on 12th Ave</div>
+            </div>
+          </div>
+          <div class="catering-form reveal">
+            <form id="cateringForm" novalidate>
+              <div class="field">
+                <label for="catName">Your name</label>
+                <input type="text" id="catName" placeholder="Sana Ahmed">
+                <div class="field-error" id="errName">Enter your name.</div>
+              </div>
+              <div class="field-row">
+                <div class="field">
+                  <label for="catDate">Event date</label>
+                  <input type="date" id="catDate">
+                  <div class="field-error" id="errDate">Pick a date.</div>
+                </div>
+                <div class="field">
+                  <label for="catCount">Guest count</label>
+                  <input type="number" id="catCount" min="1" placeholder="25">
+                  <div class="field-error" id="errCount">Enter a guest count.</div>
+                </div>
+              </div>
+              <div class="field">
+                <label for="catEmail">Email</label>
+                <input type="email" id="catEmail" placeholder="you@company.com">
+                <div class="field-error" id="errEmail">Enter a valid email.</div>
+              </div>
+              <button type="submit" class="btn btn-primary" style="width:100%;">Request catering quote</button>
+              <div class="catering-confirm" id="cateringConfirm">Thanks, that's ready to send. We opened an email to lahoribowls.wa@gmail.com with your details, just hit send.</div>
+            </form>
+          </div>
+        </div>
+      </div>
+  </section>
+
+  <section id="gallery">
+    <div class="wrap">
+      <div class="gallery-head reveal">
+        <div>
+          <span class="eyebrow"><i class="ph-bold ph-camera"></i>Behind the bowl</span>
+          <h2>The build, up close</h2>
+        </div>
+        <a class="btn btn-secondary" href="https://www.instagram.com/lahori_bowls/" target="_blank" rel="noopener"><i class="ph-bold ph-instagram-logo"></i>@lahori_bowls</a>
+      </div>
+      <div class="gallery-grid">
+        <div class="gallery-tile reveal"><img src="assets/ingredients/rice_base.png" alt="Saffron basmati rice"></div>
+        <div class="gallery-tile reveal"><img src="assets/ingredients/salmon_left.png" alt="Glazed salmon and jalapeno"></div>
+        <div class="gallery-tile reveal"><img src="assets/ingredients/sauce_chutney.png" alt="Mint chutney"></div>
+        <div class="gallery-tile reveal"><img src="assets/ingredients/crispy_onion.png" alt="Crispy onions"></div>
+        <div class="gallery-tile reveal"><img src="assets/ingredients/sauce_harissa.png" alt="Harissa sauce"></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="visit">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <h2>Visit us</h2>
+      </div>
+      <div class="visit-grid">
+        <div class="visit-card reveal">
+          <div class="visit-row">
+            <i class="ph-bold ph-map-pin"></i>
+            <div><strong>Address</strong><span>104 12th Ave, Suite B, Seattle, WA 98122</span></div>
+          </div>
+          <div class="visit-row">
+            <i class="ph-bold ph-phone"></i>
+            <div><strong>Phone</strong><span><a href="tel:+12067998578">(206) 799-8578</a></span></div>
+          </div>
+          <div class="visit-row">
+            <i class="ph-bold ph-envelope-simple"></i>
+            <div><strong>Email</strong><span>lahoribowls.wa@gmail.com</span></div>
+          </div>
+          <div class="visit-actions">
+            <a class="btn btn-primary" href="https://www.google.com/maps/search/?api=1&query=104+12th+Ave+Suite+B+Seattle+WA+98122" target="_blank" rel="noopener">Get directions</a>
+            <a class="btn btn-secondary" href="#builder">Order online</a>
+            <a class="btn btn-secondary" href="tel:+12067998578"><i class="ph-bold ph-phone"></i>Call us</a>
+          </div>
+          <table class="hours-table" style="margin-top:24px;">
+            <tr><td>Sunday</td><td>12:00 – 11:00 PM</td></tr>
+            <tr><td>Monday</td><td>12:00 – 11:00 PM</td></tr>
+            <tr><td>Tuesday</td><td>12:00 – 11:00 PM</td></tr>
+            <tr><td>Wednesday</td><td>12:00 – 11:00 PM</td></tr>
+            <tr><td>Thursday</td><td>12:00 – 11:00 PM</td></tr>
+            <tr><td>Friday</td><td>1:00 PM – 2:00 AM</td></tr>
+            <tr><td>Saturday</td><td>1:00 PM – 2:00 AM</td></tr>
+          </table>
+        </div>
+        <div class="map-embed reveal">
+          <iframe loading="lazy" src="https://maps.google.com/maps?q=104%2012th%20Ave%20Suite%20B%20Seattle%20WA%2098122&t=&z=15&ie=UTF8&iwloc=&output=embed" title="Map to Lahori Bowls, 104 12th Ave Suite B, Seattle"></iframe>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="footer-grid">
+      <a href="#top" class="brand">
+        <span class="brand-mark"><i class="ph-bold ph-bowl-food"></i></span>
+        Lahori Bowls
+      </a>
+      <div class="footer-links">
+        <a href="#builder">Build your bowl</a>
+        <a href="#menu">Menu</a>
+        <a href="#catering">Catering</a>
+        <a href="#visit">Visit</a>
+        <a href="https://www.instagram.com/lahori_bowls/" target="_blank" rel="noopener">Instagram</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>104 12th Ave, Suite B, Seattle, WA 98122</span>
+      <span>100% Zabiha Halal</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  /* ---------- mobile nav ---------- */
+  (function(){
+    var burger = document.getElementById('navBurger');
+    var menu = document.getElementById('mobileMenu');
+    burger.addEventListener('click', function(){ menu.classList.toggle('open'); });
+    menu.querySelectorAll('a').forEach(function(a){ a.addEventListener('click', function(){ menu.classList.remove('open'); }); });
+  })();
+
+  document.documentElement.setAttribute('data-theme', 'dark');
+
+  /* ---------- scroll reveal ---------- */
+  (function(){
+    var els = document.querySelectorAll('.reveal');
+    els.forEach(function(el){
+      var parent = el.parentElement;
+      var group = parent ? Array.prototype.filter.call(parent.children, function(c){ return c.classList.contains('reveal'); }) : [el];
+      var idx = group.indexOf(el);
+      el.style.transitionDelay = (Math.max(0, Math.min(idx, 5)) * 90) + 'ms';
+    });
+    if (!('IntersectionObserver' in window)) { els.forEach(function(el){ el.classList.add('in'); }); return; }
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if (entry.isIntersecting){ entry.target.classList.add('in'); io.unobserve(entry.target); }
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -60px 0px' });
+    els.forEach(function(el){ io.observe(el); });
+  })();
+
+  /* ---------- bowl builder ---------- */
+  (function(){
+    var ASSET = 'assets/ingredients/';
+    var PRICE = { bowl:12.99, wrap:10.99, fries:9.99 }; // fallback until live pricing loads from Supabase
+    var ADDON_PRICE = {}; // id -> per-item upcharge, populated from Supabase menu_pricing (protein etc.)
+    var STEPS = [
+      {
+        key:'format', label:'Format', single:true,
+        items:[
+          {id:'bowl', label:'Bowl', icon:'ph-bold ph-bowl-food', color:'var(--teal)', colorDark:'var(--teal-dark)'},
+          {id:'wrap', label:'Wrap', icon:'ph-bold ph-hamburger', color:'var(--saffron)', colorDark:'var(--saffron-dark)'},
+          {id:'fries', label:'Loaded fries', icon:'ph-bold ph-basket', color:'var(--chili)', colorDark:'var(--chili-dark)'}
+        ]
+      },
+      {
+        key:'base', label:'Base', single:true,
+        items:[
+          {id:'basmati', label:'Saffron basmati', img:ASSET+'rice_base.png'},
+          {id:'brown', label:'Brown rice', icon:'ph-bold ph-grains', color:'var(--saffron)', colorDark:'var(--saffron-dark)'},
+          {id:'greens', label:'Fresh greens', icon:'ph-bold ph-leaf', color:'var(--herb)', colorDark:'var(--herb-dark)'},
+          {id:'half', label:'Half and half', icon:'ph-bold ph-circle-half', color:'var(--teal)', colorDark:'var(--teal-dark)'}
+        ]
+      },
+      {
+        key:'protein', label:'Protein', single:false,
+        note:'— add more than one, priced per protein',
+        items:[
+          {id:'butter_chicken', label:'Butter chicken', icon:'ph-bold ph-cooking-pot', color:'var(--saffron)', colorDark:'var(--saffron-dark)'},
+          {id:'karahi', label:'Chicken karahi', icon:'ph-bold ph-bowl-steam', color:'var(--chili)', colorDark:'var(--chili-dark)'},
+          {id:'honey_chili', label:'Honey chili chicken', icon:'ph-bold ph-fire', color:'var(--chili-dark)', colorDark:'#5c2013'},
+          {id:'salmon', label:'Glazed salmon', img:ASSET+'salmon_left.png'},
+          {id:'steak', label:'Steak', img:ASSET+'steak.png'},
+          {id:'chana', label:'Chana masala', icon:'ph-bold ph-leaf', color:'var(--herb)', colorDark:'var(--herb-dark)'}
+        ]
+      },
+      {
+        key:'toppings', single:false, label:'Toppings',
+        note:'— shown here free, twelve more in store',
+        items:[
+          {id:'onion', label:'Crispy onions', img:ASSET+'crispy_onion.png'},
+          {id:'jalapeno', label:'Pickled jalapeños', img:ASSET+'jalapeno_slices.png'}
+        ]
+      },
+      {
+        key:'sauce', label:'Sauce', single:false,
+        note:'— mix as many as you like, always free',
+        items:[
+          {id:'chutney', label:'Mint chutney', img:ASSET+'sauce_chutney.png'},
+          {id:'tamarind', label:'Tamarind', img:ASSET+'sauce_tamarind.png'},
+          {id:'white', label:'White sauce', img:ASSET+'sauce_white_l.png'},
+          {id:'harissa', label:'Harissa', img:ASSET+'sauce_harissa.png'},
+          {id:'lahori', label:'Lahori sauce', img:ASSET+'sauce_red.png'}
+        ]
+      }
+    ];
+
+    var state = { qty:1 };
+    STEPS.forEach(function(step){
+      if (step.single) state[step.key] = step.items[0].id;
+      else { state[step.key] = []; state[step.key + 'Qty'] = {}; }
+    });
+    // a bowl always ships with one protein pre-selected; toppings/sauce start empty
+    var defaultProteinStep = STEPS.find(function(s){ return s.key === 'protein'; });
+    var defaultProteinId = defaultProteinStep.items[0].id;
+    state.protein.push(defaultProteinId);
+    state.proteinQty[defaultProteinId] = 1;
+
+    function addonUnitPrice(id){ return ADDON_PRICE[id] || 0; }
+    function addonTotalFor(stepKey){
+      var arr = state[stepKey], qtyObj = state[stepKey + 'Qty'];
+      return arr.reduce(function(sum, id){ return sum + addonUnitPrice(id) * (qtyObj[id] || 1); }, 0);
+    }
+
+    var supabaseClient = window.LAHORI_SB || null;
+
+    function loadMenuPricing(){
+      if (!supabaseClient) return;
+      supabaseClient.from('menu_pricing').select('id,category,price,active').eq('active', true)
+        .then(function(res){
+          if (!res || res.error || !res.data) return;
+          res.data.forEach(function(row){
+            var price = Number(row.price) || 0;
+            if (row.category === 'format') PRICE[row.id] = price;
+            else ADDON_PRICE[row.id] = price;
+          });
+          renderReceipt();
+        })
+        .catch(function(err){ console.warn('menu_pricing fetch failed', err); });
+    }
+
+    var stage = document.getElementById('orbitStage');
+    var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    /* ---------- live bowl visual: real ingredient photos, no WebGL required ---------- */
+    var bowlFillEl = document.getElementById('bowlFill');
+    var bowlChipsEl = document.getElementById('bowlChips');
+    var bowlEmptyHintEl = document.getElementById('bowlEmptyHint');
+    var bowlChipEls = {}; // key -> element, keyed by "stepKey:itemId"
+
+    function bowlChipPosition(index, total){
+      // arrange chips in a loose arc hovering just above the bowl rim, mirroring
+      // the "exploded ingredients" hero shot rather than a flat pile
+      var spread = Math.min(210, 46 * Math.max(total, 1));
+      var startX = -spread / 2;
+      var step = total > 1 ? spread / (total - 1) : 0;
+      var x = total > 1 ? (startX + step * index) : 0;
+      var arc = Math.pow(x / (spread / 2 || 1), 2) * 22; // slight rise toward the edges
+      var y = -66 - arc - (index % 2 === 0 ? 10 : 0);
+      return { x: Math.round(x), y: Math.round(y) };
+    }
+
+    function renderBowlVisual(){
+      var baseItem = itemFor('base', state.base);
+      if (baseItem){
+        bowlFillEl.innerHTML = baseItem.img
+          ? '<img src="' + baseItem.img + '" alt="">'
+          : '';
+        bowlFillEl.style.background = baseItem.img ? '' : ('linear-gradient(150deg,' + (baseItem.color || 'var(--saffron)') + ',' + (baseItem.colorDark || 'var(--saffron-dark)') + ')');
+      }
+
+      var contents = [];
+      state.protein.forEach(function(id){ var it = itemFor('protein', id); if (it) contents.push({ key:'protein', id:id, item:it }); });
+      state.toppings.forEach(function(id){ var it = itemFor('toppings', id); if (it) contents.push({ key:'toppings', id:id, item:it }); });
+      state.sauce.forEach(function(id){ var it = itemFor('sauce', id); if (it) contents.push({ key:'sauce', id:id, item:it }); });
+
+      bowlEmptyHintEl.style.opacity = contents.length ? '0' : '1';
+
+      var seenKeys = {};
+      contents.forEach(function(entry, i){
+        var domKey = entry.key + ':' + entry.id;
+        seenKeys[domKey] = true;
+        var pos = bowlChipPosition(i, contents.length);
+        var el = bowlChipEls[domKey];
+        if (!el){
+          el = document.createElement('div');
+          el.className = 'bowl-chip' + (entry.item.img ? '' : ' icon-chip');
+          el.title = entry.item.label;
+          el.style.setProperty('--bob-delay', (Math.random() * 2).toFixed(2) + 's');
+          if (entry.item.img){
+            el.innerHTML = '<img src="' + entry.item.img + '" alt="' + entry.item.label + '">';
+          } else {
+            var dark = entry.item.colorDark || entry.item.color;
+            el.style.background = 'linear-gradient(150deg,' + entry.item.color + ',' + dark + ')';
+            el.innerHTML = '<i class="' + entry.item.icon + '"></i>';
+          }
+          bowlChipsEl.appendChild(el);
+          bowlChipEls[domKey] = el;
+          el.style.setProperty('--cx', pos.x + 'px');
+          el.style.setProperty('--cy', pos.y + 'px');
+          // force a reflow so the "in" transition actually animates from the initial state
+          void el.offsetWidth;
+          requestAnimationFrame(function(){ el.classList.add('in'); });
+        } else {
+          el.style.setProperty('--cx', pos.x + 'px');
+          el.style.setProperty('--cy', pos.y + 'px');
+        }
+      });
+
+      Object.keys(bowlChipEls).forEach(function(domKey){
+        if (seenKeys[domKey]) return;
+        var el = bowlChipEls[domKey];
+        el.classList.remove('in');
+        el.classList.add('leaving');
+        delete bowlChipEls[domKey];
+        setTimeout(function(){ if (el.parentNode) el.parentNode.removeChild(el); }, 320);
+      });
+    }
+
+    /* ---------- itemFor helper ---------- */
+    function itemFor(stepKey, id){
+      var step = STEPS.find(function(s){ return s.key === stepKey; });
+      if (!step) return null;
+      return step.items.find(function(it){ return it.id === id; }) || null;
+    }
+
+    /* ---------- layer carousels ---------- */
+    var layersStackEl = document.getElementById('layersStack');
+    var layerState = {};
+    STEPS.forEach(function(step){
+      var idx = 0;
+      if (step.single){
+        idx = step.items.findIndex(function(it){ return it.id === state[step.key]; });
+        if (idx < 0) idx = 0;
+      }
+      layerState[step.key] = { focusIndex: idx };
+    });
+
+    function currentLayerItem(step){
+      return step.items[layerState[step.key].focusIndex];
+    }
+
+    function renderLayerCard(step){
+      var panel = layersStackEl.querySelector('.layer-panel[data-key="' + step.key + '"]');
+      if (!panel) return;
+      var card = panel.querySelector('.layer-card');
+      var item = currentLayerItem(step);
+      var thumbHtml;
+      if (item.img){
+        thumbHtml = '<div class="layer-thumb"><img src="' + item.img + '" alt="' + item.label + '"></div>';
+      } else {
+        var dark = item.colorDark || item.color;
+        thumbHtml = '<div class="layer-thumb icon-thumb" style="background:linear-gradient(150deg,' + item.color + ',' + dark + ');"><i class="' + item.icon + '"></i></div>';
+      }
+      var countHtml = '<span class="layer-option-count">' + (layerState[step.key].focusIndex+1) + ' of ' + step.items.length + '</span>';
+      var isAdded = step.single ? (state[step.key] === item.id) : (state[step.key].indexOf(item.id) > -1);
+
+      card.innerHTML = thumbHtml +
+        '<div class="layer-info"><div class="layer-option-name">' + item.label + '</div>' + countHtml + '</div>' +
+        '<button type="button" class="layer-add-btn' + (isAdded ? ' added' : '') + '" data-act="add-item" data-key="' + step.key + '" data-id="' + item.id + '">' + (isAdded ? 'Added ✓' : 'Add') + '</button>';
+
+      var list = panel.querySelector('[data-role="added-list"]');
+      if (list && !step.single){
+        var arr = state[step.key], qtyObj = state[step.key + 'Qty'];
+        list.textContent = arr.length ? ('Added: ' + arr.map(function(id){
+          var it = step.items.find(function(x){ return x.id === id; });
+          var q = qtyObj[id] || 1;
+          return it ? (it.label + (q > 1 ? (' x' + q) : '')) : id;
+        }).join(', ')) : 'Nothing added yet — tap Add on anything you want.';
+      }
+    }
+
+    function renderAllLayers(){ STEPS.forEach(renderLayerCard); }
+
+    function cycleLayer(step, dir){
+      var n = step.items.length;
+      var ls = layerState[step.key];
+      ls.focusIndex = (ls.focusIndex + dir + n) % n;
+      renderLayerCard(step);
+    }
+
+    function addItem(step, item){
+      if (!item) return;
+      if (step.single){
+        if (state[step.key] !== item.id){
+          state[step.key] = item.id;
+        }
+      } else {
+        var arr = state[step.key];
+        var qtyObj = state[step.key + 'Qty'];
+        var idx = arr.indexOf(item.id);
+        if (idx > -1){
+          arr.splice(idx, 1);
+          delete qtyObj[item.id];
+        } else {
+          arr.push(item.id);
+          qtyObj[item.id] = 1;
+        }
+      }
+      renderLayerCard(step);
+      renderReceipt();
+    }
+
+    function attachLayerSwipe(cardEl, step){
+      var startX = 0, startY = 0, dragging = false, moved = false;
+      function down(e){
+        dragging = true; moved = false;
+        startX = (e.touches ? e.touches[0].clientX : e.clientX);
+        startY = (e.touches ? e.touches[0].clientY : e.clientY);
+        document.addEventListener('mousemove', move);
+        document.addEventListener('mouseup', up);
+        document.addEventListener('touchmove', move, { passive:false });
+        document.addEventListener('touchend', up);
+      }
+      function move(e){
+        if (!dragging) return;
+        var cx = (e.touches ? e.touches[0].clientX : e.clientX);
+        var cy = (e.touches ? e.touches[0].clientY : e.clientY);
+        var dx = cx - startX, dy = cy - startY;
+        if (Math.abs(dx) > 6 && Math.abs(dx) > Math.abs(dy)){
+          moved = true;
+          e.preventDefault && e.preventDefault();
+        }
+      }
+      function up(e){
+        if (!dragging) return;
+        dragging = false;
+        document.removeEventListener('mousemove', move);
+        document.removeEventListener('mouseup', up);
+        document.removeEventListener('touchmove', move);
+        document.removeEventListener('touchend', up);
+        if (!moved) return;
+        var cx = (e.changedTouches ? e.changedTouches[0].clientX : e.clientX);
+        var dx = cx - startX;
+        if (Math.abs(dx) < 28) return;
+        cycleLayer(step, dx < 0 ? 1 : -1);
+      }
+      cardEl.addEventListener('mousedown', down);
+      cardEl.addEventListener('touchstart', down, { passive:true });
+    }
+
+    function buildLayers(){
+      layersStackEl.innerHTML = '';
+      STEPS.forEach(function(step, idx){
+        var panel = document.createElement('div');
+        panel.className = 'layer-panel';
+        panel.dataset.key = step.key;
+        panel.innerHTML =
+          '<div class="layer-head"><span class="layer-index">0' + (idx+1) + '</span><span class="layer-name">' + step.label + (step.note ? ' <span style="color:var(--ink-soft);font-weight:400;">' + step.note + '</span>' : '') + '</span></div>' +
+          '<div class="layer-carousel">' +
+            '<button type="button" class="layer-arrow" data-act="prev" data-key="' + step.key + '" aria-label="Previous ' + step.label + '"><i class="ph-bold ph-caret-left"></i></button>' +
+            '<div class="layer-card" data-key="' + step.key + '"></div>' +
+            '<button type="button" class="layer-arrow" data-act="next" data-key="' + step.key + '" aria-label="Next ' + step.label + '"><i class="ph-bold ph-caret-right"></i></button>' +
+          '</div>' +
+          (step.single ? '' : '<div class="layer-added-list" data-role="added-list"></div>');
+        layersStackEl.appendChild(panel);
+        attachLayerSwipe(panel.querySelector('.layer-card'), step);
+      });
+      renderAllLayers();
+    }
+
+    layersStackEl.addEventListener('click', function(e){
+      var arrowBtn = e.target.closest('.layer-arrow');
+      if (arrowBtn){
+        var step = STEPS.find(function(s){ return s.key === arrowBtn.dataset.key; });
+        if (step) cycleLayer(step, arrowBtn.dataset.act === 'next' ? 1 : -1);
+        return;
+      }
+      var addBtn = e.target.closest('[data-act="add-item"]');
+      if (addBtn){
+        var addStep = STEPS.find(function(s){ return s.key === addBtn.dataset.key; });
+        var addItemObj = addStep && addStep.items.find(function(it){ return it.id === addBtn.dataset.id; });
+        if (addStep && addItemObj) addItem(addStep, addItemObj);
+      }
+    });
+
+    /* ---------- live receipt ---------- */
+    var receiptLinesEl = document.getElementById('receiptLines');
+    var receiptTotalEl = document.getElementById('receiptTotal');
+
+    function addReceiptLine(titleHtml, priceLabel, controlsHtml){
+      var el = document.createElement('div');
+      el.className = 'receipt-line';
+      el.innerHTML =
+        '<div class="rl-main"><span class="rl-title">' + titleHtml + '</span><span class="rl-price">' + priceLabel + '</span></div>' +
+        (controlsHtml ? '<div class="rl-controls">' + controlsHtml + '</div>' : '');
+      receiptLinesEl.appendChild(el);
+    }
+
+    function renderMultiLines(stepKey, label){
+      var arr = state[stepKey], qtyObj = state[stepKey + 'Qty'];
+      arr.forEach(function(id){
+        var it = itemFor(stepKey, id);
+        if (!it) return;
+        var qty = qtyObj[id] || 1;
+        var unit = addonUnitPrice(id);
+        var priceLabel = unit > 0 ? ('+$' + (unit * qty).toFixed(2)) : 'Free';
+        addReceiptLine(
+          it.label + (qty > 1 ? (' ×' + qty) : '') + '<span class="rl-sub">' + label + '</span>',
+          priceLabel,
+          '<div class="qty-stepper">' +
+            '<button type="button" class="qty-btn" data-role="multi-minus" data-step="' + stepKey + '" data-id="' + id + '" aria-label="Decrease quantity"' + (qty <= 1 ? ' disabled' : '') + '>−</button>' +
+            '<span class="qty-val">' + qty + '</span>' +
+            '<button type="button" class="qty-btn" data-role="multi-plus" data-step="' + stepKey + '" data-id="' + id + '" aria-label="Increase quantity">+</button>' +
+          '</div>' +
+          '<button type="button" class="rl-void" data-role="multi-void" data-step="' + stepKey + '" data-id="' + id + '" aria-label="Remove ' + it.label + '"><i class="ph-bold ph-x"></i></button>'
+        );
+      });
+    }
+
+    function renderReceipt(){
+      receiptLinesEl.innerHTML = '';
+      var formatItem = itemFor('format', state.format);
+      var baseItem = itemFor('base', state.base);
+      var unitPrice = PRICE[state.format] || PRICE.bowl;
+      var addonsPerOrder = addonTotalFor('protein') + addonTotalFor('toppings') + addonTotalFor('sauce');
+      var total = (unitPrice + addonsPerOrder) * state.qty;
+
+      addReceiptLine(
+        formatItem.label + '<span class="rl-sub">Format</span>',
+        '$' + (unitPrice * state.qty).toFixed(2),
+        '<div class="qty-stepper">' +
+          '<button type="button" class="qty-btn" data-role="qty-minus" aria-label="Decrease quantity"' + (state.qty <= 1 ? ' disabled' : '') + '>−</button>' +
+          '<span class="qty-val">' + state.qty + '</span>' +
+          '<button type="button" class="qty-btn" data-role="qty-plus" aria-label="Increase quantity">+</button>' +
+        '</div>'
+      );
+      addReceiptLine(baseItem.label + '<span class="rl-sub">Base</span>', 'Included');
+
+      renderMultiLines('protein', 'Protein');
+      renderMultiLines('toppings', 'Topping');
+      renderMultiLines('sauce', 'Sauce');
+
+      if (!state.toppings.length && !state.sauce.length){
+        var hint = document.createElement('div');
+        hint.className = 'receipt-empty';
+        hint.textContent = 'No toppings or sauce added yet — tap Add on any layer below.';
+        receiptLinesEl.appendChild(hint);
+      }
+
+      receiptTotalEl.textContent = '$' + total.toFixed(2);
+      renderBowlVisual();
+    }
+
+    receiptLinesEl.addEventListener('click', function(e){
+      var btn = e.target.closest('button[data-role]');
+      if (!btn) return;
+      var role = btn.dataset.role;
+      if (role === 'qty-plus'){ state.qty = Math.min(12, state.qty + 1); }
+      else if (role === 'qty-minus'){ state.qty = Math.max(1, state.qty - 1); }
+      else if (role === 'multi-plus'){
+        var sKey1 = btn.dataset.step, id1 = btn.dataset.id;
+        state[sKey1 + 'Qty'][id1] = Math.min(20, (state[sKey1 + 'Qty'][id1] || 1) + 1);
+      }
+      else if (role === 'multi-minus'){
+        var sKey2 = btn.dataset.step, id2 = btn.dataset.id;
+        state[sKey2 + 'Qty'][id2] = Math.max(1, (state[sKey2 + 'Qty'][id2] || 1) - 1);
+      }
+      else if (role === 'multi-void'){
+        var sKey3 = btn.dataset.step, id3 = btn.dataset.id;
+        var arr = state[sKey3];
+        var idx = arr.indexOf(id3);
+        if (idx > -1) arr.splice(idx, 1);
+        delete state[sKey3 + 'Qty'][id3];
+        var stepObj = STEPS.find(function(s){ return s.key === sKey3; });
+        if (stepObj) renderLayerCard(stepObj);
+      }
+      renderReceipt();
+    });
+
+    buildLayers();
+    renderReceipt();
+
+    /* ---------- order button: sends the order to Supabase (kitchen dashboard), plus an email fallback ---------- */
+    function listMulti(stepKey){
+      return state[stepKey].length ? state[stepKey].map(function(id){
+        var it = itemFor(stepKey, id);
+        var q = state[stepKey + 'Qty'][id] || 1;
+        var unit = addonUnitPrice(id);
+        var priceTxt = unit > 0 ? (' +$' + (unit * q).toFixed(2)) : '';
+        return it ? (it.label + (q > 1 ? (' x' + q) : '') + priceTxt) : id;
+      }).join(', ') : 'none';
+    }
+
+    function snapshotOrder(){
+      var formatItem = itemFor('format', state.format);
+      var baseItem = itemFor('base', state.base);
+      var unitPrice = PRICE[state.format] || PRICE.bowl;
+      var addonsPerOrder = addonTotalFor('protein') + addonTotalFor('toppings') + addonTotalFor('sauce');
+      var total = (unitPrice + addonsPerOrder) * state.qty;
+      return {
+        formatItem: formatItem, baseItem: baseItem, unitPrice: unitPrice, total: total,
+        items: {
+          format: state.format, qty: state.qty, base: state.base,
+          protein: state.protein.map(function(id){ return { id:id, qty: state.proteinQty[id] || 1, unit_price: addonUnitPrice(id) }; }),
+          toppings: state.toppings.map(function(id){ return { id:id, qty: state.toppingsQty[id] || 1 }; }),
+          sauce: state.sauce.map(function(id){ return { id:id, qty: state.sauceQty[id] || 1 }; })
+        }
+      };
+    }
+
+    function newOrderId(){
+      if (window.crypto && window.crypto.randomUUID) return window.crypto.randomUUID();
+      // Fallback UUIDv4 for browsers without crypto.randomUUID.
+      return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c){
+        var r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+      });
+    }
+
+    function notifyOrderEmail(orderId, kind){
+      if (!orderId || !window.LAHORI_SUPABASE_URL || !window.LAHORI_SUPABASE_KEY) return;
+      var acct = window.LAHORI_ACCOUNT || {};
+      var token = (acct.session && acct.session.access_token) || window.LAHORI_SUPABASE_KEY;
+      fetch(window.LAHORI_SUPABASE_URL + '/functions/v1/send-order-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token, 'apikey': window.LAHORI_SUPABASE_KEY },
+        body: JSON.stringify({ orderId: orderId, kind: kind })
+      }).catch(function(err){ console.warn('Order email notify failed (non-fatal)', err); });
+    }
+    window.LAHORI_NOTIFY_ORDER_EMAIL = notifyOrderEmail;
+
+    document.getElementById('orderBtn').addEventListener('click', function(){
+      var snap = snapshotOrder();
+      var guestName = (document.getElementById('guestName').value || '').trim();
+      var guestPhone = (document.getElementById('guestPhone').value || '').trim();
+      var guestEmail = (document.getElementById('guestEmail').value || '').trim();
+
+      var lines = [
+        'New Lahori Bowls order:',
+        guestName ? ('Name: ' + guestName) : 'Name: (not given)',
+        guestPhone ? ('Phone: ' + guestPhone) : 'Phone: (not given)',
+        'Format: ' + snap.formatItem.label + ' x' + state.qty,
+        'Base: ' + snap.baseItem.label,
+        'Protein: ' + listMulti('protein'),
+        'Toppings: ' + listMulti('toppings'),
+        'Sauce: ' + listMulti('sauce'),
+        'Total: $' + snap.total.toFixed(2)
+      ];
+      var body = lines.join('\n');
+      var subject = encodeURIComponent('New order — ' + snap.formatItem.label + ' x' + state.qty);
+
+      var acct = window.LAHORI_ACCOUNT || {};
+      var customerId = acct.session ? acct.session.user.id : null;
+      // Generate the id client-side (rather than reading it back after insert)
+      // because guest orders have no auth.uid() to satisfy the RLS SELECT
+      // policy that would otherwise gate the INSERT...RETURNING row.
+      var orderId = newOrderId();
+
+      if (supabaseClient){
+        supabaseClient.from('orders').insert({
+          id: orderId,
+          customer_id: customerId,
+          guest_name: guestName || (acct.profile ? acct.profile.full_name : null) || null,
+          guest_phone: guestPhone || (acct.profile ? acct.profile.phone : null) || null,
+          guest_email: guestEmail || (acct.profile ? acct.profile.email : null) || null,
+          items: snap.items,
+          subtotal: snap.total,
+          total: snap.total,
+          status: 'pending'
+        }).then(function(res){
+          if (res && res.error) { console.warn('Order insert failed, falling back to email only', res.error); return; }
+          notifyOrderEmail(orderId, 'confirmation');
+        }).catch(function(err){ console.warn('Order insert failed, falling back to email only', err); });
+      }
+
+      window.location.href = 'mailto:lahoribowls.wa@gmail.com?subject=' + subject + '&body=' + encodeURIComponent(body);
+      document.getElementById('orderToast').classList.add('show');
+    });
+
+    loadMenuPricing();
+  })();
+
+  /* ---------- account / points / rewards ---------- */
+  (function(){
+    var supabaseClient = window.LAHORI_SB || null;
+    var overlay = document.getElementById('acctOverlay');
+    var rewardsCache = [];
+
+    function $(sel){ return document.querySelector(sel); }
+    function esc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+    function openModal(){ overlay.classList.add('open'); }
+    function closeModal(){ overlay.classList.remove('open'); }
+
+    document.getElementById('navAccountBtn').addEventListener('click', openModal);
+    var mobileBtn = document.getElementById('navAccountBtnMobile');
+    if (mobileBtn) mobileBtn.addEventListener('click', function(e){ e.preventDefault(); openModal(); });
+    document.getElementById('acctCloseBtn').addEventListener('click', closeModal);
+    overlay.addEventListener('click', function(e){ if (e.target === overlay) closeModal(); });
+
+    document.querySelectorAll('.acct-tab').forEach(function(tab){
+      tab.addEventListener('click', function(){
+        document.querySelectorAll('.acct-tab').forEach(function(t){ t.classList.toggle('active', t === tab); });
+        document.getElementById('acctSigninForm').classList.toggle('hidden', tab.dataset.acctTab !== 'signin');
+        document.getElementById('acctSignupForm').classList.toggle('hidden', tab.dataset.acctTab !== 'signup');
+      });
+    });
+
+    function isBirthdayToday(birthdayStr){
+      if (!birthdayStr) return false;
+      var b = new Date(birthdayStr + 'T00:00:00');
+      var today = new Date();
+      return b.getUTCMonth() === today.getMonth() && b.getUTCDate() === today.getDate();
+    }
+
+    function rewardIsEligible(r, profile){
+      if (!r.active) return false;
+      var now = new Date();
+      if (r.starts_at && new Date(r.starts_at) > now) return false;
+      if (r.ends_at && new Date(r.ends_at) < now) return false;
+      if (r.kind === 'birthday' && !isBirthdayToday(profile.birthday)) return false;
+      return true;
+    }
+
+    function renderRewards(profile){
+      var list = document.getElementById('acctRewardsList');
+      var eligible = rewardsCache.filter(function(r){ return rewardIsEligible(r, profile); });
+      if (!eligible.length){ list.innerHTML = '<div class="acct-reward-empty">No rewards available right now — check back after your next order.</div>'; return; }
+      list.innerHTML = eligible.map(function(r){
+        var canAfford = (profile.points_balance || 0) >= r.points_cost;
+        return '<div class="acct-reward">' +
+          '<div><div class="acct-reward-title">' + esc(r.title) + (r.kind !== 'standard' ? ' <span style="color:var(--saffron); font-size:11px; text-transform:uppercase;">· ' + r.kind + '</span>' : '') + '</div>' +
+          (r.description ? '<div class="acct-reward-desc">' + esc(r.description) + '</div>' : '') + '</div>' +
+          '<div style="text-align:right;">' +
+          '<div class="acct-reward-cost">' + r.points_cost + ' pts</div>' +
+          '<button class="btn btn-secondary" style="padding:6px 12px; font-size:12px; margin-top:6px;" data-redeem="' + r.id + '" data-cost="' + r.points_cost + '" ' + (canAfford ? '' : 'disabled') + '>' + (canAfford ? 'Redeem' : 'Not enough points') + '</button>' +
+          '</div></div>';
+      }).join('');
+    }
+
+    async function loadRewardsAndRender(profile){
+      if (!supabaseClient) return;
+      var res = await supabaseClient.from('rewards').select('*').eq('active', true);
+      rewardsCache = (res && res.data) || [];
+      renderRewards(profile);
+    }
+
+    document.getElementById('acctRewardsList').addEventListener('click', async function(e){
+      var btn = e.target.closest('button[data-redeem]');
+      if (!btn || !supabaseClient || !window.LAHORI_ACCOUNT.session) return;
+      var rewardId = btn.dataset.redeem;
+      var cost = parseInt(btn.dataset.cost, 10) || 0;
+      var profile = window.LAHORI_ACCOUNT.profile;
+      var msgEl = document.getElementById('acctRedeemMsg');
+      if (!profile || (profile.points_balance || 0) < cost) { msgEl.className = 'acct-msg err'; msgEl.textContent = 'Not enough points for that yet.'; return; }
+      btn.disabled = true;
+      var newBalance = (profile.points_balance || 0) - cost;
+      var upd = await supabaseClient.from('profiles').update({ points_balance: newBalance }).eq('id', profile.id);
+      if (upd.error) { msgEl.className = 'acct-msg err'; msgEl.textContent = 'Could not redeem — try again.'; btn.disabled = false; return; }
+      await supabaseClient.from('points_ledger').insert({ customer_id: profile.id, delta: -cost, reason: 'redeem' });
+      profile.points_balance = newBalance;
+      window.LAHORI_ACCOUNT.profile = profile;
+      msgEl.className = 'acct-msg ok';
+      msgEl.textContent = 'Redeemed! Show this screen to staff when you order or pick up.';
+      updateSignedInUI(profile);
+    });
+
+    function updateNavLabel(){
+      var label = document.getElementById('navAccountLabel');
+      var labelMobile = document.getElementById('navAccountLabelMobile');
+      if (window.LAHORI_ACCOUNT.profile) {
+        var first = (window.LAHORI_ACCOUNT.profile.full_name || 'Account').split(' ')[0];
+        var pts = window.LAHORI_ACCOUNT.profile.points_balance || 0;
+        label.textContent = first + ' · ' + pts + ' pts';
+        if (labelMobile) labelMobile.textContent = first + ' · ' + pts + ' pts';
+      } else {
+        label.textContent = 'Sign in';
+        if (labelMobile) labelMobile.textContent = 'Sign in / My rewards';
+      }
+    }
+
+    function updateSignedInUI(profile){
+      document.getElementById('acctName').textContent = profile.full_name || 'Member';
+      document.getElementById('acctPoints').textContent = profile.points_balance || 0;
+      updateNavLabel();
+      renderRewards(profile);
+    }
+
+    async function loadOwnProfile(userId){
+      if (!supabaseClient) return null;
+      var res = await supabaseClient.from('profiles').select('*').eq('id', userId).maybeSingle();
+      return res.error ? null : res.data;
+    }
+
+    async function handleAccountSession(session){
+      window.LAHORI_ACCOUNT.session = session || null;
+      if (!session) {
+        window.LAHORI_ACCOUNT.profile = null;
+        updateNavLabel();
+        document.getElementById('acctSignedOut').classList.remove('hidden');
+        document.getElementById('acctSignedIn').classList.add('hidden');
+        return;
+      }
+      var profile = await loadOwnProfile(session.user.id);
+      window.LAHORI_ACCOUNT.profile = profile;
+      if (!profile) return;
+      document.getElementById('acctSignedOut').classList.add('hidden');
+      document.getElementById('acctSignedIn').classList.remove('hidden');
+      updateSignedInUI(profile);
+      loadRewardsAndRender(profile);
+    }
+
+    if (supabaseClient) {
+      supabaseClient.auth.getSession().then(function(res){ handleAccountSession(res.data && res.data.session); });
+      supabaseClient.auth.onAuthStateChange(function(_evt, session){ handleAccountSession(session); });
+    }
+
+    document.getElementById('acctSigninForm').addEventListener('submit', async function(e){
+      e.preventDefault();
+      if (!supabaseClient) return;
+      var errEl = document.getElementById('acctSigninError');
+      errEl.textContent = '';
+      var res = await supabaseClient.auth.signInWithPassword({
+        email: document.getElementById('acctSigninEmail').value.trim(),
+        password: document.getElementById('acctSigninPassword').value
+      });
+      if (res.error) { errEl.textContent = res.error.message || 'Sign-in failed.'; return; }
+      closeModal();
+    });
+
+    document.getElementById('acctSignupForm').addEventListener('submit', async function(e){
+      e.preventDefault();
+      if (!supabaseClient) return;
+      var errEl = document.getElementById('acctSignupError');
+      errEl.textContent = '';
+      var name = document.getElementById('acctSignupName').value.trim();
+      var phone = document.getElementById('acctSignupPhone').value.trim();
+      var birthday = document.getElementById('acctSignupBirthday').value || null;
+      var res = await supabaseClient.auth.signUp({
+        email: document.getElementById('acctSignupEmail').value.trim(),
+        password: document.getElementById('acctSignupPassword').value,
+        options: { data: { full_name: name, phone: phone || null } }
+      });
+      if (res.error) { errEl.textContent = res.error.message || 'Could not create account.'; return; }
+      // handle_new_user already created the base profile row; fill in the extras.
+      if (res.data && res.data.user) {
+        await supabaseClient.from('profiles').update({ full_name: name, phone: phone || null, birthday: birthday }).eq('id', res.data.user.id);
+      }
+      if (res.data && res.data.session) {
+        closeModal();
+      } else {
+        errEl.style.color = 'var(--herb)';
+        errEl.textContent = 'Account created! Check your email to confirm, then sign in.';
+      }
+    });
+
+    document.getElementById('acctSignOutBtn').addEventListener('click', function(){
+      if (supabaseClient) supabaseClient.auth.signOut();
+      closeModal();
+    });
+  })();
+
+  /* ---------- catering form ---------- */
+  (function(){
+    var form = document.getElementById('cateringForm');
+    form.addEventListener('submit', function(e){
+      e.preventDefault();
+      var name = document.getElementById('catName');
+      var date = document.getElementById('catDate');
+      var count = document.getElementById('catCount');
+      var email = document.getElementById('catEmail');
+      var ok = true;
+
+      function toggleError(input, errId, valid){
+        var err = document.getElementById(errId);
+        if (valid){ err.classList.remove('show'); } else { err.classList.add('show'); ok = false; }
+      }
+
+      toggleError(name, 'errName', name.value.trim().length > 0);
+      toggleError(date, 'errDate', date.value.length > 0);
+      toggleError(count, 'errCount', count.value && Number(count.value) > 0);
+      var emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim());
+      toggleError(email, 'errEmail', emailOk);
+
+      if (!ok) return;
+
+      var subject = encodeURIComponent('Catering inquiry from ' + name.value.trim());
+      var body = encodeURIComponent(
+        'Name: ' + name.value.trim() + '\n' +
+        'Event date: ' + date.value + '\n' +
+        'Guest count: ' + count.value + '\n' +
+        'Email: ' + email.value.trim()
+      );
+      window.location.href = 'mailto:lahoribowls.wa@gmail.com?subject=' + subject + '&body=' + body;
+      document.getElementById('cateringConfirm').classList.add('show');
+    });
+  })();
+</script>
+
+</body>
+</html>
