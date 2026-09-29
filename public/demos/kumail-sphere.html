@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Kumail Rizvi — I Build What Actually Ships</title>
-<meta name="description" content="An archive of real, deployed AI-engineering projects by Kumail Rizvi — live products with live data, not mockups.">
+<title>Kumail Rizvi: I Build What Actually Ships</title>
+<meta name="description" content="An archive of real, deployed AI-engineering projects by Kumail Rizvi: live products with live data, not mockups.">
 <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
@@ -666,7 +666,7 @@ body.contactopen #contactModal{ opacity:1; pointer-events:auto; }
     <div id="avatar" aria-hidden="true">KR</div>
     <b>Kumail Rizvi</b>
   </div>
-  <p>This is a working archive, not a gallery. Every screen here is a real product with live data, deployed and running right now — built end to end: backend logic, real APIs, and interfaces people can actually use.</p>
+  <p>This is a working archive, not a gallery. Every screen here is a real product with live data, deployed and running right now, built end to end: backend logic, real APIs, and interfaces people can actually use.</p>
 </div>
 
 <div class="colophon chrome">Project Archive 2026</div>
@@ -718,7 +718,7 @@ body.contactopen #contactModal{ opacity:1; pointer-events:auto; }
       <button type="submit" id="contactSubmit" class="csubmit">Send message</button>
       <p class="cfallback">Prefer email? <a href="mailto:kumailrizvi890@gmail.com">kumailrizvi890@gmail.com</a></p>
     </form>
-    <div id="contactSent" class="csent" hidden>Message received — I&rsquo;ll get back to you at the email you gave, usually within a day.</div>
+    <div id="contactSent" class="csent" hidden>Message received. I&rsquo;ll get back to you at the email you gave, usually within a day.</div>
   </div>
 </div>
 
@@ -740,7 +740,7 @@ body.contactopen #contactModal{ opacity:1; pointer-events:auto; }
     <div class="lit-actions">
       <button id="litDemoBtn" type="button" class="demo-btn">Launch live demo</button>
       <a id="litOpenBtn" href="#" target="_blank" rel="noopener" class="open-btn">Open in new tab ↗</a>
-      <span class="demo-hint">The real, deployed app — not a mockup.</span>
+      <span class="demo-hint">The real, deployed app, not a mockup.</span>
     </div>
   </div>
 </div>
@@ -759,25 +759,37 @@ body.contactopen #contactModal{ opacity:1; pointer-events:auto; }
     opsauto: "https://ops-automation-kumailr.vercel.app",
     pawpass: "https://pawpass-kumailr.vercel.app",
     qmail: "https://qmail-demo-kumailr.vercel.app",
-    fadekings: "https://fade-kings-kumailr.vercel.app"
+    fadekings: "https://fade-kings-kumailr.vercel.app",
+    lahorisite: "https://portfolio-kumailr.vercel.app/demos/lahori-bowls/index.html",
+    lahoriadmin: "https://portfolio-kumailr.vercel.app/demos/lahori-bowls/admin.html",
+    agencytemplate: "https://portfolio-kumailr.vercel.app/demos/agency-template/",
+    internships: "https://portfolio-kumailr.vercel.app/demos/internships-dashboard/index.html",
+    salescrm: "https://portfolio-kumailr.vercel.app/demos/sales-websites-dashboard/index.html",
+    pulsehub: "https://portfolio-kumailr.vercel.app/demos/pulse-command-center/index.html"
   };
   function demoUrlFor(id){ return LIVE_DEMOS[id.split("-")[0]] || null; }
 
   var STILLS = [
-    {id:"tradepro-terminal", title:"TradePro — Live Terminal", place:"Python · Vercel · Yahoo Finance API", note:"A candlestick terminal for BTC-USD with live market data, an 8-factor confluence gate (RSI, MACD, ADX and more), and a real order ticket with ATR-based stops."},
-    {id:"tradepro-agents", title:"TradePro — Confluence Gate", place:"Rules-based strategy engine", note:"One transparent, rules-based agent that only opens a position when at least 7 of 8 independent technical checks agree — no black box, no hidden overrides."},
-    {id:"tradepro-lab", title:"TradePro — What-If Lab", place:"Live indicator readings", note:"Live RSI, MACD, ADX and volume readings for the focus symbol, with a slider showing how many checks would need to flip before a trade triggers."},
-    {id:"opsauto-overview", title:"Ops Automation — Overview", place:"Node · Vercel Cron · Supabase", note:"Four scheduled automations that do genuine work — a live jobs crawl, real HTTP lead checks, an interval-intersection scheduler, and date-math follow-up drafts."},
-    {id:"opsauto-workflows", title:"Ops Automation — Run a Workflow", place:"On-demand triggers", note:"Every “Run now” hits a real serverless function — a live Remotive API crawl, real network checks, or an actual scheduling algorithm, never a canned timer."},
-    {id:"opsauto-activity", title:"Ops Automation — Run Log", place:"Supabase-backed history", note:"Every run, scheduled or triggered, is logged to Supabase with its real duration and output, filterable by workflow."},
-    {id:"opsauto-schedule", title:"Ops Automation — Cron Schedule", place:"Vercel Cron, daily", note:"A Vercel Cron job hits this dashboard's API once a day and runs one randomly-selected workflow, logged distinctly as “scheduled.”"},
-    {id:"pawpass-landing", title:"PawPass — Welcome", place:"Next.js · Supabase · OpenAI", note:"A pet-care coordination platform built for shelter volunteers handing off care between shifts."},
-    {id:"pawpass-list", title:"PawPass — Pet Care Center", place:"Shelter roster", note:"Real pet records pulled from Supabase, each with its own care history and update log."},
-    {id:"pawpass-detail", title:"PawPass — Pet Profile", place:"Care handoff log", note:"Feeding instructions, medical notes, and a timestamped update history so no detail gets lost between volunteers."},
-    {id:"pawpass-assistant", title:"PawPass — AI Care Assistant", place:"RAG chatbot", note:"A retrieval-augmented chatbot answering real pet-care questions, grounded in the shelter's own notes rather than a generic model reply."},
-    {id:"qmail-dashboard", title:"Qmail — Security Dashboard", place:"Privacy-first email client", note:"Scam attempts blocked, unsubscribe requests, and encrypted-message counts, computed from the account's real inbox activity."},
-    {id:"qmail-scam", title:"Qmail — Scam Detection", place:"AI classifier, inline", note:"A real classifier flags phishing attempts inline and explains why — here, calling out urgency language and a request for credentials."},
-    {id:"fadekings-hero", title:"Fade Kings — Book a Chair", place:"Next.js · Supabase booking", note:"A barber shop's booking site — walk-ins and appointments from one live page, built so a local business can actually take bookings online instead of by phone."}
+    {id:"tradepro-terminal", title:"TradePro: Live Terminal", place:"Python · Vercel · Yahoo Finance API", note:"A candlestick terminal for BTC-USD with live market data, an 8-factor confluence gate (RSI, MACD, ADX and more), and a real order ticket with ATR-based stops."},
+    {id:"tradepro-agents", title:"TradePro: Confluence Gate", place:"Rules-based strategy engine", note:"One transparent, rules-based agent that only opens a position when at least 7 of 8 independent technical checks agree, with no black box and no hidden overrides."},
+    {id:"tradepro-lab", title:"TradePro: What-If Lab", place:"Live indicator readings", note:"Live RSI, MACD, ADX and volume readings for the focus symbol, with a slider showing how many checks would need to flip before a trade triggers."},
+    {id:"opsauto-overview", title:"Ops Automation: Overview", place:"Node · Vercel Cron · Supabase", note:"Four scheduled automations that do genuine work: a live jobs crawl, real HTTP lead checks, an interval-intersection scheduler, and date-math follow-up drafts."},
+    {id:"opsauto-workflows", title:"Ops Automation: Run a Workflow", place:"On-demand triggers", note:"Every “Run now” hits a real serverless function: a live Remotive API crawl, real network checks, or an actual scheduling algorithm, never a canned timer."},
+    {id:"opsauto-activity", title:"Ops Automation: Run Log", place:"Supabase-backed history", note:"Every run, scheduled or triggered, is logged to Supabase with its real duration and output, filterable by workflow."},
+    {id:"opsauto-schedule", title:"Ops Automation: Cron Schedule", place:"Vercel Cron, daily", note:"A Vercel Cron job hits this dashboard's API once a day and runs one randomly-selected workflow, logged distinctly as “scheduled.”"},
+    {id:"pawpass-landing", title:"PawPass: Welcome", place:"Next.js · Supabase · OpenAI", note:"A pet-care coordination platform built for shelter volunteers handing off care between shifts."},
+    {id:"pawpass-list", title:"PawPass: Pet Care Center", place:"Shelter roster", note:"Real pet records pulled from Supabase, each with its own care history and update log."},
+    {id:"pawpass-detail", title:"PawPass: Pet Profile", place:"Care handoff log", note:"Feeding instructions, medical notes, and a timestamped update history so no detail gets lost between volunteers."},
+    {id:"pawpass-assistant", title:"PawPass: AI Care Assistant", place:"RAG chatbot", note:"A retrieval-augmented chatbot answering real pet-care questions, grounded in the shelter's own notes rather than a generic model reply."},
+    {id:"qmail-dashboard", title:"Qmail: Security Dashboard", place:"Privacy-first email client", note:"Scam attempts blocked, unsubscribe requests, and encrypted-message counts, computed from the account's real inbox activity."},
+    {id:"qmail-scam", title:"Qmail: Scam Detection", place:"AI classifier, inline", note:"A real classifier flags phishing attempts inline and explains why, here calling out urgency language and a request for credentials."},
+    {id:"fadekings-hero", title:"Fade Kings: Book a Chair", place:"Next.js · Supabase booking", note:"A barber shop's booking site: walk-ins and appointments from one live page, built so a local business can actually take bookings online instead of by phone."},
+    {id:"lahorisite-hero", title:"Lahori Bowls: Build Your Bowl", place:"Next.js · Supabase · Real-time build", note:"A real ordering site for a Lahori street-food concept: pick a base, protein, toppings and sauce and watch the bowl assemble live, backed by a real Supabase menu and orders backend."},
+    {id:"lahoriadmin-login", title:"Lahori Bowls: Staff Dashboard", place:"Supabase Auth, gated login", note:"The real, Auth-gated dashboard staff use to run the kitchen side, covering orders, menu, and staff accounts behind a genuine sign-in."},
+    {id:"agencytemplate-landing", title:"Agency Template: Client Site Base", place:"Vite · React · Tailwind", note:"The reusable site template real client projects get built from, with a full home-services layout, booking call-to-action, and reviews ready to swap in a brand's own content."},
+    {id:"internships-review", title:"Internship Command: Review Queue", place:"Indeed · ZipRecruiter APIs", note:"A swipe-to-approve triage tool over real, currently-posted internship and new-grad listings, tracking a daily application goal against a live funnel."},
+    {id:"salescrm-pipeline", title:"Agency CRM: Lead Pipeline", place:"Notion-backed CRM logic", note:"The same schema and queries as the live Notion CRM I run for outreach, shown here with sample companies so client data stays private."},
+    {id:"pulsehub-status", title:"Pulse Command Center: Status Hub", place:"Cross-app status overview", note:"A status hub that greets you and rolls up pipeline and pipeline value across the other tools, pointing to each workspace instead of duplicating its data."}
   ];
 
   var N = STILLS.length;
