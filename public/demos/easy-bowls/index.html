@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Lahori Bowls — Build your bowl, floating and free</title>
-<meta name="description" content="Bold Lahori street-food flavors. Build your bowl live: pick your base, protein, toppings and sauce and watch it come together in real time. 100% Zabiha Halal, Capitol Hill, Seattle. Order online for pickup.">
+<title>Easy Bowls — Build your bowl, floating and free</title>
+<meta name="description" content="Bold South Asian street-food flavors. Build your bowl live: pick your base, protein, toppings and sauce and watch it come together in real time. 100% Zabiha Halal, Seattle, WA. Order online for pickup.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
@@ -16,15 +16,15 @@
   // One shared Supabase client for the whole page (builder pricing/orders +
   // the account/rewards module below), so a sign-in from the account modal
   // is immediately visible to the order button without a page reload.
-  window.LAHORI_SB = (function(){
+  window.EASYBOWLS_SB = (function(){
     try {
-      if (window.supabase && window.LAHORI_SUPABASE_URL && window.LAHORI_SUPABASE_KEY) {
-        return window.supabase.createClient(window.LAHORI_SUPABASE_URL, window.LAHORI_SUPABASE_KEY);
+      if (window.supabase && window.EASYBOWLS_SUPABASE_URL && window.EASYBOWLS_SUPABASE_KEY) {
+        return window.supabase.createClient(window.EASYBOWLS_SUPABASE_URL, window.EASYBOWLS_SUPABASE_KEY);
       }
     } catch (e) { console.warn('Supabase client unavailable', e); }
     return null;
   })();
-  window.LAHORI_ACCOUNT = { session: null, profile: null };
+  window.EASYBOWLS_ACCOUNT = { session: null, profile: null };
 </script>
 <style>
   :root{
@@ -439,7 +439,7 @@
   <div class="wrap">
     <a href="#top" class="brand">
       <span class="brand-mark"><i class="ph-bold ph-bowl-food"></i></span>
-      <span class="brand-word">Lahori Bowls<span class="brand-sub">Capitol Hill, Seattle</span></span>
+      <span class="brand-word">Easy Bowls<span class="brand-sub">Seattle, WA</span></span>
     </a>
     <div class="nav-links">
       <a href="#builder">Build your bowl</a>
@@ -448,7 +448,7 @@
       <a href="#visit">Visit</a>
     </div>
     <div class="nav-right">
-      <a class="nav-call" href="tel:+12067998578" aria-label="Call Lahori Bowls, (206) 799-8578" title="Call us: (206) 799-8578"><i class="ph-bold ph-phone"></i><span class="nav-call-label">(206) 799-8578</span></a>
+      <a class="nav-call" href="tel:+12065550142" aria-label="Call Easy Bowls, (206) 555-0142" title="Call us: (206) 555-0142"><i class="ph-bold ph-phone"></i><span class="nav-call-label">(206) 555-0142</span></a>
       <button class="nav-call" id="navAccountBtn" aria-label="Sign in or view your account" title="Your account"><i class="ph-bold ph-user-circle"></i><span class="nav-call-label" id="navAccountLabel">Sign in</span></button>
       <a class="nav-cta" href="#builder">Order online</a>
       <button class="nav-burger" id="navBurger" aria-label="Open menu"><i class="ph ph-list"></i></button>
@@ -459,14 +459,14 @@
     <a href="#menu">Menu</a>
     <a href="#catering">Catering</a>
     <a href="#visit">Visit</a>
-    <a href="tel:+12067998578"><i class="ph-bold ph-phone"></i>&nbsp; Call: (206) 799-8578</a>
+    <a href="tel:+12065550142"><i class="ph-bold ph-phone"></i>&nbsp; Call: (206) 555-0142</a>
     <a href="#" id="navAccountBtnMobile"><i class="ph-bold ph-user-circle"></i>&nbsp; <span id="navAccountLabelMobile">Sign in / My rewards</span></a>
   </div>
 </nav>
 
 <!-- ================= ACCOUNT / REWARDS MODAL ================= -->
 <div class="acct-overlay" id="acctOverlay">
-  <div class="acct-card" role="dialog" aria-modal="true" aria-label="Your Lahori Bowls account">
+  <div class="acct-card" role="dialog" aria-modal="true" aria-label="Your Easy Bowls account">
     <button class="acct-close" id="acctCloseBtn" aria-label="Close">&times;</button>
 
     <div id="acctSignedOut">
@@ -531,7 +531,7 @@
         <p>Pick a base, a protein, toppings and sauce — watch each one drop into the bowl live. Pakistani street food, fast casual, ready in minutes on 12th Ave.</p>
         <div class="hero-cta-row">
           <a class="btn btn-primary" href="#builder"><i class="ph-bold ph-hand-swipe-right"></i>Build your bowl</a>
-          <a class="btn btn-secondary" href="tel:+12067998578"><i class="ph-bold ph-phone"></i>Call: (206) 799-8578</a>
+          <a class="btn btn-secondary" href="tel:+12065550142"><i class="ph-bold ph-phone"></i>Call: (206) 555-0142</a>
         </div>
         <div class="hero-stat-row">
           <div class="hero-stat"><span class="n">$12.99+</span><span class="l">Starting price</span></div>
@@ -546,7 +546,7 @@
     <div class="wrap">
       <div class="trust-item reveal"><i class="ph-bold ph-seal-check"></i>100% Zabiha Halal</div>
       <div class="trust-item reveal"><i class="ph-bold ph-clock"></i>Ready in minutes</div>
-      <div class="trust-item reveal"><i class="ph-bold ph-map-pin"></i>Capitol Hill, Seattle</div>
+      <div class="trust-item reveal"><i class="ph-bold ph-map-pin"></i>Seattle, WA</div>
       <div class="trust-item reveal"><i class="ph-bold ph-users-three"></i>Catering available</div>
     </div>
   </div>
@@ -591,7 +591,7 @@
             <input type="email" id="guestEmail" placeholder="Email (for order confirmation + ready alert)" autocomplete="email">
           </div>
           <button class="btn btn-primary" id="orderBtn"><i class="ph-bold ph-paper-plane-tilt"></i>Place order</button>
-          <a class="btn btn-secondary" id="cashAppBtn" href="https://cash.app/$lahoribowls/pickup" target="_blank" rel="noopener"><i class="ph ph-bag"></i>Pay with Cash App instead</a>
+          <a class="btn btn-secondary" id="cashAppBtn" href="https://cash.app/$easybowls/pickup" target="_blank" rel="noopener"><i class="ph ph-bag"></i>Pay with Cash App instead</a>
           <div class="toast" id="orderToast">Order sent to the kitchen. Want to pay ahead? Use Cash App below, or just pay when you pick up.</div>
         </div>
 
@@ -622,7 +622,7 @@
       </div>
       <div class="menu-bento">
         <div class="menu-tile big reveal">
-          <img src="assets/ig-salmon-bowl.jpg" alt="Real Lahori Bowls salmon bowl, from @lahori_bowls on Instagram">
+          <img src="assets/ig-salmon-bowl.jpg" alt="Real Easy Bowls salmon bowl, from @easybowls_wa on Instagram">
           <div class="tint"></div>
           <div class="cap"><strong>Glazed salmon</strong><span>Seared and finished with house glaze, straight from the counter</span></div>
         </div>
@@ -649,7 +649,7 @@
         <div class="menu-tile duo saffron reveal" style="background:linear-gradient(150deg, var(--chili-dark), var(--saffron-dark));">
           <i class="ph-bold ph-bowl-steam"></i>
           <strong>Chicken karahi</strong>
-          <span>Lahori style, bone-in flavor</span>
+          <span>House style, bone-in flavor</span>
         </div>
       </div>
     </div>
@@ -693,7 +693,7 @@
                 <div class="field-error" id="errEmail">Enter a valid email.</div>
               </div>
               <button type="submit" class="btn btn-primary" style="width:100%;">Request catering quote</button>
-              <div class="catering-confirm" id="cateringConfirm">Thanks, that's ready to send. We opened an email to lahoribowls.wa@gmail.com with your details, just hit send.</div>
+              <div class="catering-confirm" id="cateringConfirm">Thanks, that's ready to send. We opened an email to easybowls.wa@gmail.com with your details, just hit send.</div>
             </form>
           </div>
         </div>
@@ -707,7 +707,7 @@
           <span class="eyebrow"><i class="ph-bold ph-camera"></i>Behind the bowl</span>
           <h2>The build, up close</h2>
         </div>
-        <a class="btn btn-secondary" href="https://www.instagram.com/lahori_bowls/" target="_blank" rel="noopener"><i class="ph-bold ph-instagram-logo"></i>@lahori_bowls</a>
+        <a class="btn btn-secondary" href="https://www.instagram.com/easybowls_wa/" target="_blank" rel="noopener"><i class="ph-bold ph-instagram-logo"></i>@easybowls_wa</a>
       </div>
       <div class="gallery-grid">
         <div class="gallery-tile reveal"><img src="assets/ingredients/rice_base.png" alt="Saffron basmati rice"></div>
@@ -732,16 +732,16 @@
           </div>
           <div class="visit-row">
             <i class="ph-bold ph-phone"></i>
-            <div><strong>Phone</strong><span><a href="tel:+12067998578">(206) 799-8578</a></span></div>
+            <div><strong>Phone</strong><span><a href="tel:+12065550142">(206) 555-0142</a></span></div>
           </div>
           <div class="visit-row">
             <i class="ph-bold ph-envelope-simple"></i>
-            <div><strong>Email</strong><span>lahoribowls.wa@gmail.com</span></div>
+            <div><strong>Email</strong><span>easybowls.wa@gmail.com</span></div>
           </div>
           <div class="visit-actions">
             <a class="btn btn-primary" href="https://www.google.com/maps/search/?api=1&query=104+12th+Ave+Suite+B+Seattle+WA+98122" target="_blank" rel="noopener">Get directions</a>
             <a class="btn btn-secondary" href="#builder">Order online</a>
-            <a class="btn btn-secondary" href="tel:+12067998578"><i class="ph-bold ph-phone"></i>Call us</a>
+            <a class="btn btn-secondary" href="tel:+12065550142"><i class="ph-bold ph-phone"></i>Call us</a>
           </div>
           <table class="hours-table" style="margin-top:24px;">
             <tr><td>Sunday</td><td>12:00 – 11:00 PM</td></tr>
@@ -754,7 +754,7 @@
           </table>
         </div>
         <div class="map-embed reveal">
-          <iframe loading="lazy" src="https://maps.google.com/maps?q=104%2012th%20Ave%20Suite%20B%20Seattle%20WA%2098122&t=&z=15&ie=UTF8&iwloc=&output=embed" title="Map to Lahori Bowls, 104 12th Ave Suite B, Seattle"></iframe>
+          <iframe loading="lazy" src="https://maps.google.com/maps?q=210%20Pine%20St%20Suite%204%20Seattle%20WA%2098101&t=&z=15&ie=UTF8&iwloc=&output=embed" title="Map to Easy Bowls, 210 Pine St Suite 4, Seattle"></iframe>
         </div>
       </div>
     </div>
@@ -767,14 +767,14 @@
     <div class="footer-grid">
       <a href="#top" class="brand">
         <span class="brand-mark"><i class="ph-bold ph-bowl-food"></i></span>
-        Lahori Bowls
+        Easy Bowls
       </a>
       <div class="footer-links">
         <a href="#builder">Build your bowl</a>
         <a href="#menu">Menu</a>
         <a href="#catering">Catering</a>
         <a href="#visit">Visit</a>
-        <a href="https://www.instagram.com/lahori_bowls/" target="_blank" rel="noopener">Instagram</a>
+        <a href="https://www.instagram.com/easybowls_wa/" target="_blank" rel="noopener">Instagram</a>
       </div>
     </div>
     <div class="footer-bottom">
@@ -864,7 +864,7 @@
           {id:'tamarind', label:'Tamarind', img:ASSET+'sauce_tamarind.png'},
           {id:'white', label:'White sauce', img:ASSET+'sauce_white_l.png'},
           {id:'harissa', label:'Harissa', img:ASSET+'sauce_harissa.png'},
-          {id:'lahori', label:'Lahori sauce', img:ASSET+'sauce_red.png'}
+          {id:'signature', label:'Signature sauce', img:ASSET+'sauce_red.png'}
         ]
       }
     ];
@@ -886,7 +886,7 @@
       return arr.reduce(function(sum, id){ return sum + addonUnitPrice(id) * (qtyObj[id] || 1); }, 0);
     }
 
-    var supabaseClient = window.LAHORI_SB || null;
+    var supabaseClient = window.EASYBOWLS_SB || null;
 
     function loadMenuPricing(){
       if (!supabaseClient) return;
@@ -1273,16 +1273,16 @@
     }
 
     function notifyOrderEmail(orderId, kind){
-      if (!orderId || !window.LAHORI_SUPABASE_URL || !window.LAHORI_SUPABASE_KEY) return;
-      var acct = window.LAHORI_ACCOUNT || {};
-      var token = (acct.session && acct.session.access_token) || window.LAHORI_SUPABASE_KEY;
-      fetch(window.LAHORI_SUPABASE_URL + '/functions/v1/send-order-email', {
+      if (!orderId || !window.EASYBOWLS_SUPABASE_URL || !window.EASYBOWLS_SUPABASE_KEY) return;
+      var acct = window.EASYBOWLS_ACCOUNT || {};
+      var token = (acct.session && acct.session.access_token) || window.EASYBOWLS_SUPABASE_KEY;
+      fetch(window.EASYBOWLS_SUPABASE_URL + '/functions/v1/send-order-email', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token, 'apikey': window.LAHORI_SUPABASE_KEY },
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token, 'apikey': window.EASYBOWLS_SUPABASE_KEY },
         body: JSON.stringify({ orderId: orderId, kind: kind })
       }).catch(function(err){ console.warn('Order email notify failed (non-fatal)', err); });
     }
-    window.LAHORI_NOTIFY_ORDER_EMAIL = notifyOrderEmail;
+    window.EASYBOWLS_NOTIFY_ORDER_EMAIL = notifyOrderEmail;
 
     document.getElementById('orderBtn').addEventListener('click', function(){
       var snap = snapshotOrder();
@@ -1291,7 +1291,7 @@
       var guestEmail = (document.getElementById('guestEmail').value || '').trim();
 
       var lines = [
-        'New Lahori Bowls order:',
+        'New Easy Bowls order:',
         guestName ? ('Name: ' + guestName) : 'Name: (not given)',
         guestPhone ? ('Phone: ' + guestPhone) : 'Phone: (not given)',
         'Format: ' + snap.formatItem.label + ' x' + state.qty,
@@ -1304,7 +1304,7 @@
       var body = lines.join('\n');
       var subject = encodeURIComponent('New order — ' + snap.formatItem.label + ' x' + state.qty);
 
-      var acct = window.LAHORI_ACCOUNT || {};
+      var acct = window.EASYBOWLS_ACCOUNT || {};
       var customerId = acct.session ? acct.session.user.id : null;
       // Generate the id client-side (rather than reading it back after insert)
       // because guest orders have no auth.uid() to satisfy the RLS SELECT
@@ -1328,7 +1328,7 @@
         }).catch(function(err){ console.warn('Order insert failed, falling back to email only', err); });
       }
 
-      window.location.href = 'mailto:lahoribowls.wa@gmail.com?subject=' + subject + '&body=' + encodeURIComponent(body);
+      window.location.href = 'mailto:easybowls.wa@gmail.com?subject=' + subject + '&body=' + encodeURIComponent(body);
       document.getElementById('orderToast').classList.add('show');
     });
 
@@ -1337,7 +1337,7 @@
 
   /* ---------- account / points / rewards ---------- */
   (function(){
-    var supabaseClient = window.LAHORI_SB || null;
+    var supabaseClient = window.EASYBOWLS_SB || null;
     var overlay = document.getElementById('acctOverlay');
     var rewardsCache = [];
 
@@ -1401,10 +1401,10 @@
 
     document.getElementById('acctRewardsList').addEventListener('click', async function(e){
       var btn = e.target.closest('button[data-redeem]');
-      if (!btn || !supabaseClient || !window.LAHORI_ACCOUNT.session) return;
+      if (!btn || !supabaseClient || !window.EASYBOWLS_ACCOUNT.session) return;
       var rewardId = btn.dataset.redeem;
       var cost = parseInt(btn.dataset.cost, 10) || 0;
-      var profile = window.LAHORI_ACCOUNT.profile;
+      var profile = window.EASYBOWLS_ACCOUNT.profile;
       var msgEl = document.getElementById('acctRedeemMsg');
       if (!profile || (profile.points_balance || 0) < cost) { msgEl.className = 'acct-msg err'; msgEl.textContent = 'Not enough points for that yet.'; return; }
       btn.disabled = true;
@@ -1413,7 +1413,7 @@
       if (upd.error) { msgEl.className = 'acct-msg err'; msgEl.textContent = 'Could not redeem — try again.'; btn.disabled = false; return; }
       await supabaseClient.from('points_ledger').insert({ customer_id: profile.id, delta: -cost, reason: 'redeem' });
       profile.points_balance = newBalance;
-      window.LAHORI_ACCOUNT.profile = profile;
+      window.EASYBOWLS_ACCOUNT.profile = profile;
       msgEl.className = 'acct-msg ok';
       msgEl.textContent = 'Redeemed! Show this screen to staff when you order or pick up.';
       updateSignedInUI(profile);
@@ -1422,9 +1422,9 @@
     function updateNavLabel(){
       var label = document.getElementById('navAccountLabel');
       var labelMobile = document.getElementById('navAccountLabelMobile');
-      if (window.LAHORI_ACCOUNT.profile) {
-        var first = (window.LAHORI_ACCOUNT.profile.full_name || 'Account').split(' ')[0];
-        var pts = window.LAHORI_ACCOUNT.profile.points_balance || 0;
+      if (window.EASYBOWLS_ACCOUNT.profile) {
+        var first = (window.EASYBOWLS_ACCOUNT.profile.full_name || 'Account').split(' ')[0];
+        var pts = window.EASYBOWLS_ACCOUNT.profile.points_balance || 0;
         label.textContent = first + ' · ' + pts + ' pts';
         if (labelMobile) labelMobile.textContent = first + ' · ' + pts + ' pts';
       } else {
@@ -1447,16 +1447,16 @@
     }
 
     async function handleAccountSession(session){
-      window.LAHORI_ACCOUNT.session = session || null;
+      window.EASYBOWLS_ACCOUNT.session = session || null;
       if (!session) {
-        window.LAHORI_ACCOUNT.profile = null;
+        window.EASYBOWLS_ACCOUNT.profile = null;
         updateNavLabel();
         document.getElementById('acctSignedOut').classList.remove('hidden');
         document.getElementById('acctSignedIn').classList.add('hidden');
         return;
       }
       var profile = await loadOwnProfile(session.user.id);
-      window.LAHORI_ACCOUNT.profile = profile;
+      window.EASYBOWLS_ACCOUNT.profile = profile;
       if (!profile) return;
       document.getElementById('acctSignedOut').classList.add('hidden');
       document.getElementById('acctSignedIn').classList.remove('hidden');
@@ -1545,7 +1545,7 @@
         'Guest count: ' + count.value + '\n' +
         'Email: ' + email.value.trim()
       );
-      window.location.href = 'mailto:lahoribowls.wa@gmail.com?subject=' + subject + '&body=' + body;
+      window.location.href = 'mailto:easybowls.wa@gmail.com?subject=' + subject + '&body=' + body;
       document.getElementById('cateringConfirm').classList.add('show');
     });
   })();

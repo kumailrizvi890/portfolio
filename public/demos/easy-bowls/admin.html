@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Lahori Bowls — Team Dashboard</title>
+<title>Easy Bowls — Team Dashboard</title>
 <meta name="robots" content="noindex, nofollow">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -131,9 +131,9 @@
 <div id="loginView" class="auth-shell">
   <div class="card auth-card">
     <div class="auth-brand">
-      <div class="mark">LB</div>
+      <div class="mark">EB</div>
       <div>
-        <div style="font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:17px;">Lahori Bowls</div>
+        <div style="font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:17px;">Easy Bowls</div>
         <div style="font-size:11.5px; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.04em;">Team Dashboard</div>
       </div>
     </div>
@@ -168,7 +168,7 @@
 <div id="deniedView" class="auth-shell hidden">
   <div class="card auth-card" style="text-align:center;">
     <h2 style="margin-bottom:10px;" id="deniedTitle">This account isn't staff</h2>
-    <p style="color:var(--ink-soft); font-size:13.5px; margin-bottom:18px;" id="deniedMsg">Your login worked, but this account doesn't have employee or owner access on Lahori Bowls. Ask the owner to add you from the Staff tab.</p>
+    <p style="color:var(--ink-soft); font-size:13.5px; margin-bottom:18px;" id="deniedMsg">Your login worked, but this account doesn't have employee or owner access on Easy Bowls. Ask the owner to add you from the Staff tab.</p>
     <button class="btn btn-teal hidden" id="claimOwnerBtn" style="margin-bottom:10px;">Make this account the owner</button>
     <div><button class="btn btn-ghost" id="deniedSignOutBtn">Sign out</button></div>
   </div>
@@ -178,7 +178,7 @@
 <div id="dashboard" class="hidden">
   <div class="topbar">
     <div class="wrap">
-      <div class="topbar-brand"><div class="mark">LB</div> Lahori Bowls · Team</div>
+      <div class="topbar-brand"><div class="mark">EB</div> Easy Bowls · Team</div>
       <div class="topbar-right">
         <div class="who">Signed in as <b id="whoName">—</b><br><span id="whoRole"></span></div>
         <button class="btn btn-ghost btn-sm" id="refreshBtn"><i class="ph ph-arrows-clockwise"></i> Refresh</button>
@@ -292,8 +292,8 @@
 
   var supabaseClient = null;
   try {
-    if (window.supabase && window.LAHORI_SUPABASE_URL && window.LAHORI_SUPABASE_KEY) {
-      supabaseClient = window.supabase.createClient(window.LAHORI_SUPABASE_URL, window.LAHORI_SUPABASE_KEY);
+    if (window.supabase && window.EASYBOWLS_SUPABASE_URL && window.EASYBOWLS_SUPABASE_KEY) {
+      supabaseClient = window.supabase.createClient(window.EASYBOWLS_SUPABASE_URL, window.EASYBOWLS_SUPABASE_KEY);
     }
   } catch (e) { console.warn('Supabase client init failed', e); }
 
@@ -353,8 +353,8 @@
       $('#claimOwnerBtn').classList.toggle('hidden', owned);
       $('#deniedTitle').textContent = owned ? "This account isn't staff" : 'No owner account yet';
       $('#deniedMsg').textContent = owned
-        ? "Your login worked, but this account doesn't have employee or owner access on Lahori Bowls. Ask the owner to add you from the Staff tab."
-        : 'Lahori Bowls has no owner account set up yet. Since you were the first to sign in, you can claim the owner role for this account.';
+        ? "Your login worked, but this account doesn't have employee or owner access on Easy Bowls. Ask the owner to add you from the Staff tab."
+        : 'Easy Bowls has no owner account set up yet. Since you were the first to sign in, you can claim the owner role for this account.';
       showView('denied');
       return;
     }
@@ -429,7 +429,7 @@
     btn.disabled = false;
     if (res.error) { toast('Could not claim owner: ' + res.error.message); return; }
     hasOwnerCache = null;
-    toast('You are now the owner of Lahori Bowls.');
+    toast('You are now the owner of Easy Bowls.');
     handleSession(state.session);
   });
 
@@ -542,11 +542,11 @@
   }
 
   function notifyOrderEmail(orderId, kind){
-    if (!orderId || !window.LAHORI_SUPABASE_URL || !window.LAHORI_SUPABASE_KEY) return;
-    var token = (state.session && state.session.access_token) || window.LAHORI_SUPABASE_KEY;
-    fetch(window.LAHORI_SUPABASE_URL + '/functions/v1/send-order-email', {
+    if (!orderId || !window.EASYBOWLS_SUPABASE_URL || !window.EASYBOWLS_SUPABASE_KEY) return;
+    var token = (state.session && state.session.access_token) || window.EASYBOWLS_SUPABASE_KEY;
+    fetch(window.EASYBOWLS_SUPABASE_URL + '/functions/v1/send-order-email', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token, 'apikey': window.LAHORI_SUPABASE_KEY },
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token, 'apikey': window.EASYBOWLS_SUPABASE_KEY },
       body: JSON.stringify({ orderId: orderId, kind: kind })
     }).catch(function(err){ console.warn('Order email notify failed (non-fatal)', err); });
   }
@@ -694,12 +694,12 @@
       role: $('#inviteRole').value
     };
     try {
-      var resp = await fetch(window.LAHORI_SUPABASE_URL + '/functions/v1/create-staff', {
+      var resp = await fetch(window.EASYBOWLS_SUPABASE_URL + '/functions/v1/create-staff', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer ' + state.session.access_token,
-          'apikey': window.LAHORI_SUPABASE_KEY
+          'apikey': window.EASYBOWLS_SUPABASE_KEY
         },
         body: JSON.stringify(payload)
       });
