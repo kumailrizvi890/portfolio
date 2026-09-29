@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Kumail Rizvi: I Build What Actually Ships</title>
-<meta name="description" content="An archive of real, deployed AI-engineering projects by Kumail Rizvi: live products with live data, not mockups.">
+<title>Kumail Rizvi: Projects That Serve Purpose</title>
+<meta name="description" content="A collection of real, deployed AI-engineering projects by Kumail Rizvi: live products with live data, not mockups.">
 <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
@@ -12,7 +12,7 @@
 :root{
   --serif:"Playfair Display","Times New Roman",serif;
   --sans:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
-  --bg:#000;
+  --bg:radial-gradient(ellipse 72% 66% at 50% 56%, #0d1c34 0%, #070c16 46%, #000000 82%);
   --ink:#f4f2ef;
   --dim:#8c8783;
   --line:rgba(244,242,239,.28);
@@ -39,9 +39,9 @@ body{
   font-weight:300;
   -webkit-font-smoothing:antialiased;
   -moz-osx-font-smoothing:grayscale;
-  overflow-x:hidden;
-  min-height:100vh;
-  min-height:100dvh;
+  overflow:hidden;
+  height:100vh;
+  height:100dvh;
   overscroll-behavior-y:none;
 }
 body.locked{ overflow:hidden; height:100vh; height:100dvh; }
@@ -53,9 +53,6 @@ button{
   cursor:pointer; -webkit-tap-highlight-color:transparent; touch-action:manipulation;
 }
 a{ -webkit-tap-highlight-color:transparent; }
-
-/* ---------- scroll track (16vh of real dolly distance) ---------- */
-#scrolltrack{ position:relative; height:116vh; pointer-events:none; }
 
 /* ---------- stage / world / orb / headline (verbatim block) ---------- */
 #stage{
@@ -243,14 +240,6 @@ body.menuopen .bars i:nth-child(2){ transform:translateY(0) rotate(-45deg); }
   max-width:min(320px, 46vw);
 }
 .bio .who{ display:flex; align-items:center; gap:14px; margin-bottom:14px; }
-#avatar{
-  width:52px; height:52px; border-radius:3px; flex:none;
-  display:flex; align-items:center; justify-content:center;
-  background:rgba(244,242,239,.08);
-  border:1px solid rgba(244,242,239,.22);
-  font-family:var(--serif); font-size:17px; letter-spacing:.02em;
-  color:var(--ink);
-}
 .bio b{ font-family:var(--serif); font-weight:400; font-size:19px; letter-spacing:.01em; }
 .bio p{ font-size:12.5px; line-height:1.62; color:rgba(244,242,239,.72); margin:0; }
 body.deep .bio.chrome, body.gridview .bio.chrome, body.lit .bio.chrome{
@@ -278,7 +267,7 @@ body.gridview .colophon.chrome, body.lit .colophon.chrome{ opacity:0; pointer-ev
   width:44px; height:44px; padding:5px;
   display:grid; grid-template-columns:1fr 1fr; grid-template-rows:1fr 1fr; gap:4px;
   opacity:0; transform:translateY(8px); pointer-events:none;
-  transition:opacity .4s ease, transform .4s ease;
+  transition:opacity .6s ease 1.1s, transform .6s ease 1.1s;
 }
 body.deep .gridbtn, body.gridview .gridbtn{ opacity:1; transform:none; pointer-events:auto; }
 .gridbtn b{ display:block; background:var(--ink); border-radius:2px; transition:background .3s ease, transform .3s ease; }
@@ -293,8 +282,8 @@ body.gridview .gridbtn b:nth-child(4){ transform:translate(-3px,-3px); }
   transform:translateX(-50%);
   z-index:54;
   display:flex; align-items:center; gap:10px;
-  font-size:10px; text-transform:uppercase; letter-spacing:.24em;
-  color:rgba(244,242,239,.42);
+  font-size:13px; text-transform:uppercase; letter-spacing:.22em;
+  color:rgba(244,242,239,.5);
   white-space:nowrap;
 }
 .cue s{
@@ -651,7 +640,6 @@ body.contactopen #contactModal{ opacity:1; pointer-events:auto; }
   <h1 id="headline"><span class="inner"></span></h1>
 </div>
 
-<div id="scrolltrack"></div>
 
 <header class="chrome">
   <a href="#" class="wordmark" id="wordmark" aria-label="Kumail Rizvi">Kumail<em>Rizvi</em></a>
@@ -663,13 +651,12 @@ body.contactopen #contactModal{ opacity:1; pointer-events:auto; }
 
 <div class="bio chrome">
   <div class="who">
-    <div id="avatar" aria-hidden="true">KR</div>
     <b>Kumail Rizvi</b>
   </div>
   <p>This is a working archive, not a gallery. Every screen here is a real product with live data, deployed and running right now, built end to end: backend logic, real APIs, and interfaces people can actually use.</p>
 </div>
 
-<div class="colophon chrome">Project Archive 2026</div>
+<div class="colophon chrome">Projects 2026</div>
 
 <button id="gridBtn" class="gridbtn chrome" type="button" aria-label="Toggle grid view">
   <b></b><b></b><b></b><b></b>
@@ -686,7 +673,7 @@ body.contactopen #contactModal{ opacity:1; pointer-events:auto; }
 
 <div id="menu">
   <nav>
-    <a href="#" data-grid>The Archive</a>
+    <a href="#" data-grid>Projects</a>
     <a href="/resume-kumail-rizvi.pdf" target="_blank" rel="noopener">Resume</a>
     <a href="https://github.com/kumailrizvi890" target="_blank" rel="noopener">GitHub</a>
     <a href="https://linkedin.com/in/syedkumailrizvi" target="_blank" rel="noopener">LinkedIn</a>
@@ -842,7 +829,7 @@ body.contactopen #contactModal{ opacity:1; pointer-events:auto; }
 
   /* ---------- headline words ---------- */
   (function buildHeadline(){
-    var words = "I Build What Actually Ships".split(" ");
+    var words = "Projects that serve purpose".split(" ");
     words.forEach(function(w, i){
       var span = document.createElement("span");
       span.style.setProperty("--i", i);
@@ -870,13 +857,17 @@ body.contactopen #contactModal{ opacity:1; pointer-events:auto; }
 
   /* ---------- build flat grid ---------- */
   (function buildGrid(){
+    var seenProjects = {};
     cardsData.forEach(function(c){
+      var project = c.title.indexOf(":") >= 0 ? c.title.slice(0, c.title.indexOf(":")) : c.title;
+      if (seenProjects[project]){ return; }
+      seenProjects[project] = true;
       var figure = document.createElement("figure");
       figure.dataset.idx = c.idx;
       var img = document.createElement("img");
-      img.alt = c.title;
+      img.alt = project;
       var cap = document.createElement("figcaption");
-      cap.textContent = c.title;
+      cap.textContent = project;
       figure.appendChild(img);
       figure.appendChild(cap);
       gridRows.appendChild(figure);
@@ -937,6 +928,7 @@ body.contactopen #contactModal{ opacity:1; pointer-events:auto; }
   /* ---------- camera loop ---------- */
   var spin = 0, tilt = -4, camZ = 0;
   var dragX = 0, dragY = 0, velX = 0, velY = 0;
+  var touched = false, deepness = 0;
   var pitchLimit = 32;
   var focused = -1;
   var lastDim = {}, lastFade = {};
@@ -963,19 +955,22 @@ body.contactopen #contactModal{ opacity:1; pointer-events:auto; }
       dragY = clamp(dragY, minDragY, maxDragY);
     }
 
-    var p = clamp(window.scrollY / (window.innerHeight * 0.05), 0, 1);
-    var camZTarget = p * Math.min(64, R * 0.12);
+    var deepTarget = touched ? 1 : 0;
+    deepness += (deepTarget - deepness) * 0.045;
+    if (deepness < 0.0005){ deepness = 0; }
+
+    var camZTarget = deepness * Math.min(64, R * 0.12);
     camZ += (camZTarget - camZ) * 0.075;
 
     var sx = tilt + dragY, sy = spin + dragX;
 
     world.style.transform = "translateZ(" + camZ + "px) rotateY(" + sy + "deg) rotateX(" + sx + "deg)";
     headline.style.transform = "translateZ(" + (camZ + R * 0.62) + "px)";
-    headline.style.opacity = String(Math.max(0, 1 - p * 0.55));
+    headline.style.opacity = String(Math.max(0, 1 - deepness));
 
-    body.classList.toggle("deep", p >= 0.999);
+    body.classList.toggle("deep", deepness >= 0.99);
 
-    var shade = 1 - Math.min(1, p * 1.6);
+    var shade = 1 - Math.min(1, deepness * 1.6);
     var near = PERSP * 0.66;
     var lit = isLit();
 
@@ -1004,12 +999,6 @@ body.contactopen #contactModal{ opacity:1; pointer-events:auto; }
   }
 
   function tick(){ frame(); requestAnimationFrame(tick); }
-
-  /* ---------- scroll clamp ---------- */
-  window.addEventListener("scroll", function(){
-    var max = window.innerHeight * 0.16;
-    if (window.scrollY > max){ window.scrollTo(0, max); }
-  }, { passive: true });
 
   /* ---------- drag / pointer rotation ---------- */
   var pointerId = null, dragMode = null, downCardIdx = -1;
@@ -1052,6 +1041,7 @@ body.contactopen #contactModal{ opacity:1; pointer-events:auto; }
     }
     if (dragMode !== "rotate"){ return; }
 
+    touched = true;
     dragX += dx * 0.13;
     dragY += dy * 0.13;
     var minDragY = -pitchLimit - tilt, maxDragY = pitchLimit - tilt;
@@ -1367,7 +1357,7 @@ body.contactopen #contactModal{ opacity:1; pointer-events:auto; }
       decodedUrls[c.idx] = url;
       cardEls[c.idx].img.src = url;
       cardEls[c.idx].img.classList.add("in");
-      gridFigureEls[c.idx].img.src = url;
+      if (gridFigureEls[c.idx]){ gridFigureEls[c.idx].img.src = url; }
       assetReady();
     });
   });
@@ -1384,7 +1374,25 @@ body.contactopen #contactModal{ opacity:1; pointer-events:auto; }
     setTimeout(function(){
       layout();
       body.classList.add("revealed");
+      setTimeout(autoSpinDemo, 700);
     }, 200);
+  }
+
+  function autoSpinDemo(){
+    var duration = 2000, start = null, from = 0, to = 54;
+    function ease(t){ return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; }
+    function step(ts){
+      if (touched){ return; }
+      if (start === null){ start = ts; }
+      var t = Math.min(1, (ts - start) / duration);
+      dragX = from + (to - from) * ease(t);
+      if (t < 1){
+        requestAnimationFrame(step);
+      } else {
+        velX = 0.35;
+      }
+    }
+    requestAnimationFrame(step);
   }
 
   /* ---------- init ---------- */
