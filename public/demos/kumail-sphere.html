@@ -65,6 +65,26 @@ a{ -webkit-tap-highlight-color:transparent; }
 }
 @media (pointer:coarse){ #stage{ touch-action:pan-y; } }
 
+/* ---------- drag hint (auto-spin teaching cue) ---------- */
+.drag-hint{
+  position:fixed; left:0; right:0; top:50%; height:0;
+  z-index:58; pointer-events:none;
+  opacity:0; transition:opacity .5s ease;
+}
+.drag-hint.active{ opacity:1; }
+.drag-hint-trail{
+  position:absolute; top:-1.5px; height:3px; width:0; left:0;
+  border-radius:3px;
+  background:linear-gradient(90deg, rgba(244,242,239,0), rgba(244,242,239,.85) 55%, rgba(158,204,255,.95));
+  box-shadow:0 0 10px 2px rgba(244,242,239,.55), 0 0 26px 6px rgba(110,170,255,.4);
+}
+.drag-hint-dot{
+  position:absolute; top:50%; left:0; width:16px; height:16px;
+  margin:-8px 0 0 -8px; border-radius:50%;
+  background:radial-gradient(circle, #fff 0%, rgba(244,242,239,.95) 45%, rgba(158,204,255,0) 78%);
+  box-shadow:0 0 18px 5px rgba(244,242,239,.9), 0 0 44px 14px rgba(110,170,255,.55);
+}
+
 #world{
   position:absolute; top:50%; left:50%;
   width:0; height:0;
@@ -639,6 +659,11 @@ body.contactopen #contactModal{ opacity:1; pointer-events:auto; }
     <div id="orb"></div>
   </div>
   <h1 id="headline"><span class="inner"></span></h1>
+</div>
+
+<div id="dragHint" class="drag-hint">
+  <div class="drag-hint-trail" id="dragHintTrail"></div>
+  <div class="drag-hint-dot" id="dragHintDot"></div>
 </div>
 
 
@@ -1381,16 +1406,32 @@ body.contactopen #contactModal{ opacity:1; pointer-events:auto; }
 
   function autoSpinDemo(){
     var duration = 2000, start = null, from = 0, to = 110;
+    var hint = document.getElementById("dragHint");
+    var hintDot = document.getElementById("dragHintDot");
+    var hintTrail = document.getElementById("dragHintTrail");
+    var startX = window.innerWidth * 0.3, endX = window.innerWidth * 0.7;
     function ease(t){ return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; }
+    function hideHint(){
+      if (hint){ hint.classList.remove("active"); }
+    }
+    if (hint){ hint.classList.add("active"); }
     function step(ts){
-      if (touched){ return; }
+      if (touched){ hideHint(); return; }
       if (start === null){ start = ts; }
       var t = Math.min(1, (ts - start) / duration);
-      dragX = from + (to - from) * ease(t);
+      var e = ease(t);
+      dragX = from + (to - from) * e;
+      if (hintDot && hintTrail){
+        var x = startX + (endX - startX) * e;
+        hintDot.style.left = x + "px";
+        hintTrail.style.left = startX + "px";
+        hintTrail.style.width = Math.max(0, x - startX) + "px";
+      }
       if (t < 1){
         requestAnimationFrame(step);
       } else {
         velX = 0.35;
+        setTimeout(hideHint, 350);
       }
     }
     requestAnimationFrame(step);
