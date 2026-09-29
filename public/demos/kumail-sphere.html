@@ -762,7 +762,6 @@ body.contactopen #contactModal{ opacity:1; pointer-events:auto; }
     fadekings: "https://fade-kings-kumailr.vercel.app",
     lahorisite: "https://portfolio-kumailr.vercel.app/demos/lahori-bowls/index.html",
     lahoriadmin: "https://portfolio-kumailr.vercel.app/demos/lahori-bowls/admin.html",
-    agencytemplate: "https://portfolio-kumailr.vercel.app/demos/agency-template/",
     internships: "https://portfolio-kumailr.vercel.app/demos/internships-dashboard/index.html",
     salescrm: "https://portfolio-kumailr.vercel.app/demos/sales-websites-dashboard/index.html",
     pulsehub: "https://portfolio-kumailr.vercel.app/demos/pulse-command-center/index.html"
@@ -786,10 +785,9 @@ body.contactopen #contactModal{ opacity:1; pointer-events:auto; }
     {id:"fadekings-hero", title:"Fade Kings: Book a Chair", place:"Next.js · Supabase booking", note:"A barber shop's booking site: walk-ins and appointments from one live page, built so a local business can actually take bookings online instead of by phone."},
     {id:"lahorisite-hero", title:"Lahori Bowls: Build Your Bowl", place:"Next.js · Supabase · Real-time build", note:"A real ordering site for a Lahori street-food concept: pick a base, protein, toppings and sauce and watch the bowl assemble live, backed by a real Supabase menu and orders backend."},
     {id:"lahoriadmin-login", title:"Lahori Bowls: Staff Dashboard", place:"Supabase Auth, gated login", note:"The real, Auth-gated dashboard staff use to run the kitchen side, covering orders, menu, and staff accounts behind a genuine sign-in."},
-    {id:"agencytemplate-landing", title:"Agency Template: Client Site Base", place:"Vite · React · Tailwind", note:"The reusable site template real client projects get built from, with a full home-services layout, booking call-to-action, and reviews ready to swap in a brand's own content."},
     {id:"internships-review", title:"Internship Command: Review Queue", place:"Indeed · ZipRecruiter APIs", note:"A swipe-to-approve triage tool over real, currently-posted internship and new-grad listings, tracking a daily application goal against a live funnel."},
     {id:"salescrm-pipeline", title:"Agency CRM: Lead Pipeline", place:"Notion-backed CRM logic", note:"The same schema and queries as the live Notion CRM I run for outreach, shown here with sample companies so client data stays private."},
-    {id:"pulsehub-status", title:"Pulse Command Center: Status Hub", place:"Cross-app status overview", note:"A status hub that greets you and rolls up pipeline and pipeline value across the other tools, pointing to each workspace instead of duplicating its data."}
+    {id:"pulsehub-status", title:"Pulse Command Center: Status Hub", place:"Real, deployed personal agent", note:"A real, live command agent I built as my own personal Jarvis: it greets me by name and rolls up status across everything I automate, from sales pipeline to job search to trading. It grew out of a larger personal system I call Mission Control that runs a lot of my day-to-day, and since the full version holds my actual personal and business data, this demo swaps in a sample pipeline instead of the real one."}
   ];
 
   var N = STILLS.length;
@@ -965,7 +963,7 @@ body.contactopen #contactModal{ opacity:1; pointer-events:auto; }
       dragY = clamp(dragY, minDragY, maxDragY);
     }
 
-    var p = clamp(window.scrollY / (window.innerHeight * 0.16), 0, 1);
+    var p = clamp(window.scrollY / (window.innerHeight * 0.05), 0, 1);
     var camZTarget = p * Math.min(64, R * 0.12);
     camZ += (camZTarget - camZ) * 0.075;
 
