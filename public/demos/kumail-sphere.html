@@ -984,7 +984,9 @@ body.contactopen #contactModal{ opacity:1; pointer-events:auto; }
   var pitchLimit = 32;
   var focused = -1;
   var lastDim = {}, lastFade = {};
-  var AUTO_SPIN = 0.08; // deg/frame idle drift, keeps every project cycling into view on its own
+  var AUTO_SPIN = 0.08; // deg/frame idle horizontal drift
+  var AUTO_TILT = 0.037; // deg/frame idle vertical drift (unclamped -- lets it tumble fully up/down)
+  var autoTilt = 0;
 
   function rotX(v, deg){
     var r = deg * Math.PI / 180, c = Math.cos(r), s = Math.sin(r);
@@ -1006,6 +1008,7 @@ body.contactopen #contactModal{ opacity:1; pointer-events:auto; }
       if (Math.abs(velY) < 0.002){ velY = 0; }
       var minDragY = -pitchLimit - tilt, maxDragY = pitchLimit - tilt;
       dragY = clamp(dragY, minDragY, maxDragY);
+      autoTilt += AUTO_TILT;
     }
 
     var deepTarget = touched ? 1 : 0;
@@ -1015,7 +1018,7 @@ body.contactopen #contactModal{ opacity:1; pointer-events:auto; }
     var camZTarget = deepness * Math.min(64, R * 0.12);
     camZ += (camZTarget - camZ) * 0.075;
 
-    var sx = tilt + dragY, sy = spin + dragX;
+    var sx = tilt + dragY + autoTilt, sy = spin + dragX;
 
     world.style.transform = "translateZ(" + camZ + "px) rotateY(" + sy + "deg) rotateX(" + sx + "deg)";
     headline.style.transform = "translateZ(" + (camZ + R * 0.62) + "px)";
