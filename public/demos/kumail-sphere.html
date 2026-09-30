@@ -984,9 +984,10 @@ body.contactopen #contactModal{ opacity:1; pointer-events:auto; }
   var pitchLimit = 32;
   var focused = -1;
   var lastDim = {}, lastFade = {};
-  var AUTO_SPIN = 0.08; // deg/frame idle horizontal drift
-  var AUTO_TILT = 0.037; // deg/frame idle vertical drift (unclamped -- lets it tumble fully up/down)
+  var AUTO_SPIN_DPS = 7.3; // deg/sec idle horizontal drift (wall-clock based)
+  var AUTO_TILT_DPS = 3.55; // deg/sec idle vertical drift, unclamped -- tumbles fully pole to pole
   var autoTilt = 0;
+  var lastFrameTime = null;
 
   function rotX(v, deg){
     var r = deg * Math.PI / 180, c = Math.cos(r), s = Math.sin(r);
@@ -1000,15 +1001,20 @@ body.contactopen #contactModal{ opacity:1; pointer-events:auto; }
 
   function isLit(){ return body.classList.contains("lit"); }
 
-  function frame(){
+  function frame(ts){
+    var now = (typeof ts === "number") ? ts : performance.now();
+    var dt = (lastFrameTime === null) ? 16.67 : Math.min(now - lastFrameTime, 100);
+    lastFrameTime = now;
+    var dtScale = dt / 16.67;
+
     if (!draggingNow() && !isLit()){
-      dragX += velX + AUTO_SPIN; dragY += velY;
-      velX *= 0.94; velY *= 0.94;
+      dragX += velX * dtScale + AUTO_SPIN_DPS * dt / 1000; dragY += velY * dtScale;
+      velX *= Math.pow(0.94, dtScale); velY *= Math.pow(0.94, dtScale);
       if (Math.abs(velX) < 0.002){ velX = 0; }
       if (Math.abs(velY) < 0.002){ velY = 0; }
       var minDragY = -pitchLimit - tilt, maxDragY = pitchLimit - tilt;
       dragY = clamp(dragY, minDragY, maxDragY);
-      autoTilt += AUTO_TILT;
+      autoTilt += AUTO_TILT_DPS * dt / 1000;
     }
 
     var deepTarget = touched ? 1 : 0;
@@ -1054,7 +1060,7 @@ body.contactopen #contactModal{ opacity:1; pointer-events:auto; }
     });
   }
 
-  function tick(){ frame(); requestAnimationFrame(tick); }
+  function tick(ts){ frame(ts); requestAnimationFrame(tick); }
 
   /* ---------- drag / pointer rotation ---------- */
   var pointerId = null, dragMode = null, downCardIdx = -1;
@@ -1445,6 +1451,8 @@ body.contactopen #contactModal{ opacity:1; pointer-events:auto; }
       if (hint){ hint.classList.remove("active"); }
     }
     if (hint){ hint.classList.add("active"); }
+    velX += 2.6; // the swipe itself gives the globe a real spin, like someone flicked it --
+                 // it decays naturally into the constant slow drift above
     function step(ts){
       if (touched){ hideHint(); return; }
       if (start === null){ start = ts; }
