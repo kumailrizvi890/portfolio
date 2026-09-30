@@ -1242,7 +1242,17 @@ body.contactopen #contactModal{ opacity:1; pointer-events:auto; }
       contactSubmit.textContent = "Send message";
     });
   });
-  document.getElementById("wordmark").addEventListener("click", function(e){ e.preventDefault(); });
+  function goHome(){
+    if (isLit()){ closeLightbox(); }
+    if (body.classList.contains("gridview")){ body.classList.remove("gridview"); currentView = "sphere"; }
+    if (menuEl.classList.contains("open")){ setMenuOpen(false); }
+    if (body.classList.contains("contactopen")){ closeContact(); }
+    touched = false; // let the deep-zoom camera ease back out to the normal view
+  }
+  document.getElementById("wordmark").addEventListener("click", function(e){
+    e.preventDefault();
+    goHome();
+  });
 
   /* ---------- lightbox ---------- */
   var openToken = 0;
