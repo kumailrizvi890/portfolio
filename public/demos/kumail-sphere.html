@@ -1441,7 +1441,7 @@ body.contactopen #contactModal{ opacity:1; pointer-events:auto; }
   }
 
   function autoSpinDemo(){
-    var duration = 1400, start = null, from = 0, to = 0, spinAmount = 110;
+    var duration = 1000, start = null;
     var hint = document.getElementById("dragHint");
     var hintDot = document.getElementById("dragHintDot");
     var hintTrail = document.getElementById("dragHintTrail");
@@ -1451,12 +1451,13 @@ body.contactopen #contactModal{ opacity:1; pointer-events:auto; }
       if (hint){ hint.classList.remove("active"); }
     }
     if (hint){ hint.classList.add("active"); }
+    velX += 6.6; // one continuous flick -- decays through the same momentum system as the
+                 // constant idle drift, so it blends straight into it with no seam
     function step(ts){
       if (touched){ hideHint(); return; }
-      if (start === null){ start = ts; from = dragX; to = from + spinAmount; }
+      if (start === null){ start = ts; }
       var t = Math.min(1, (ts - start) / duration);
       var e = ease(t);
-      dragX = from + (to - from) * e; // globe spin exactly tracks the line, same eased t
       if (hintDot && hintTrail){
         var x = startX + (endX - startX) * e;
         hintDot.style.left = x + "px";
@@ -1466,7 +1467,6 @@ body.contactopen #contactModal{ opacity:1; pointer-events:auto; }
       if (t < 1){
         requestAnimationFrame(step);
       } else {
-        velX = 0.9; // smooth hand-off into the constant idle drift, not a dead stop
         setTimeout(hideHint, 350);
       }
     }
