@@ -336,14 +336,34 @@ body.deep .cue.chrome, body.gridview .cue.chrome, body.lit .cue.chrome{ opacity:
 }
 #splash.out{ opacity:0; pointer-events:none; }
 .mark{
-  font-family:var(--serif);
-  font-size:clamp(28px, 4.4vw, 52px);
-  letter-spacing:.005em;
-  color:var(--ink);
+  width:64px; height:64px; position:relative;
   opacity:0;
-  animation:riseIn 1.25s ease .15s forwards;
+  animation:riseIn 1.1s ease .1s forwards;
 }
-.mark em{ font-style:normal; }
+.markRing{
+  position:absolute; inset:0; border-radius:50%;
+  border:1px solid rgba(180,205,255,.3);
+}
+.markRing2{ inset:11px; border-color:rgba(180,205,255,.16); }
+.markCore{
+  position:absolute; inset:23px; border-radius:50%;
+  background:radial-gradient(circle, #eaf3ff 0%, rgba(120,170,255,.55) 55%, transparent 100%);
+  animation:markPulse 2.2s ease-in-out infinite;
+}
+.markOrbit{
+  position:absolute; inset:0;
+  animation:markSpin 2.3s linear infinite;
+}
+.markDot{
+  position:absolute; top:-3px; left:50%; width:7px; height:7px; margin-left:-3.5px;
+  border-radius:50%; background:#f2f8ff;
+  box-shadow:0 0 10px rgba(140,190,255,.95), 0 0 22px rgba(120,170,255,.55);
+}
+@keyframes markSpin{ to{ transform:rotate(360deg); } }
+@keyframes markPulse{
+  0%,100%{ opacity:.55; transform:scale(1); }
+  50%{ opacity:1; transform:scale(1.14); }
+}
 .bar{
   width:clamp(120px, 17vw, 210px); height:1px;
   background:rgba(244,242,239,.16);
@@ -647,9 +667,14 @@ body.contactopen #contactModal{ opacity:1; pointer-events:auto; }
 <body class="locked">
 
 <div id="splash">
-  <div class="mark">Kumail<em>Rizvi</em></div>
+  <div class="mark" aria-label="Kumail Rizvi">
+    <div class="markRing"></div>
+    <div class="markRing markRing2"></div>
+    <div class="markCore"></div>
+    <div class="markOrbit"><span class="markDot"></span></div>
+  </div>
   <div class="bar"><s id="bar"></s></div>
-  <div class="tag">Project Archive 2026</div>
+  <div class="tag">Real Projects. Live Data.</div>
 </div>
 
 <div class="vig"></div>
@@ -789,18 +814,18 @@ body.contactopen #contactModal{ opacity:1; pointer-events:auto; }
     {id:"opsauto-workflows", title:"Ops Automation: Run a Workflow", place:"On-demand triggers", note:"Every “Run now” hits a real serverless function: a live Remotive API crawl, real network checks, or an actual scheduling algorithm, never a canned timer."},
     {id:"opsauto-activity", title:"Ops Automation: Run Log", place:"Supabase-backed history", note:"Every run, scheduled or triggered, is logged to Supabase with its real duration and output, filterable by workflow."},
     {id:"opsauto-schedule", title:"Ops Automation: Cron Schedule", place:"Vercel Cron, daily", note:"A Vercel Cron job hits this dashboard's API once a day and runs one randomly-selected workflow, logged distinctly as “scheduled.”"},
-    {id:"pawpass-landing", title:"PawPass: Welcome", place:"Next.js · Supabase · OpenAI", note:"A pet-care coordination platform built for shelter volunteers handing off care between shifts."},
+    {id:"pawpass-landing", title:"PawPass: Welcome", place:"Next.js · Supabase · Gemini API", note:"A pet-care coordination platform built for shelter volunteers handing off care between shifts."},
     {id:"pawpass-list", title:"PawPass: Pet Care Center", place:"Shelter roster", note:"Real pet records pulled from Supabase, each with its own care history and update log."},
     {id:"pawpass-detail", title:"PawPass: Pet Profile", place:"Care handoff log", note:"Feeding instructions, medical notes, and a timestamped update history so no detail gets lost between volunteers."},
-    {id:"pawpass-assistant", title:"PawPass: AI Care Assistant", place:"RAG chatbot", note:"A retrieval-augmented chatbot answering real pet-care questions, grounded in the shelter's own notes rather than a generic model reply."},
-    {id:"qmail-dashboard", title:"Qmail: Security Dashboard", place:"Privacy-first email client", note:"Scam attempts blocked, unsubscribe requests, and encrypted-message counts, computed from the account's real inbox activity."},
-    {id:"qmail-scam", title:"Qmail: Scam Detection", place:"AI classifier, inline", note:"A real classifier flags phishing attempts inline and explains why, here calling out urgency language and a request for credentials."},
+    {id:"pawpass-assistant", title:"PawPass: AI Care Assistant", place:"RAG chatbot", note:"A retrieval-augmented generation (RAG) chatbot that grounds Google Gemini responses in the shelter's own records and live pet-care notes, rather than a generic model reply."},
+    {id:"qmail-dashboard", title:"Qmail: Security Dashboard", place:"Privacy-first email client", note:"Scam attempts blocked, unsubscribe requests, and encrypted-message counts, computed from the account's real inbox activity across a full-stack PWA built in React and TypeScript."},
+    {id:"qmail-scam", title:"Qmail: Scam Detection", place:"AI classifier, inline", note:"An LLM-based content-classification pipeline (OpenAI API, structured JSON responses) flags phishing attempts inline and explains why, here calling out urgency language and a request for credentials."},
     {id:"fadekings-hero", title:"Fade Kings: Book a Chair", place:"Next.js · Supabase booking", note:"A barber shop's booking site: walk-ins and appointments from one live page, built so a local business can actually take bookings online instead of by phone."},
     {id:"easybowls-hero", title:"Easy Bowls: Build Your Bowl", place:"Next.js · Supabase · Real-time build", note:"A real ordering site for a South Asian street-food concept: pick a base, protein, toppings and sauce and watch the bowl assemble live, backed by a real Supabase menu and orders backend."},
     {id:"easybowls-admin-login", title:"Easy Bowls: Staff Dashboard", place:"Supabase Auth, gated login", note:"The real, Auth-gated dashboard staff use to run the kitchen side, covering orders, menu, and staff accounts behind a genuine sign-in."},
     {id:"internships-review", title:"Internship Command: Review Queue", place:"Indeed · ZipRecruiter APIs", note:"A swipe-to-approve triage tool over real, currently-posted internship and new-grad listings, tracking a daily application goal against a live funnel."},
     {id:"salescrm-pipeline", title:"Agency CRM: Lead Pipeline", place:"Notion-backed CRM logic", note:"The same schema and queries as the live Notion CRM I run for outreach, shown here with sample companies so client data stays private."},
-    {id:"pulsehub-status", title:"Pulse Command Center: Status Hub", place:"Real, deployed personal agent", note:"A real, live command agent I built as my own personal Jarvis: it greets me by name and rolls up status across everything I automate, from sales pipeline to job search to trading. It grew out of a larger personal system I call Mission Control that runs a lot of my day-to-day, and since the full version holds my actual personal and business data, this demo swaps in a sample pipeline instead of the real one."}
+    {id:"pulsehub-status", title:"Pulse Command Center: Status Hub", place:"Real, deployed personal agent", note:"A real, live multi-agent command center I built as my own personal Jarvis: it orchestrates 10+ MCP (Model Context Protocol) tool integrations (Gmail, Notion, job-search and CRM APIs) into scheduled workflows and rolls up status across everything I automate, from sales pipeline to job search to trading. It grew out of a larger personal system I call Mission Control that runs a lot of my day-to-day, and since the full version holds my actual personal and business data, this demo swaps in a sample pipeline instead of the real one."}
   ];
 
   var N = STILLS.length;
