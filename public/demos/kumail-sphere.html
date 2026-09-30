@@ -67,7 +67,7 @@ a{ -webkit-tap-highlight-color:transparent; }
 
 /* ---------- drag hint (auto-spin teaching cue) ---------- */
 .drag-hint{
-  position:fixed; left:0; right:0; top:50%; height:0;
+  position:fixed; left:0; right:0; top:calc(50% - clamp(60px, 10vh, 110px)); height:0;
   z-index:58; pointer-events:none;
   opacity:0; transition:opacity .5s ease;
 }
@@ -1441,7 +1441,7 @@ body.contactopen #contactModal{ opacity:1; pointer-events:auto; }
   }
 
   function autoSpinDemo(){
-    var duration = 1400, start = null;
+    var duration = 1400, start = null, from = 0, to = 0, spinAmount = 110;
     var hint = document.getElementById("dragHint");
     var hintDot = document.getElementById("dragHintDot");
     var hintTrail = document.getElementById("dragHintTrail");
@@ -1451,13 +1451,12 @@ body.contactopen #contactModal{ opacity:1; pointer-events:auto; }
       if (hint){ hint.classList.remove("active"); }
     }
     if (hint){ hint.classList.add("active"); }
-    velX += 2.6; // the swipe itself gives the globe a real spin, like someone flicked it --
-                 // it decays naturally into the constant slow drift above
     function step(ts){
       if (touched){ hideHint(); return; }
-      if (start === null){ start = ts; }
+      if (start === null){ start = ts; from = dragX; to = from + spinAmount; }
       var t = Math.min(1, (ts - start) / duration);
       var e = ease(t);
+      dragX = from + (to - from) * e; // globe spin exactly tracks the line, same eased t
       if (hintDot && hintTrail){
         var x = startX + (endX - startX) * e;
         hintDot.style.left = x + "px";
@@ -1467,6 +1466,7 @@ body.contactopen #contactModal{ opacity:1; pointer-events:auto; }
       if (t < 1){
         requestAnimationFrame(step);
       } else {
+        velX = 0.9; // smooth hand-off into the constant idle drift, not a dead stop
         setTimeout(hideHint, 350);
       }
     }
