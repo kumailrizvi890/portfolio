@@ -296,6 +296,31 @@ body.revealed.deep .gridbtn, body.revealed.gridview .gridbtn{ opacity:1; transfo
 body.gridview .gridbtn b:nth-child(1){ transform:translate(3px,3px); }
 body.gridview .gridbtn b:nth-child(4){ transform:translate(-3px,-3px); }
 
+/* ---------- background spin cue (ambient watermark) ---------- */
+.spinCue{
+  position:fixed; inset:0; z-index:5;
+  display:flex; align-items:center; justify-content:center;
+  pointer-events:none; overflow:hidden;
+  transition:opacity .6s ease;
+}
+.spinCue span{
+  font-family:var(--sans);
+  font-weight:700;
+  font-size:clamp(110px, 24vw, 340px);
+  letter-spacing:.07em;
+  color:rgba(180,205,255,.05);
+  -webkit-text-stroke:1px rgba(180,205,255,.1);
+  white-space:nowrap;
+  user-select:none;
+  animation:spinCuePulse 5s ease-in-out infinite;
+}
+@keyframes spinCuePulse{
+  0%,100%{ opacity:.55; }
+  50%{ opacity:1; }
+}
+body.deep .spinCue, body.gridview .spinCue, body.lit .spinCue{ opacity:0; pointer-events:none; }
+@media (max-width:640px){ .spinCue span{ font-size:clamp(64px, 30vw, 140px); } }
+
 /* ---------- scroll cue ---------- */
 .cue.chrome{
   position:fixed; left:50%;
@@ -304,7 +329,7 @@ body.gridview .gridbtn b:nth-child(4){ transform:translate(-3px,-3px); }
   z-index:54;
   display:flex; align-items:center; gap:10px;
   font-size:16px; text-transform:uppercase; letter-spacing:.2em;
-  color:rgba(244,242,239,.5);
+  color:rgba(244,242,239,.78);
   white-space:nowrap;
 }
 .cue s{
@@ -677,6 +702,8 @@ body.contactopen #contactModal{ opacity:1; pointer-events:auto; }
   <div class="bar"><s id="bar"></s></div>
   <div class="tag">Real Projects. Live Data.</div>
 </div>
+
+<div class="spinCue" aria-hidden="true"><span>SPIN</span></div>
 
 <div class="vig"></div>
 
