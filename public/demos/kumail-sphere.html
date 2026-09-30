@@ -334,6 +334,7 @@ body.deep .cue.chrome, body.gridview .cue.chrome, body.lit .cue.chrome{ opacity:
   display:grid; place-items:center; align-content:center; gap:26px;
   transition:opacity .6s ease;
 }
+#splash > *{ display:none; }
 #splash.out{ opacity:0; pointer-events:none; }
 .mark{
   width:64px; height:64px; position:relative;
@@ -983,6 +984,7 @@ body.contactopen #contactModal{ opacity:1; pointer-events:auto; }
   var pitchLimit = 32;
   var focused = -1;
   var lastDim = {}, lastFade = {};
+  var AUTO_SPIN = 0.08; // deg/frame idle drift, keeps every project cycling into view on its own
 
   function rotX(v, deg){
     var r = deg * Math.PI / 180, c = Math.cos(r), s = Math.sin(r);
@@ -998,7 +1000,7 @@ body.contactopen #contactModal{ opacity:1; pointer-events:auto; }
 
   function frame(){
     if (!draggingNow() && !isLit()){
-      dragX += velX; dragY += velY;
+      dragX += velX + AUTO_SPIN; dragY += velY;
       velX *= 0.94; velY *= 0.94;
       if (Math.abs(velX) < 0.002){ velX = 0; }
       if (Math.abs(velY) < 0.002){ velY = 0; }
@@ -1430,7 +1432,7 @@ body.contactopen #contactModal{ opacity:1; pointer-events:auto; }
   }
 
   function autoSpinDemo(){
-    var duration = 2000, start = null, from = 0, to = 110;
+    var duration = 1400, start = null;
     var hint = document.getElementById("dragHint");
     var hintDot = document.getElementById("dragHintDot");
     var hintTrail = document.getElementById("dragHintTrail");
@@ -1445,7 +1447,6 @@ body.contactopen #contactModal{ opacity:1; pointer-events:auto; }
       if (start === null){ start = ts; }
       var t = Math.min(1, (ts - start) / duration);
       var e = ease(t);
-      dragX = from + (to - from) * e;
       if (hintDot && hintTrail){
         var x = startX + (endX - startX) * e;
         hintDot.style.left = x + "px";
@@ -1455,7 +1456,6 @@ body.contactopen #contactModal{ opacity:1; pointer-events:auto; }
       if (t < 1){
         requestAnimationFrame(step);
       } else {
-        velX = 0.35;
         setTimeout(hideHint, 350);
       }
     }
