@@ -29,12 +29,18 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Could not save your message. Please try emailing directly." }, { status: 500 });
   }
 
-  // Best-effort push notification - a recruiter's message should never be
-  // blocked or slowed down by Telegram being unavailable, so failures here
-  // are swallowed after a console log.
-  notifyTelegram({ name, email, message }).catch((err) => {
-    console.error("Telegram notify failed:", err);
-  });
+  // Push notification - awaited (not fire-and-forget). A visitor's message is already saved
+  // above, so a Telegram failure here never fails their request; it's caught and logged
+  // below instead. But it IS awaited, because a serverless function's runtime can be frozen
+  // the instant its response is sent, and an un-awaited promise racing that teardown can get
+  // silently killed mid-flight before its fetch to Telegram ever completes. Awaiting it (with
+  // its own retry/backoff for ordinary transient blips) makes delivery reliable instead of
+  // "usually works."
+  try {
+    await notifyTelegram({ name, email, message });
+  } catch (err) {
+    console.error("Telegram notify failed after retries:", err);
+  }
 
   return NextResponse.json({ ok: true });
 }
@@ -50,13 +56,31 @@ async function notifyTelegram({ name, email, message }: { name: string; email: s
     `Email: ${email}\n\n` +
     `${message}`;
 
-  const res = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ chat_id: chatId, text }),
-  });
+  const MAX_ATTEMPTS = 3;
+  let lastErr: unknown;
 
-  if (!res.ok) {
-    throw new Error(`Telegram API responded ${res.status}`);
+  for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+    try {
+      const res = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ chat_id: chatId, text }),
+      });
+
+      if (res.ok) {
+        console.log(`Telegram notify sent on attempt ${attempt}`);
+        return;
+      }
+
+      lastErr = new Error(`Telegram API responded ${res.status}: ${await res.text().catch(() => "")}`);
+    } catch (err) {
+      lastErr = err;
+    }
+
+    if (attempt < MAX_ATTEMPTS) {
+      await new Promise((resolve) => setTimeout(resolve, 400 * attempt));
+    }
   }
+
+  throw lastErr;
 }
