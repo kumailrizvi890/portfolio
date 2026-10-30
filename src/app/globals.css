@@ -51,8 +51,9 @@
   --color-status-warn: var(--status-warn);
   --color-status-down: var(--status-down);
 
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  /* Supplied by @fontsource-variable/geist{,-mono}, imported in layout.tsx */
+  --font-sans: "Geist Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Geist Mono Variable", ui-monospace, monospace;
 }
 
 html {
@@ -95,3 +96,12 @@ body {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
+
+/* Lenis recommended stylesheet, inlined so there is no extra CSS request.
+   Source: lenis/dist/lenis.css */
+html.lenis,
+html.lenis body { height: auto; }
+.lenis:not(.lenis-autoToggle).lenis-smooth { scroll-behavior: auto !important; }
+.lenis:not(.lenis-autoToggle).lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+.lenis.lenis-stopped { overflow: clip; }
+.lenis.lenis-smooth iframe { pointer-events: none; }

@@ -1,18 +1,20 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+/*
+  Fonts are self-hosted from npm rather than next/font/google.
+
+  next/font/google also self-hosts, but it downloads the files from
+  fonts.googleapis.com at build time, so the build needs network access to
+  Google and fails in an offline or restricted CI environment. The
+  @fontsource-variable packages ship the woff2 files in node_modules, which
+  makes the build hermetic and reproducible. Same two families, same CSS
+  variable names, nothing downstream changes.
+*/
+import "@fontsource-variable/geist";
+import "@fontsource-variable/geist-mono";
 import "./globals.css";
 import { SiteNav } from "@/components/site-nav";
 import { SiteFooter } from "@/components/site-footer";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+import { SmoothScroll } from "@/components/smooth-scroll";
 
 const siteUrl =
   process.env.NEXT_PUBLIC_SITE_URL ??
@@ -38,9 +40,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className="h-full antialiased"
     >
       <body className="min-h-full flex flex-col bg-background text-foreground">
+        <SmoothScroll />
         <div className="grain" aria-hidden="true" />
         <SiteNav />
         <main className="flex-1">{children}</main>
