@@ -85,7 +85,10 @@ function Face({
       stickers on glass.
     */
     const z = mesh.current.getWorldPosition(new THREE.Vector3()).z;
-    const depth = THREE.MathUtils.mapLinear(z, -RADIUS, RADIUS, 0.16, 1);
+    // Floor at 0.42, not 0.16. Tuned against a render: below about 0.4 the far
+    // side disappears instead of receding, and the sphere stops reading as a
+    // solid and starts reading as scattered cards.
+    const depth = THREE.MathUtils.mapLinear(z, -RADIUS, RADIUS, 0.42, 1);
     const wanted = hovered ? 1 : depth * (dimmed ? 0.35 : 1);
     mat.current.opacity = THREE.MathUtils.lerp(mat.current.opacity, wanted, 0.12);
   });
@@ -215,11 +218,24 @@ function Sphere({
     }
   });
 
-  // Keep the sphere inside narrow viewports instead of cropping its edges.
-  const scale = Math.min(viewport.width / 8.2, 1);
+  /*
+    Fit to the smaller axis, not just width.
+
+    Scaling off width alone blew the sphere up on wide screens until only its
+    middle band was in frame, which destroys the silhouette: you see a drift of
+    rectangles rather than an orb. Clamping against height as well keeps the
+    whole sphere inside the viewport at every aspect ratio.
+  */
+  const scale = Math.min(viewport.width / 11, viewport.height / 7.6, 1.05);
+
+  /*
+    On a wide screen the copy owns the left half, so push the sphere right to
+    sit beside it instead of underneath it. On narrow screens it stays centred.
+  */
+  const offsetX = viewport.width > viewport.height * 1.25 ? viewport.width * 0.17 : 0;
 
   return (
-    <group ref={group} scale={scale}>
+    <group ref={group} scale={scale} position={[offsetX, 0, 0]}>
       {positions.map((p, i) => (
         <Face
           key={sphereItems[i].src}

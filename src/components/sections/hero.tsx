@@ -18,10 +18,18 @@ export function Hero() {
   const reduce = useReducedMotion();
 
   return (
-    <section className="relative isolate flex min-h-[100dvh] flex-col overflow-hidden border-b border-border">
-      {/* The sphere sits behind everything and is the only thing in this
-          layer. It is interactive, so it must not be pointer-events-none. */}
-      <div className="absolute inset-0">
+    <section className="relative isolate flex min-h-[100dvh] flex-col justify-end overflow-hidden border-b border-border md:justify-center">
+      {/*
+        The sphere is interactive, so this layer must not be
+        pointer-events-none.
+
+        On phones it gets its own band across the top instead of sitting behind
+        the copy. Rendered full-bleed it ended up as faint rectangles behind the
+        body paragraph: too dim to read as a sphere, but present enough to make
+        the text harder to read. Its own band is the fix, and it keeps the
+        paragraph on a solid background.
+      */}
+      <div className="absolute inset-x-0 top-0 h-[44%] md:inset-0 md:h-auto">
         <Suspense fallback={null}>
           <ProjectSphere reduced={!!reduce} />
         </Suspense>
@@ -37,9 +45,25 @@ export function Hero() {
         still reads. On mobile the column is full width, so it darkens from the
         bottom instead of the left.
       */}
+      {/* Phone scrim: solid under the copy, clearing by the top of the sphere band. */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 bg-gradient-to-t from-background via-background/85 to-background/20 md:bg-gradient-to-r md:from-background md:via-background/80 md:to-transparent"
+        className="pointer-events-none absolute inset-0 md:hidden"
+        style={{
+          background:
+            "linear-gradient(to top, var(--background) 0%, var(--background) 54%, color-mix(in srgb, var(--background) 55%, transparent) 72%, transparent 100%)",
+        }}
+      />
+
+      {/* Desktop scrim: opaque behind the copy column, clearing to the right so
+          the sphere stays legible rather than being washed out. */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 hidden md:block"
+        style={{
+          background:
+            "linear-gradient(to right, var(--background) 0%, color-mix(in srgb, var(--background) 88%, transparent) 38%, transparent 68%)",
+        }}
       />
 
       <div className="relative mx-auto flex w-full max-w-6xl flex-1 items-center px-4 pt-24 pb-16 sm:px-6 md:pt-28 md:pb-24">
