@@ -18,21 +18,30 @@ export function Hero() {
   const reduce = useReducedMotion();
 
   return (
-    <section className="relative isolate flex min-h-[100dvh] flex-col justify-end overflow-hidden border-b border-border md:justify-center">
+    <section className="relative isolate flex min-h-[100dvh] flex-col overflow-hidden border-b border-border md:justify-center">
       {/*
         The sphere is interactive, so this layer must not be
         pointer-events-none.
 
-        On phones it gets its own band across the top instead of sitting behind
-        the copy. Rendered full-bleed it ended up as faint rectangles behind the
-        body paragraph: too dim to read as a sphere, but present enough to make
-        the text harder to read. Its own band is the fix, and it keeps the
-        paragraph on a solid background.
+        On phones it is a real block in the document flow, not an absolutely
+        positioned band. An absolute band overlapped the copy anyway, because
+        the copy starts about a quarter of the way down the viewport while the
+        band ran to nearly half, leaving screenshots sitting behind the eyebrow,
+        the headline and the first line of the paragraph. Putting it in flow
+        means the text physically cannot collide with it.
+
+        On desktop it goes back to full-bleed behind everything, where the
+        gradient scrim handles legibility.
       */}
-      <div className="absolute inset-x-0 top-0 h-[44%] md:inset-0 md:h-auto">
+      <div className="relative mt-16 h-[30dvh] w-full shrink-0 md:absolute md:inset-0 md:mt-0 md:h-auto">
         <Suspense fallback={null}>
           <ProjectSphere reduced={!!reduce} />
         </Suspense>
+        {/* Feather the bottom edge so the band does not end on a hard line. */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-background to-transparent md:hidden"
+        />
       </div>
 
       {/*
@@ -45,16 +54,6 @@ export function Hero() {
         still reads. On mobile the column is full width, so it darkens from the
         bottom instead of the left.
       */}
-      {/* Phone scrim: solid under the copy, clearing by the top of the sphere band. */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 md:hidden"
-        style={{
-          background:
-            "linear-gradient(to top, var(--background) 0%, var(--background) 54%, color-mix(in srgb, var(--background) 55%, transparent) 72%, transparent 100%)",
-        }}
-      />
-
       {/* Desktop scrim: opaque behind the copy column, clearing to the right so
           the sphere stays legible rather than being washed out. */}
       <div
@@ -66,7 +65,9 @@ export function Hero() {
         }}
       />
 
-      <div className="relative mx-auto flex w-full max-w-6xl flex-1 items-center px-4 pt-24 pb-16 sm:px-6 md:pt-28 md:pb-24">
+      {/* pt-8 on phones because the sphere band above already clears the nav;
+          pt-28 on desktop where the sphere is behind rather than above. */}
+      <div className="relative mx-auto flex w-full max-w-6xl flex-1 items-center px-4 pt-8 pb-16 sm:px-6 md:pt-28 md:pb-24">
         <div className="grid w-full gap-10 md:grid-cols-[1.05fr_0.95fr] md:items-center">
           <motion.div
             initial={reduce ? false : { opacity: 0, y: 16 }}
