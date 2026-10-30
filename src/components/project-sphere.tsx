@@ -230,9 +230,17 @@ function Sphere({
 
   /*
     On a wide screen the copy owns the left half, so push the sphere right to
-    sit beside it instead of underneath it. On narrow screens it stays centred.
+    sit beside it instead of underneath it. On phones it stays centred.
+
+    This has to key off the actual screen width, not the canvas aspect ratio.
+    The phone layout gives the sphere a short, full-width band (375x244), which
+    is wide-and-short, so an aspect test reads it as a desktop viewport and
+    shoves the orb off the right edge. `md` here is the same 768px breakpoint
+    the hero uses to switch between the in-flow band and the full-bleed layer.
   */
-  const offsetX = viewport.width > viewport.height * 1.25 ? viewport.width * 0.17 : 0;
+  const isWideScreen =
+    typeof window !== "undefined" && window.matchMedia("(min-width: 768px)").matches;
+  const offsetX = isWideScreen ? viewport.width * 0.17 : 0;
 
   return (
     <group ref={group} scale={scale} position={[offsetX, 0, 0]}>
