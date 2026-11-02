@@ -110,7 +110,7 @@ export const projects: Project[] = [
     tagline: "Shelter & foster coordination, offline-first",
     description:
       "An offline-capable PWA for animal shelters: pet profiles, care logs, shift checklists, emergency alerts, and a RAG chatbot grounded in the shelter's own pet-records database.",
-    tech: ["Gemini API", "RAG", "Offline-first PWA"],
+    tech: ["Flask", "PostgreSQL", "Offline-first PWA"],
     demoHref: "/demos/pawpass",
     repoHref: "https://github.com/kumailrizvi890/PawPass",
     size: "md",
