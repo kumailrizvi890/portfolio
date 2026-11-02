@@ -23,7 +23,7 @@ export const heroCopy = {
   eyebrow: "Software Engineer, class of 2027",
   headline: "I build systems, then I make you watch them run.",
   subtext:
-    "Full-stack engineer shipping AI-integrated products end to end. Every project below is live, not a screenshot.",
+    "Full-stack engineer shipping AI-integrated products end to end. Every project below is live, not a screenshot. Currently seeking Summer 2027 internships in Software Engineering & AI Engineering.",
 };
 
 export type Skill = {
