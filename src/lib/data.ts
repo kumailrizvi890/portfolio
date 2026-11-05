@@ -23,7 +23,7 @@ export const heroCopy = {
   eyebrow: "Software Engineer, class of 2027",
   headline: "I build systems, then I make you watch them run.",
   subtext:
-    "Full-stack engineer shipping AI-integrated products end to end. Every project below is live, not a screenshot.",
+    "Full-stack engineer shipping AI-integrated products end to end. Every project below is live, not a screenshot. Currently seeking Summer 2027 internships in Software Engineering & AI Engineering.",
 };
 
 export type Skill = {
@@ -110,7 +110,7 @@ export const projects: Project[] = [
     tagline: "Shelter & foster coordination, offline-first",
     description:
       "An offline-capable PWA for animal shelters: pet profiles, care logs, shift checklists, emergency alerts, and a RAG chatbot grounded in the shelter's own pet-records database.",
-    tech: ["Gemini API", "RAG", "Offline-first PWA"],
+    tech: ["Flask", "PostgreSQL", "Offline-first PWA"],
     demoHref: "/demos/pawpass",
     repoHref: "https://github.com/kumailrizvi890/PawPass",
     size: "md",
