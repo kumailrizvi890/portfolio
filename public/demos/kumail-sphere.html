@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Kumail Rizvi: Projects That Serve Purpose</title>
-<meta name="description" content="A collection of real, deployed AI-engineering projects by Kumail Rizvi: live products with live data, not mockups.">
+<title>Kumail Rizvi | Software Engineering &amp; AI Internship, Summer 2027</title>
+<meta name="description" content="Kumail Rizvi, CS student at UW Bothell, seeking a Summer 2027 software engineering or AI internship. Deployed, clickable projects in Python, TypeScript, Next.js, Flask and Supabase.">
 <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
@@ -262,6 +262,11 @@ body.menuopen .bars i:nth-child(2){ transform:translateY(0) rotate(-45deg); }
 .bio .who{ display:flex; align-items:center; gap:14px; margin-bottom:14px; }
 .bio b{ font-family:var(--serif); font-weight:400; font-size:19px; letter-spacing:.01em; }
 .bio p{ font-size:12.5px; line-height:1.62; color:rgba(244,242,239,.72); margin:0; }
+.bio.chrome{ text-shadow:0 1px 10px rgba(0,0,0,.9), 0 0 2px rgba(0,0,0,.8); }
+.bio .seek{ font-size:13px; line-height:1.45; color:var(--ink); margin:0 0 10px; }
+.bio .quick{ display:flex; flex-wrap:wrap; gap:6px 14px; margin:0 0 12px; position:relative; z-index:2; }
+.bio .quick a{ font-size:12.5px; color:var(--ink); text-decoration:none; border-bottom:1px solid var(--line); padding:6px 0 2px; }
+.bio .quick a:hover, .bio .quick a:focus-visible{ border-bottom-color:var(--ink); }
 body.deep .bio.chrome, body.gridview .bio.chrome, body.lit .bio.chrome{
   opacity:0; transform:translateY(10px); pointer-events:none;
 }
@@ -486,6 +491,10 @@ body.lit #stage{ filter:blur(30px) brightness(.32); pointer-events:none; }
 }
 .shot.demo img{ opacity:0; }
 .shot.demo #litFrame{ opacity:1; pointer-events:auto; }
+.frameLoad{ position:absolute; inset:0; display:none; align-items:center; justify-content:center; gap:12px; padding:24px; text-align:center; font-size:13px; color:var(--ink); background:#0b0b0b; z-index:1; }
+.shot.demo.loading .frameLoad{ display:flex; }
+.frameLoad .spin{ width:18px; height:18px; flex:none; border:2px solid var(--line); border-top-color:var(--ink); border-radius:50%; animation:frameSpin .8s linear infinite; }
+@keyframes frameSpin{ to{ transform:rotate(360deg); } }
 body.demomode .plate{ width:min(94vw, 1160px); }
 body.demomode .shot{ aspect-ratio:auto; height:min(76vh, 820px); }
 button[data-close]{
@@ -672,6 +681,7 @@ body.contactopen #contactModal{ opacity:1; pointer-events:auto; }
   :root{ --hw:min(88vw, 320px); }
   .bio .who{ gap:10px; margin-bottom:10px; }
   .bio p{ display:none; }
+  .bio .seek{ font-size:12px; }
   .rows{ grid-template-columns:1fr; }
   #menu nav{ gap:2px; }
   #menu a{ font-size:clamp(24px, 10vw, 40px); }
@@ -701,7 +711,7 @@ body.contactopen #contactModal{ opacity:1; pointer-events:auto; }
     <div class="markOrbit"><span class="markDot"></span></div>
   </div>
   <div class="bar"><s id="bar"></s></div>
-  <div class="tag">Real Projects. Live Data.</div>
+  <div class="tag">Real Projects. Deployed.</div>
 </div>
 
 <div class="spinCue" aria-hidden="true"><span>SPIN</span></div>
@@ -733,7 +743,14 @@ body.contactopen #contactModal{ opacity:1; pointer-events:auto; }
   <div class="who">
     <b>Kumail Rizvi</b>
   </div>
-  <p>This is a working archive, not a gallery. Every screen here is a real product with live data, deployed and running right now, built end to end: backend logic, real APIs, and interfaces people can actually use.</p>
+  <div class="seek">Seeking a Summer 2027 software engineering / AI internship &middot; CS @ UW Bothell, Dec 2027</div>
+  <nav class="quick" aria-label="Quick links">
+    <a href="/resume-kumail-rizvi.pdf" target="_blank" rel="noopener">Resume</a>
+    <a href="https://github.com/kumailrizvi890" target="_blank" rel="noopener">GitHub</a>
+    <a href="https://linkedin.com/in/syedkumailrizvi" target="_blank" rel="noopener">LinkedIn</a>
+    <a href="mailto:kumailrizvi890@gmail.com">Email</a>
+  </nav>
+  <p>Every project here is deployed and clickable. A few run on sample data to keep client or personal data private, and they are labeled.</p>
 </div>
 
 <div class="colophon chrome">Projects 2026</div>
@@ -767,7 +784,7 @@ body.contactopen #contactModal{ opacity:1; pointer-events:auto; }
   <div class="cpanel">
     <button data-close-contact type="button" class="cclose">Close</button>
     <h2>Let&rsquo;s talk</h2>
-    <p class="csub">Hiring for an AI Engineer / PM role? This writes straight to my database and pings my phone the moment it lands.</p>
+    <p class="csub">Hiring a Summer 2027 software or AI intern? This form saves to my database and notifies me as soon as it lands.</p>
     <form id="contactForm">
       <div class="crow">
         <label for="cName">Name</label>
@@ -795,6 +812,7 @@ body.contactopen #contactModal{ opacity:1; pointer-events:auto; }
     <div class="shot">
       <img id="litImg" alt="">
       <iframe id="litFrame" title="Live project demo" loading="lazy"></iframe>
+      <div class="frameLoad" aria-live="polite"><span class="spin" aria-hidden="true"></span><span>Loading live demo&hellip; first load can take a few seconds.</span></div>
       <button data-close type="button">Close</button>
     </div>
     <div class="meta">
@@ -807,7 +825,7 @@ body.contactopen #contactModal{ opacity:1; pointer-events:auto; }
     <div class="lit-actions">
       <button id="litDemoBtn" type="button" class="demo-btn">Launch live demo</button>
       <a id="litOpenBtn" href="#" target="_blank" rel="noopener" class="open-btn">Open in new tab ↗</a>
-      <span class="demo-hint">The real, deployed app, not a mockup.</span>
+      <span class="demo-hint">The deployed app. Sample-data demos are labeled inside the app.</span>
     </div>
   </div>
 </div>
@@ -843,18 +861,18 @@ body.contactopen #contactModal{ opacity:1; pointer-events:auto; }
     {id:"opsauto-workflows", title:"Ops Automation: Run a Workflow", place:"On-demand triggers", note:"Every “Run now” hits a real serverless function: a live Remotive API crawl, real network checks, or an actual scheduling algorithm, never a canned timer."},
     {id:"opsauto-activity", title:"Ops Automation: Run Log", place:"Supabase-backed history", note:"Every run, scheduled or triggered, is logged to Supabase with its real duration and output, filterable by workflow."},
     {id:"opsauto-schedule", title:"Ops Automation: Cron Schedule", place:"Vercel Cron, daily", note:"A Vercel Cron job hits this dashboard's API once a day and runs one randomly-selected workflow, logged distinctly as “scheduled.”"},
-    {id:"pawpass-landing", title:"PawPass: Welcome", place:"Flask · PostgreSQL · Offline-first PWA", note:"A pet-care coordination platform for shelter volunteers, built end-to-end on my own: Next.js on the frontend, a Supabase Postgres backend holding real shelter data, and a Gemini-powered assistant layered on top so volunteers get grounded, record-specific answers instead of generic chatbot replies."},
+    {id:"pawpass-landing", title:"PawPass: Welcome", place:"Flask · PostgreSQL · Offline-first PWA", note:"A pet-care coordination PWA for shelter volunteers: a Flask and SQLAlchemy REST API on PostgreSQL, a cache-first service worker so care can be logged offline, and a Gemini-powered care assistant."},
     {id:"pawpass-list", title:"PawPass: Pet Care Center", place:"Shelter roster", note:"Real pet records pulled from Supabase, each with its own care history and update log."},
     {id:"pawpass-detail", title:"PawPass: Pet Profile", place:"Care handoff log", note:"Feeding instructions, medical notes, and a timestamped update history so no detail gets lost between volunteers."},
-    {id:"pawpass-assistant", title:"PawPass: AI Care Assistant", place:"Gemini API · RAG", note:"A retrieval-augmented generation (RAG) chatbot: it pulls the specific pet's records and the shelter's live care notes from Supabase, feeds that context into Google Gemini, and only then generates an answer &mdash; so the response is grounded in real data rather than the model guessing."},
-    {id:"qmail-dashboard", title:"Qmail: Security Dashboard", place:"Privacy-first email client", note:"Scam attempts blocked, unsubscribe requests, and encrypted-message counts, aggregated from the classification pipeline above and computed from the account's real inbox activity across a full-stack PWA built in React and TypeScript."},
+    {id:"pawpass-assistant", title:"PawPass: AI Care Assistant", place:"Gemini API", note:"A care assistant that sends the pet's record and care log to Google Gemini as context, so answers are about that specific animal. The public demo has no API key attached, so it answers from a built-in fallback instead of calling Gemini."},
+    {id:"qmail-dashboard", title:"Qmail: Security Dashboard", place:"Privacy-first email client", note:"Team hackathon project, 5th place at WSU Hackathon 2025; I led branding and UX. The dashboard totals scams flagged, unsubscribe requests and encrypted messages for the demo account in a React and TypeScript PWA."},
     {id:"qmail-scam", title:"Qmail: Scam Detection", place:"OpenAI API · Structured JSON", note:"An LLM-based content-classification pipeline: message text goes to the OpenAI API with a structured JSON response schema, so the label, confidence, and reasoning come back as parseable data instead of free text I'd have to scrape. Flags phishing attempts inline and explains why, here calling out urgency language and a request for credentials."},
-    {id:"fadekings-hero", title:"Fade Kings: Book a Chair", place:"Next.js · Supabase booking", note:"A barber shop's booking site: walk-ins and appointments from one live page, built so a local business can actually take bookings online instead of by phone."},
-    {id:"easybowls-hero", title:"Fast Bowls: Build Your Bowl", place:"Next.js · Supabase · Real-time build", note:"A real ordering site for a South Asian street-food concept: pick a base, protein, toppings and sauce and watch the bowl assemble live, backed by a real Supabase menu and orders backend."},
-    {id:"easybowls-admin-login", title:"Fast Bowls: Staff Dashboard", place:"Supabase Auth, gated login", note:"The real, Auth-gated dashboard staff use to run the kitchen side, covering orders, menu, and staff accounts behind a genuine sign-in."},
+    {id:"fadekings-hero", title:"Fade Kings: Book a Chair", place:"Next.js · Supabase booking", note:"A demo booking site for a barbershop: customers book or join walk-ins from one page, barbers manage availability, and owners see live stats through Supabase Realtime."},
+    {id:"easybowls-hero", title:"Fast Bowls: Build Your Bowl", place:"Next.js · Supabase · Real-time build", note:"A demo ordering site for a South Asian street-food concept: pick a base, protein, toppings and sauce and watch the bowl assemble live, backed by a real Supabase menu and orders backend."},
+    {id:"easybowls-admin-login", title:"Fast Bowls: Staff Dashboard", place:"Supabase Auth, gated login", note:"An Auth-gated staff dashboard for the kitchen side, covering orders, menu, and staff accounts behind a Supabase sign-in."},
     {id:"internships-review", title:"Internship Command: Review Queue", place:"Indeed · ZipRecruiter APIs", note:"A swipe-to-approve triage tool over real, currently-posted internship and new-grad listings, tracking a daily application goal against a live funnel."},
     {id:"salescrm-pipeline", title:"Agency CRM: Lead Pipeline", place:"Notion-backed CRM logic", note:"The same schema and queries as the live Notion CRM I run for outreach, shown here with sample companies so client data stays private."},
-    {id:"pulsehub-status", title:"Pulse Command Center: Status Hub", place:"Claude · MCP · Multi-agent", note:"A real, live multi-agent command center I built as my own personal Jarvis, on Claude with the Model Context Protocol (MCP): it orchestrates 10+ MCP tool integrations (Gmail, Notion, job-search and CRM APIs) into scheduled workflows and rolls up status across everything I automate, from sales pipeline to job search to trading. It grew out of a larger personal system I call Mission Control that runs a lot of my day-to-day, and since the full version holds my actual personal and business data, this demo swaps in a sample pipeline instead of the real one."}
+    {id:"pulsehub-status", title:"Pulse Command Center: Status Hub", place:"Claude · MCP connectors", note:"A status hub for the personal automation setup I run on Claude with MCP connectors (Gmail, Notion, job search). The real one holds personal and client data, so this version runs on labeled sample data with the same schema."}
   ];
 
   var N = STILLS.length;
@@ -1293,6 +1311,8 @@ body.contactopen #contactModal{ opacity:1; pointer-events:auto; }
           litDemoBtn.classList.remove("active");
           body.classList.remove("demomode");
         } else {
+          shotEl.classList.add("loading");
+          litFrame.onload = function(){ if (litFrame.src !== "about:blank") shotEl.classList.remove("loading"); };
           litFrame.src = demoUrl;
           shotEl.classList.add("demo");
           litDemoBtn.textContent = "Back to screenshot";
