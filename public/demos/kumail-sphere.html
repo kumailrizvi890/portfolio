@@ -849,7 +849,8 @@ body.contactopen #contactModal{ opacity:1; pointer-events:auto; }
     easybowlsadmin: "https://portfolio-kumailr.vercel.app/demos/easy-bowls/admin.html",
     internships: "https://portfolio-kumailr.vercel.app/demos/internships-dashboard/index.html",
     salescrm: "https://portfolio-kumailr.vercel.app/demos/sales-websites-dashboard/index.html",
-    pulsehub: "https://portfolio-kumailr.vercel.app/demos/pulse-command-center/index.html"
+    pulsehub: "https://portfolio-kumailr.vercel.app/demos/pulse-command-center/index.html",
+    askkumail: "https://ask-kumail.vercel.app"
   };
   function demoUrlFor(id){ return LIVE_DEMOS[id.split("-")[0]] || null; }
 
@@ -872,6 +873,7 @@ body.contactopen #contactModal{ opacity:1; pointer-events:auto; }
     {id:"easybowls-admin-login", title:"Fast Bowls: Staff Dashboard", place:"Supabase Auth, gated login", note:"An Auth-gated staff dashboard for the kitchen side, covering orders, menu, and staff accounts behind a Supabase sign-in."},
     {id:"internships-review", title:"Internship Command: Review Queue", place:"Indeed · ZipRecruiter APIs", note:"A swipe-to-approve triage tool over real, currently-posted internship and new-grad listings, tracking a daily application goal against a live funnel."},
     {id:"salescrm-pipeline", title:"Agency CRM: Lead Pipeline", place:"Notion-backed CRM logic", note:"The same schema and queries as the live Notion CRM I run for outreach, shown here with sample companies so client data stays private."},
+    {id:"askkumail-home", title:"Ask Kumail: RAG + MCP", place:"Next.js · Vercel AI SDK · MCP", note:"Ask a question about my projects and get an answer grounded in my READMEs and resume, with citations. Retrieval is hybrid: BM25 keyword ranking and embedding similarity merged with reciprocal rank fusion. The same search is exposed as a remote MCP server that Claude can connect to, and a labeled eval set measures retrieval accuracy."},
     {id:"pulsehub-status", title:"Pulse Command Center: Status Hub", place:"Claude · MCP connectors", note:"A status hub for the personal automation setup I run on Claude with MCP connectors (Gmail, Notion, job search). The real one holds personal and client data, so this version runs on labeled sample data with the same schema."}
   ];
 

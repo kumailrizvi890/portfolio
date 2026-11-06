@@ -9,8 +9,11 @@ for anything that needs to persist.
 
 ## Why it's built this way
 
-Most portfolios describe projects. This one runs them. Each card on the homepage links to a page
-that actually executes real backend code when you interact with it:
+The homepage (`public/demos/kumail-sphere.html`, served at `/`) is a rotating sphere of project
+screenshots; each card opens the deployed app in place. Newer projects, like
+[Ask Kumail](https://github.com/kumailrizvi890/ask-kumail) (RAG + MCP), live in their own repos.
+
+This repo also keeps earlier self-contained demo pages that run real backend code in the portfolio itself:
 
 | Demo | Route | Backend | What it proves |
 |---|---|---|---|
