@@ -97,8 +97,8 @@ export const projects: Project[] = [
     name: "Pulse Find",
     tagline: "Job application tracker with an MCP server",
     description:
-      "My job search tracker with an MCP server. It scans application email, files confirmations, assessments, interviews and rejections into one tracker, flags what is waiting on me and when it is due, shows who ghosted me, and screens recruiter mail for scams. TypeScript, Next.js and Supabase. It is the tracker I run my own search on, currently 116 applications.",
-    tech: ["TypeScript", "Next.js", "Supabase"],
+      "Pulse Find is a complete job search platform Kumail built and runs his own search on. Users sign up, connect their own AI agent over MCP, and get the whole loop in one place: a dashboard that shows what is waiting on them, an application tracker with a full Excel style sheet view plus xlsx import and export, a jobs board with a swipe deck, a leads pipeline, and a networking tracker with next steps and due dates. The agent keeps everything current by syncing application email, screening scams, finding leads, and surfacing deadlines. It is live as a free skill on Agensi for other job seekers.",
+    tech: ["TypeScript", "Next.js", "Supabase", "MCP", "PostgreSQL"],
     demoHref: "https://pulse-find-two.vercel.app",
     repoHref: "https://github.com/kumailrizvi890/Pulse-Find",
     size: "lg",
