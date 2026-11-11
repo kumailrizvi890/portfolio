@@ -5,7 +5,6 @@
 
 export const profile = {
   name: "Syed Kumail Rizvi",
-
   shortName: "Kumail",
   role: "Software Engineer",
   focus: "Full-stack systems, AI-integrated products, and the infra underneath them",
