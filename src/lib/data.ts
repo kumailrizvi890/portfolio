@@ -5,6 +5,7 @@
 
 export const profile = {
   name: "Syed Kumail Rizvi",
+
   shortName: "Kumail",
   role: "Software Engineer",
   focus: "Full-stack systems, AI-integrated products, and the infra underneath them",
@@ -81,6 +82,30 @@ export type Project = {
 
 export const projects: Project[] = [
   {
+    slug: "ask-kumail",
+    name: "Ask Kumail",
+    tagline: "RAG question-answering over my documents, via MCP",
+    description:
+      "A RAG question-answering system over my own documents with an MCP server. I built BM25 from scratch and fused it with embeddings using reciprocal rank fusion, and every answer cites its sources. On a 22-question eval set, embeddings hit 100% top-1 and BM25 86%, so the system routes between them.",
+    tech: ["TypeScript", "Next.js", "RAG", "MCP"],
+    demoHref: "https://ask-kumail.vercel.app",
+    repoHref: "https://github.com/kumailrizvi890/ask-kumail",
+    size: "lg",
+    accentStatus: "ok",
+  },
+  {
+    slug: "pulse-find",
+    name: "Pulse Find",
+    tagline: "Job application tracker with an MCP server",
+    description:
+      "My job search tracker with an MCP server. It scans application email, files confirmations, assessments, interviews and rejections into one tracker, flags what is waiting on me and when it is due, shows who ghosted me, and screens recruiter mail for scams. TypeScript, Next.js and Supabase. It is the tracker I run my own search on, currently 116 applications.",
+    tech: ["TypeScript", "Next.js", "Supabase"],
+    demoHref: "https://pulse-find-two.vercel.app",
+    repoHref: "https://github.com/kumailrizvi890/Pulse-Find",
+    size: "lg",
+    accentStatus: "ok",
+  },
+  {
     slug: "cluster-pulse",
     name: "Cluster Pulse",
     tagline: "Go microservice for fleet health & rollout risk",
@@ -101,7 +126,7 @@ export const projects: Project[] = [
     tech: ["React", "TypeScript", "Tailwind", "OpenAI API", "OAuth"],
     award: "5th Place, WSU Hackathon 2025",
     demoHref: "/demos/qmail",
-    repoHref: "https://github.com/kumailrizvi890/qmail",
+    repoHref: "https://github.com/garv-seth/qmail",
     size: "md",
   },
   {
