@@ -147,7 +147,7 @@ export const projects: Project[] = [
       "A personal operations platform: 10+ MCP tools (Notion, Gmail, job-search and CRM APIs) wired into scheduled workflows, feeding live dashboards that replaced manual tracking across job search and business operations.",
     tech: ["Claude", "MCP", "Python", "Scheduled workflows"],
     demoHref: "/demos/workflow-automation",
-    repoHref: "https://github.com/kumailrizvi890/Auto-Intern",
+    repoHref: "https://github.com/kumailrizvi890/Ops-Automation",
     size: "sm",
   },
   {
