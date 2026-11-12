@@ -850,7 +850,8 @@ body.contactopen #contactModal{ opacity:1; pointer-events:auto; }
     internships: "https://portfolio-kumailr.vercel.app/demos/internships-dashboard/index.html",
     salescrm: "https://portfolio-kumailr.vercel.app/demos/sales-websites-dashboard/index.html",
     pulsehub: "https://portfolio-kumailr.vercel.app/demos/pulse-command-center/index.html",
-    askkumail: "https://ask-kumail.vercel.app"
+    askkumail: "https://ask-kumail.vercel.app",
+      pulsefind: "https://pulse-find-two.vercel.app"
   };
   function demoUrlFor(id){ return LIVE_DEMOS[id.split("-")[0]] || null; }
 
@@ -874,6 +875,7 @@ body.contactopen #contactModal{ opacity:1; pointer-events:auto; }
     {id:"internships-review", title:"Internship Command: Review Queue", place:"Indeed · ZipRecruiter APIs", note:"A swipe-to-approve triage tool over real, currently-posted internship and new-grad listings, tracking a daily application goal against a live funnel."},
     {id:"salescrm-pipeline", title:"Agency CRM: Lead Pipeline", place:"Notion-backed CRM logic", note:"The same schema and queries as the live Notion CRM I run for outreach, shown here with sample companies so client data stays private."},
     {id:"askkumail-home", title:"Ask Kumail: RAG + MCP", place:"Next.js · Vercel AI SDK · MCP", note:"Ask a question about my projects and get an answer grounded in my READMEs and resume, with citations. Retrieval is hybrid: BM25 keyword ranking and embedding similarity merged with reciprocal rank fusion. The same search is exposed as a remote MCP server that Claude can connect to, and a labeled eval set measures retrieval accuracy."},
+    {id:"pulsefind-platform", title:"Pulse Find", place:"TypeScript · Next.js · Supabase · MCP", note:"Pulse Find is a complete job search platform Kumail built and runs his own search on. Users sign up, connect their own AI agent over MCP, and get the whole loop in one place: a dashboard that shows what is waiting on them, an application tracker with a full Excel style sheet view plus xlsx import and export, a jobs board with a swipe deck, a leads pipeline, and a networking tracker with next steps and due dates."},
     {id:"pulsehub-status", title:"Pulse Command Center: Status Hub", place:"Claude · MCP connectors", note:"A status hub for the personal automation setup I run on Claude with MCP connectors (Gmail, Notion, job search). The real one holds personal and client data, so this version runs on labeled sample data with the same schema."}
   ];
 
