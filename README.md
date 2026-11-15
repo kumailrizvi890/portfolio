@@ -4,7 +4,7 @@ A portfolio where every project is a live, running thing, not a screenshot. Buil
 on the frontend and real Go, Python, and TypeScript backends, deployed on Vercel with Supabase
 for anything that needs to persist.
 
-**Live:** _deployed on Vercel, see the live demo links below_
+**Live:** https://portfolio-kumailr.vercel.app
 **Resume:** [`/resume-kumail-rizvi.pdf`](./public/resume-kumail-rizvi.pdf)
 
 ## Why it's built this way
