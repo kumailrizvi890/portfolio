@@ -5,6 +5,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Kumail Rizvi | Software Engineering &amp; AI Internship, Summer 2027</title>
 <meta name="description" content="Kumail Rizvi, CS student at UW Bothell, seeking a Summer 2027 software engineering or AI internship. Deployed, clickable projects in Python, TypeScript, Next.js, Flask and Supabase.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://portfolio-kumailr.vercel.app/">
+<meta property="og:title" content="Kumail Rizvi | Software Engineering &amp; AI Internship, Summer 2027">
+<meta property="og:description" content="Deployed, clickable projects in Python, TypeScript, Next.js, Flask and Supabase. Ask Kumail answers questions about my work with citations, Pulse Find runs my whole job search, and every project is live.">
+<meta property="og:image" content="https://portfolio-kumailr.vercel.app/demos/kumail-sphere-img/askkumail-home.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Kumail Rizvi | Software Engineering &amp; AI Internship, Summer 2027">
+<meta name="twitter:description" content="Deployed, clickable projects in Python, TypeScript, Next.js, Flask and Supabase. Ask Kumail answers questions about my work with citations, Pulse Find runs my whole job search, and every project is live.">
+<meta name="twitter:image" content="https://portfolio-kumailr.vercel.app/demos/kumail-sphere-img/askkumail-home.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
@@ -192,7 +201,10 @@ body.gridview #grid{ opacity:1; pointer-events:auto; }
   background:#0b0b0b;
   cursor:pointer;
   overflow:hidden;
+  opacity:0; transform:translateY(14px);
+  transition:opacity .7s cubic-bezier(.22,1,.36,1), transform .7s cubic-bezier(.22,1,.36,1);
 }
+body.gridview .rows figure{ opacity:1; transform:none; transition-delay:calc(var(--gi, 0) * 60ms); }
 .rows img{ width:100%; height:100%; object-fit:cover; opacity:.82; transition:transform .8s ease, opacity .8s ease; }
 .rows figure:hover img{ transform:scale(1.05); opacity:1; }
 .rows figcaption{
@@ -845,20 +857,20 @@ body.contactopen #contactModal{ opacity:1; pointer-events:auto; }
     pawpass: "https://pawpass-kumailr.vercel.app",
     qmail: "https://qmail-demo-kumailr.vercel.app",
     fadekings: "https://fade-house-puce.vercel.app",
-    easybowlssite: "https://portfolio-kumailr.vercel.app/demos/easy-bowls/index.html",
-    easybowlsadmin: "https://portfolio-kumailr.vercel.app/demos/easy-bowls/admin.html",
+    "easybowls-hero": "https://portfolio-kumailr.vercel.app/demos/easy-bowls/index.html",
+    "easybowls-admin-login": "https://portfolio-kumailr.vercel.app/demos/easy-bowls/admin.html",
     internships: "https://portfolio-kumailr.vercel.app/demos/internships-dashboard/index.html",
     salescrm: "https://portfolio-kumailr.vercel.app/demos/sales-websites-dashboard/index.html",
     pulsehub: "https://portfolio-kumailr.vercel.app/demos/pulse-command-center/index.html",
     askkumail: "https://ask-kumail.vercel.app",
       pulsefind: "https://pulse-find-two.vercel.app"
   };
-  function demoUrlFor(id){ return LIVE_DEMOS[id.split("-")[0]] || null; }
+  function demoUrlFor(id){ return LIVE_DEMOS[id] || LIVE_DEMOS[id.split("-")[0]] || null; }
 
   var STILLS = [
-  {id:"askkumail-home", title:"Ask Kumail: RAG + MCP", place:"Next.js · Vercel AI SDK · MCP", note:"Ask a question about my projects and get an answer grounded in my READMEs and resume, with citations. Retrieval is hybrid: BM25 keyword ranking and embedding similarity merged with reciprocal rank fusion. The same search is exposed as a remote MCP server that Claude can connect to, and a labeled eval set measures retrieval accuracy."},
-  {id:"pulsefind-platform", title:"Pulse Find", place:"TypeScript · Next.js · Supabase · MCP", note:"Pulse Find is a complete job search platform Kumail built and runs his own search on. Users sign up, connect their own AI agent over MCP, and get the whole loop in one place: a dashboard that shows what is waiting on them, an application tracker with a full Excel style sheet view plus xlsx import and export, a jobs board with a swipe deck, a leads pipeline, and a networking tracker with next steps and due dates."},
-    {id:"tradepro-terminal", title:"TradePro: Live Terminal", place:"Python · Vercel · Yahoo Finance API", note:"A candlestick terminal for BTC-USD with live market data, an 8-factor confluence gate (RSI, MACD, ADX and more), and a real order ticket with ATR-based stops."},
+  {id:"askkumail-home", title:"Ask Kumail: RAG + MCP", place:"Next.js · Vercel AI SDK · MCP", note:"Ask a question about my projects and get an answer grounded in my READMEs and resume, with citations. Retrieval is hybrid: BM25 keyword ranking and embedding similarity merged with reciprocal rank fusion. The same search is exposed as a remote MCP server that Claude can connect to. On a labeled 22-question eval, embeddings hit 100% top-1, hybrid 90.9%, and BM25 written from scratch 86.4%."},
+  {id:"pulsefind-platform", title:"Pulse Find", place:"TypeScript · Next.js · Supabase · MCP", note:"Pulse Find is a complete job search platform Kumail built and runs his own search on. Users sign up, connect their own AI agent over MCP, and get the whole loop in one place: a dashboard that shows what is waiting on them, an application tracker with a full Excel style sheet view plus xlsx import and export, a jobs board with a swipe deck, a leads pipeline, and a networking tracker with next steps and due dates. An in-app sync keeps it in step with my real tracker every 2 hours. The public demo runs on labeled sample data, so the real tracker stays private."},
+    {id:"tradepro-terminal", title:"TradePro: Live Terminal", place:"Python · Vercel · Yahoo Finance API", note:"A candlestick terminal with live Yahoo Finance data across a 25-symbol watchlist, SMA 20 and 50 plus RSI 14 overlays, an 8-factor confluence gate, and a real order ticket with ATR-based stops and a paper-trading trade desk."},
     {id:"tradepro-agents", title:"TradePro: Confluence Gate", place:"Rules-based strategy engine", note:"One transparent, rules-based agent that only opens a position when at least 7 of 8 independent technical checks agree, with no black box and no hidden overrides."},
     {id:"tradepro-lab", title:"TradePro: What-If Lab", place:"Live indicator readings", note:"Live RSI, MACD, ADX and volume readings for the focus symbol, with a slider showing how many checks would need to flip before a trade triggers."},
     {id:"opsauto-overview", title:"Ops Automation: Overview", place:"Node · Vercel Cron · Supabase", note:"Four scheduled automations that do genuine work: a live jobs crawl, real HTTP lead checks, an interval-intersection scheduler, and date-math follow-up drafts."},
@@ -869,14 +881,14 @@ body.contactopen #contactModal{ opacity:1; pointer-events:auto; }
     {id:"pawpass-list", title:"PawPass: Pet Care Center", place:"Shelter roster", note:"Real pet records pulled from Supabase, each with its own care history and update log."},
     {id:"pawpass-detail", title:"PawPass: Pet Profile", place:"Care handoff log", note:"Feeding instructions, medical notes, and a timestamped update history so no detail gets lost between volunteers."},
     {id:"pawpass-assistant", title:"PawPass: AI Care Assistant", place:"Gemini API", note:"A care assistant that sends the pet's record and care log to Google Gemini as context, so answers are about that specific animal. The public demo has no API key attached, so it answers from a built-in fallback instead of calling Gemini."},
-    {id:"qmail-dashboard", title:"Qmail: Security Dashboard", place:"Privacy-first email client", note:"Team hackathon project, 5th place at WSU Hackathon 2025; I led branding and UX. The dashboard totals scams flagged, unsubscribe requests and encrypted messages for the demo account in a React and TypeScript PWA."},
+    {id:"qmail-dashboard", title:"Qmail: Inbox", place:"Privacy-first email client", note:"Team hackathon project, 5th place at WSU Hackathon 2025; I led branding and UX. The inbox triages mail into piles, flags scams inline, and totals scams blocked and unsubscribe suggestions for the demo account in a React and TypeScript PWA."},
     {id:"qmail-scam", title:"Qmail: Scam Detection", place:"OpenAI API · Structured JSON", note:"An LLM-based content-classification pipeline: message text goes to the OpenAI API with a structured JSON response schema, so the label, confidence, and reasoning come back as parseable data instead of free text I'd have to scrape. Flags phishing attempts inline and explains why, here calling out urgency language and a request for credentials."},
-    {id:"fadekings-hero", title:"Fade Kings: Book a Chair", place:"Next.js · Supabase booking", note:"A demo booking site for a barbershop: customers book or join walk-ins from one page, barbers manage availability, and owners see live stats through Supabase Realtime."},
+    {id:"fadekings-hero", title:"Fade Kings: Book a Chair", place:"Next.js · Supabase booking", note:"A demo booking site for a barbershop: customers book or join walk-ins from one page, barbers manage availability, and owners see booking stats. The demo runs on sample data while its database is paused, so the menu and crew sections show sample content instead of live data."},
     {id:"easybowls-hero", title:"Fast Bowls: Build Your Bowl", place:"Next.js · Supabase · Real-time build", note:"A demo ordering site for a South Asian street-food concept: pick a base, protein, toppings and sauce and watch the bowl assemble live, backed by a real Supabase menu and orders backend."},
     {id:"easybowls-admin-login", title:"Fast Bowls: Staff Dashboard", place:"Supabase Auth, gated login", note:"An Auth-gated staff dashboard for the kitchen side, covering orders, menu, and staff accounts behind a Supabase sign-in."},
-    {id:"internships-review", title:"Internship Command: Review Queue", place:"Indeed · ZipRecruiter APIs", note:"A swipe-to-approve triage tool over real, currently-posted internship and new-grad listings, tracking a daily application goal against a live funnel."},
-    {id:"salescrm-pipeline", title:"Agency CRM: Lead Pipeline", place:"Notion-backed CRM logic", note:"The same schema and queries as the live Notion CRM I run for outreach, shown here with sample companies so client data stays private."},
-        {id:"pulsehub-status", title:"Pulse Command Center: Status Hub", place:"Claude · MCP connectors", note:"A status hub for the personal automation setup I run on Claude with MCP connectors (Gmail, Notion, job search). The real one holds personal and client data, so this version runs on labeled sample data with the same schema."}
+    {id:"internships-review", title:"Internship Command: Review Queue", place:"Indeed · ZipRecruiter APIs", note:"A swipe-to-approve triage tool over real, currently-posted internship and new-grad listings, tracking a daily application goal against a live funnel. Unlike Pulse Find, the live platform I run my whole search on, this is a static demo of the review queue I use to triage new listings."},
+    {id:"salescrm-pipeline", title:"Agency CRM: Lead Pipeline", place:"Notion-backed CRM logic", note:"The same schema and queries as the live Notion CRM I run for outreach, shown here with sample companies so client data stays private. This is a static demo of the outreach CRM, not a live product."},
+        {id:"pulsehub-status", title:"Pulse Command Center: Status Hub", place:"Claude · MCP connectors", note:"A status hub for the personal automation setup I run on Claude with MCP connectors (Gmail, Notion, job search). Unlike Ops Automation, which runs the four scheduled workflows, this hub only watches their status in one place. The real one holds personal and client data, so this version runs on labeled sample data with the same schema."}
   ];
 
   var N = STILLS.length;
@@ -960,14 +972,18 @@ body.contactopen #contactModal{ opacity:1; pointer-events:auto; }
   /* ---------- build flat grid ---------- */
   (function buildGrid(){
     var seenProjects = {};
+    var gridPos = 0;
     cardsData.forEach(function(c){
       var project = c.title.indexOf(":") >= 0 ? c.title.slice(0, c.title.indexOf(":")) : c.title;
       if (seenProjects[project]){ return; }
       seenProjects[project] = true;
       var figure = document.createElement("figure");
       figure.dataset.idx = c.idx;
+      figure.style.setProperty("--gi", gridPos++);
       var img = document.createElement("img");
       img.alt = project;
+      img.loading = "lazy";
+      img.decoding = "async";
       var cap = document.createElement("figcaption");
       cap.textContent = project;
       figure.appendChild(img);
@@ -1036,6 +1052,7 @@ body.contactopen #contactModal{ opacity:1; pointer-events:auto; }
   var lastDim = {}, lastFade = {};
   var AUTO_SPIN_DPS = 7.3; // deg/sec idle horizontal drift (wall-clock based)
   var AUTO_TILT_DPS = 3.55; // deg/sec idle vertical drift, unclamped -- tumbles fully pole to pole
+  var REDUCED = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   var autoTilt = 0;
   var lastFrameTime = null;
 
@@ -1058,13 +1075,13 @@ body.contactopen #contactModal{ opacity:1; pointer-events:auto; }
     var dtScale = dt / 16.67;
 
     if (!draggingNow() && !isLit()){
-      dragX += velX * dtScale + AUTO_SPIN_DPS * dt / 1000; dragY += velY * dtScale;
+      dragX += velX * dtScale + (REDUCED ? 0 : AUTO_SPIN_DPS * dt / 1000); dragY += velY * dtScale;
       velX *= Math.pow(0.94, dtScale); velY *= Math.pow(0.94, dtScale);
       if (Math.abs(velX) < 0.002){ velX = 0; }
       if (Math.abs(velY) < 0.002){ velY = 0; }
       var minDragY = -pitchLimit - tilt, maxDragY = pitchLimit - tilt;
       dragY = clamp(dragY, minDragY, maxDragY);
-      autoTilt += AUTO_TILT_DPS * dt / 1000;
+      if (!REDUCED){ autoTilt += AUTO_TILT_DPS * dt / 1000; }
     }
 
     var deepTarget = touched ? 1 : 0;
@@ -1498,7 +1515,7 @@ body.contactopen #contactModal{ opacity:1; pointer-events:auto; }
     setTimeout(function(){
       layout();
       body.classList.add("revealed");
-      setTimeout(autoSpinDemo, 700);
+      if (!REDUCED){ setTimeout(autoSpinDemo, 700); }
     }, 200);
   }
 
